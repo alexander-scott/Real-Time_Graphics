@@ -1,125 +1,98 @@
+//***************************************************************************************
+// Camera.h by Frank Luna (C) 2011 All Rights Reserved.
+//   
+// Simple first person style camera class that lets the viewer explore the 3D scene.
+//   -It keeps track of the camera coordinate system relative to the world space
+//    so that the view matrix can be constructed.  
+//   -It keeps track of the viewing frustum of the camera so that the projection
+//    matrix can be obtained.
+//***************************************************************************************
+
 #pragma once
+
+#include <windows.h>
 #include <d3d11_1.h>
 #include <d3dcompiler.h>
 #include <directxmath.h>
+#include <directxcolors.h>
+#include <sstream>
+#include "resource.h"
+#include <iostream>
+
+#include <vector>
+#include <memory>
+
+#include "DX11AppHelper.h"
 
 using namespace DirectX;
 
-////////////////////////////////////////////////////////
-// Stores View and Projection matrices used by shaders
-// to translate 3D world into 2D screen surface
-// Camera can be moved and rotated. Also, user can change 
-// camera's target and position
-////////////////////////////////////////////////////////
 class SceneCamera
 {
 public:
-	// Constructs default camera looking at 0,0,0
-	// placed at 0,0,-1 with up vector 0,1,0 (note that mUp is NOT a vector - it's vector's end)
-    SceneCamera(void);
-	// Create camera, based on another one
-	SceneCamera(const SceneCamera& camera);
-	// Copy all camera's parameters
-    SceneCamera& operator=(const SceneCamera& camera);
-    ~SceneCamera(void) {}
+	SceneCamera(float nearDepth, float farDepth, float windowWidth, float windowHeight);
+	~SceneCamera();
+
+	// Get/Set world camera position.
+	XMVECTOR GetPosition()const { return XMLoadFloat3(&mCameraPos);	}
+	XMFLOAT3 GetPosition3f()const { return mCameraPos; }
+	void SetPosition(float x, float y, float z);
+	void SetPosition(const XMFLOAT3& v);
+	
+	// Get camera basis vectors.
+	XMFLOAT3 GetUp3f()const { return mCameraUpDir; }
+	
+	// Define camera space via LookAt parameters.
+	void LookAt(FXMVECTOR pos, FXMVECTOR target, FXMVECTOR worldUp);
+	void LookAt(const XMFLOAT3& pos, const XMFLOAT3& target, const XMFLOAT3& up);
+
+	XMFLOAT4X4 GetViewMatrix()const;
+	XMFLOAT4X4 GetProjectionMatrix()const;
+
+	void OnMouseMove(int x, int y);
+
+	void UpdateCameraView();
 
 private:
-	// Initialize camera's View matrix from mPosition, mTarget and mUp coordinates
-	void initViewMatrix();
+	// Strafe/Walk the camera a distance d.
+	void Strafe(float d);
+	void Walk(float d);
 
-public:
-	// Initialize camera's perspective Projection matrix
-	void InitProjMatrix(const float angle, const float client_width, const float client_height, 
-		const float nearest, const float farthest);
-	// Initialize camera's orthogonal projection
-	void InitOrthoMatrix(const float client_width, const float client_height,
-		const float near_plane, const float far_plane);
+	// Set frustum.
+	void CreateProjectionMatrix();
 
-	// Resize matrices when window size changes
-	void OnResize(uint32_t new_width, uint32_t new_height);
+	float mCameraPitch = 0;
+	float mCameraYaw = 0;
 
-	///////////////////////////////////////////////
-	/*** View matrix transformation interfaces ***/
-	///////////////////////////////////////////////
+	POINT mLastMousePos;
 
-	// Move camera
-	void Move(XMFLOAT3 direction);
-	// Rotate camera around `axis` by `degrees`. Camera's position is a 
-	// pivot point of rotation, so it doesn't change
-	void Rotate(XMFLOAT3 axis, float degrees);
-	// Set camera position coordinates
-    void Position(XMFLOAT3& new_position);
-	// Get camera position coordinates
-	const XMFLOAT3& Position() const { return mPosition; }
-	// Change camera target position
-	void Target(XMFLOAT3 new_target);
-	// Get camera's target position coordinates
-	const XMFLOAT3& Target() const { return mTarget; }
-	// Get camera's up vector
-	const XMFLOAT3 Up() { return GMathVF(GMathFV(mUp) - GMathFV(mPosition)); }
-	// Get camera's look at target vector
-	const XMFLOAT3 LookAtTarget() { return GMathVF(GMathFV(mTarget) - GMathFV(mPosition)); }	
-	// Returns transposed camera's View matrix	
-    const XMFLOAT4X4 View() { return GMathMF(XMMatrixTranspose(GMathFM(mView))); }
+	// Camera coordinate system with coordinates relative to world space.
+	XMFLOAT3 mCameraPos = { 0.0f, 0.0f, 0.0f };
+	XMFLOAT3 mCameraRightDir = { 1.0f, 0.0f, 0.0f };
+	XMFLOAT3 mCameraUpDir = { 0.0f, 1.0f, 0.0f };
+	XMFLOAT3 mCameraForwardDir = { 0.0f, 0.0f, 1.0f };
 
-	/////////////////////////////////////////////////////
-	/*** Projection matrix transformation interfaces ***/
-	/////////////////////////////////////////////////////
+	// Cache frustum properties.
+	float mNearZ = 0.0f;
+	float mFarZ = 0.0f;
+	float mAspect = 0.0f;
+	float mFovY = 0.0f;
+	float mNearWindowHeight = 0.0f;
+	float mFarWindowHeight = 0.0f;
 
-	// Set view frustum's angle
-	void Angle(float angle);
-	// Get view frustum's angle
-	const float& Angle() const { return mAngle; }
+	bool mViewDirty = true;
 
-	// Set nearest culling plane distance from view frustum's projection plane
-	void NearestPlane(float nearest);
-	// Set farthest culling plane distance from view frustum's projection plane
-	void FarthestPlane(float farthest);
+	// Cache View/Proj matrices.
+	XMFLOAT4X4 mViewMatrix = Identity4x4();
+	XMFLOAT4X4 mProjectionMatrix = Identity4x4();
 
-	// Returns transposed camera's Projection matrix
-	const XMFLOAT4X4 Proj() { return GMathMF(XMMatrixTranspose(GMathFM(mProj))); }
-	// Returns transposed orthogonal camera matrix
-	const XMFLOAT4X4 Ortho() { return GMathMF(XMMatrixTranspose(GMathFM(mOrtho))); }
-
-private:
-    /*** Camera parameters ***/
-    XMFLOAT3 mPosition;		// Camera's coordinates
-    XMFLOAT3 mTarget;		// View target's coordinates
-    XMFLOAT3 mUp;			// Camera's up vector end coordinates
-
-	/*** Projection parameters ***/
-	float mAngle;			// Angle of view frustum
-	float mClientWidth;		// Window's width
-	float mClientHeight;	// Window's height
-	float mNearest;			// Nearest view frustum plane
-	float mFarthest;		// Farthest view frustum plane
-
-    XMFLOAT4X4  mView;		// View matrix
-	XMFLOAT4X4	mProj;		// Projection matrix
-	XMFLOAT4X4	mOrtho;		// Ortho matrix for drawing without tranformation
-
-private:
-	inline XMVECTOR GMathFV(XMFLOAT3& val)
+	XMFLOAT4X4 Identity4x4()
 	{
-		return XMLoadFloat3(&val);
-	}
+		static XMFLOAT4X4 I(
+			1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f);
 
-	inline XMFLOAT3 GMathVF(XMVECTOR& vec)
-	{
-		XMFLOAT3 val;
-		XMStoreFloat3(&val, vec);
-		return val;
-	}
-
-	inline XMMATRIX GMathFM(XMFLOAT4X4& val)
-	{
-		return XMLoadFloat4x4(&val);
-	}
-
-	inline XMFLOAT4X4 GMathMF(XMMATRIX& matrix)
-	{
-		XMFLOAT4X4 val;
-		XMStoreFloat4x4(&val, matrix);
-		return val;
+		return I;
 	}
 };

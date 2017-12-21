@@ -1,154 +1,167 @@
+//***************************************************************************************
+// Camera.h by Frank Luna (C) 2011 All Rights Reserved.
+//***************************************************************************************
+
 #include "SceneCamera.h"
 
-SceneCamera::SceneCamera(void)
+using namespace DirectX;
+
+SceneCamera::SceneCamera(float nearDepth, float farDepth, float windowWidth, float windowHeight)
 {
-    mPosition		= XMFLOAT3(0.0f, 0.0f, -1.0f);
-    mTarget			= XMFLOAT3(0.0f, 0.0f, 0.0f);
-    mUp				= GMathVF(GMathFV(mPosition) + GMathFV(XMFLOAT3(0, 1, 0)));
-	this->initViewMatrix();
+	mFovY = 0.25f * kPI;
+	mAspect = windowWidth / windowHeight;
+	mNearZ = nearDepth;
+	mFarZ = farDepth;
 
-	mAngle			= 0.0f;
-	mClientWidth	= 0.0f;
-	mClientHeight	= 0.0f;
-	mNearest		= 0.0f;
-	mFarthest		= 0.0f;
+	mCameraForwardDir = XMFLOAT3(0, 0, -1);
+	mCameraUpDir = XMFLOAT3(0, 1, 0);
 
-	XMStoreFloat4x4(&mView, XMMatrixIdentity());
-	XMStoreFloat4x4(&mProj, XMMatrixIdentity());
-	XMStoreFloat4x4(&mOrtho, XMMatrixIdentity());
+	UpdateCameraView();
 }
 
-SceneCamera::SceneCamera(const SceneCamera& camera)
+SceneCamera::~SceneCamera()
 {
-	*this = camera;
 }
 
-SceneCamera& SceneCamera::operator=(const SceneCamera& camera)
+void SceneCamera::SetPosition(float x, float y, float z)
 {
-    mPosition		= camera.mPosition;
-    mTarget			= camera.mTarget;
-    mUp				= camera.mUp;
-
-	mAngle			= camera.mAngle;
-	mClientWidth	= camera.mClientWidth;
-	mClientHeight	= camera.mClientHeight;
-	mNearest		= camera.mNearest;
-	mFarthest		= camera.mFarthest;
-
-    mView			= camera.mView;
-	mProj			= camera.mProj;
-	mOrtho			= camera.mOrtho;
-    return *this;
+	mCameraPos = XMFLOAT3(x, y, z);
+	mViewDirty = true;
 }
 
-void SceneCamera::initViewMatrix()
+void SceneCamera::SetPosition(const XMFLOAT3& v)
 {
-	XMStoreFloat4x4(&mView, XMMatrixLookAtLH(XMLoadFloat3(&mPosition), XMLoadFloat3(&mTarget), 
-		XMLoadFloat3(&this->Up())));
+	mCameraPos = v;
+	mViewDirty = true;
 }
 
-void SceneCamera::InitProjMatrix(const float angle, const float client_width, const float client_height, 
-								const float near_plane, const float far_plane)
+void SceneCamera::CreateProjectionMatrix()
 {
-	mAngle = angle;
-	mClientWidth = client_width;
-	mClientHeight = client_height;
-	mNearest = near_plane;
-	mFarthest = far_plane;
-	XMStoreFloat4x4(&mProj, XMMatrixPerspectiveFovLH(angle, client_width/client_height, 
-		near_plane, far_plane));
+	mNearWindowHeight = 2.0f * mNearZ * tanf(0.5f*mFovY);
+	mFarWindowHeight = 2.0f * mFarZ * tanf(0.5f*mFovY);
+
+	XMMATRIX P = XMMatrixPerspectiveFovLH(mFovY, mAspect, mNearZ, mFarZ);
+	XMStoreFloat4x4(&mProjectionMatrix, P);
 }
 
-void SceneCamera::Move(XMFLOAT3 direction)
+void SceneCamera::LookAt(FXMVECTOR pos, FXMVECTOR target, FXMVECTOR worldUp)
 {
-	mPosition = GMathVF(XMVector3Transform(GMathFV(mPosition), 
-		XMMatrixTranslation(direction.x, direction.y, direction.z)));
-	mTarget = GMathVF(XMVector3Transform(GMathFV(mTarget), 
-		XMMatrixTranslation(direction.x, direction.y, direction.z)));
-	mUp = GMathVF(XMVector3Transform(GMathFV(mUp), 
-		XMMatrixTranslation(direction.x, direction.y, direction.z)));
+	XMVECTOR L = XMVector3Normalize(XMVectorSubtract(target, pos));
+	XMVECTOR R = XMVector3Normalize(XMVector3Cross(worldUp, L));
+	XMVECTOR U = XMVector3Cross(L, R);
 
-	this->initViewMatrix();
+	XMStoreFloat3(&mCameraPos, pos);
+	XMStoreFloat3(&mCameraForwardDir, L);
+	XMStoreFloat3(&mCameraRightDir, R);
+	XMStoreFloat3(&mCameraUpDir, U);
+
+	mViewDirty = true;
 }
 
-void SceneCamera::Rotate(XMFLOAT3 axis, float degrees)
+void SceneCamera::LookAt(const XMFLOAT3& pos, const XMFLOAT3& target, const XMFLOAT3& up)
 {
-	if (XMVector3Equal(GMathFV(axis), XMVectorZero()) ||
-		degrees == 0.0f)
-		return;
+	XMVECTOR P = XMLoadFloat3(&pos);
+	XMVECTOR T = XMLoadFloat3(&target);
+	XMVECTOR U = XMLoadFloat3(&up);
 
-	// rotate vectors
-	XMFLOAT3 look_at_target = GMathVF(GMathFV(mTarget) - GMathFV(mPosition));
-	XMFLOAT3 look_at_up = GMathVF(GMathFV(mUp) - GMathFV(mPosition));
-	look_at_target = GMathVF(XMVector3Transform(GMathFV(look_at_target), 
-		XMMatrixRotationAxis(GMathFV(axis), XMConvertToRadians(degrees))));
-	look_at_up = GMathVF(XMVector3Transform(GMathFV(look_at_up), 
-		XMMatrixRotationAxis(GMathFV(axis), XMConvertToRadians(degrees))));
+	LookAt(P, T, U);
 
-	// restore vectors's end points mTarget and mUp from new rotated vectors
-	mTarget = GMathVF(GMathFV(mPosition) + GMathFV(look_at_target));
-	mUp = GMathVF(GMathFV(mPosition) + GMathFV(look_at_up));
-
-	this->initViewMatrix();
+	mViewDirty = true;
 }
 
-void SceneCamera::Target(XMFLOAT3 new_target)
+XMFLOAT4X4 SceneCamera::GetViewMatrix()const
 {
-	if (XMVector3Equal(GMathFV(new_target), GMathFV(mPosition)) ||
-		XMVector3Equal(GMathFV(new_target), GMathFV(mTarget)))
-		return;
+	return mViewMatrix;
+}
 
-	XMFLOAT3 old_look_at_target = GMathVF(GMathFV(mTarget) - GMathFV(mPosition));	
-	XMFLOAT3 new_look_at_target = GMathVF(GMathFV(new_target) - GMathFV(mPosition));
-	float angle = XMConvertToDegrees(XMVectorGetX(
-		XMVector3AngleBetweenNormals(XMVector3Normalize(GMathFV(old_look_at_target)), 
-		XMVector3Normalize(GMathFV(new_look_at_target)))));
-	if (angle != 0.0f && angle != 360.0f && angle != 180.0f)
+XMFLOAT4X4 SceneCamera::GetProjectionMatrix()const
+{
+	return mProjectionMatrix;
+}
+
+void SceneCamera::Strafe(float d)
+{
+	// mPosition += d*mRight
+
+	XMVECTOR speed = XMVectorReplicate(d);
+	XMVECTOR rightDir = XMLoadFloat3(&mCameraRightDir);
+	XMVECTOR position = XMLoadFloat3(&mCameraPos);
+	XMStoreFloat3(&mCameraPos, XMVectorMultiplyAdd(speed, rightDir, position));
+
+	mViewDirty = true;
+}
+
+void SceneCamera::Walk(float d)
+{
+	// mPosition += d*mLook
+
+	XMVECTOR speed = XMVectorReplicate(d);
+	XMVECTOR forwardDir = XMLoadFloat3(&mCameraForwardDir);
+	XMVECTOR position = XMLoadFloat3(&mCameraPos);
+	XMStoreFloat3(&mCameraPos, XMVectorMultiplyAdd(speed, forwardDir, position));
+
+	mViewDirty = true;
+}
+
+void SceneCamera::OnMouseMove(int x, int y)
+{
+	// If right mouse button pressed
+	if (GetAsyncKeyState(MK_RBUTTON))
 	{
-		XMVECTOR axis = XMVector3Cross(GMathFV(old_look_at_target), GMathFV(new_look_at_target));
-		Rotate(GMathVF(axis), angle);
+		// Pitch
+		mCameraPitch = mCameraPitch - XMConvertToRadians(kCameraLookSpeed*static_cast<float>(y - mLastMousePos.y));
+		// Yaw
+		mCameraYaw = mCameraYaw - XMConvertToRadians(kCameraLookSpeed*static_cast<float>(x - mLastMousePos.x));
+
+		mCameraPitch = min(kCameraMaxPitch / 16, mCameraPitch);
+		mCameraPitch = max(-kCameraMaxPitch * 2, mCameraPitch);
+
+		if (mCameraYaw > kPI)
+			mCameraYaw -= kPI * 2;
+		else if (mCameraYaw <= -kPI)
+			mCameraYaw += kPI * 2;
+
+		if (GetAsyncKeyState(VK_UP))
+		{
+			Walk(kCameraMoveSpeed);
+		}
+		else if (GetAsyncKeyState(VK_DOWN))
+		{
+			Walk(-kCameraMoveSpeed);
+		}
+
+		if (GetAsyncKeyState(VK_LEFT))
+		{
+			Strafe(-kCameraMoveSpeed * 30);
+		}
+		else if (GetAsyncKeyState(VK_RIGHT))
+		{
+			Strafe(kCameraMoveSpeed * 30);
+		}
 	}
-	mTarget = new_target;
-	this->initViewMatrix();
+
+	XMVECTOR lookAt = XMLoadFloat3(&mCameraForwardDir);
+	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	XMVECTOR right = XMVector3Normalize(XMVector3Cross(up, lookAt));
+	XMStoreFloat3(&mCameraRightDir, right);
+
+	mLastMousePos.x = x;
+	mLastMousePos.y = y;
 }
 
-// Set camera position
-void SceneCamera::Position(XMFLOAT3& new_position)
+void SceneCamera::UpdateCameraView()
 {
-	XMFLOAT3 move_vector = GMathVF(GMathFV(new_position) - GMathFV(mPosition));
-	XMFLOAT3 target = mTarget;
-	this->Move(move_vector);
-	this->Target(target);
-}
+	mCameraForwardDir.x = kCameraRadius*sinf(mCameraPitch)*cosf(mCameraYaw);
+	mCameraForwardDir.z = kCameraRadius*sinf(mCameraPitch)*sinf(mCameraYaw);
+	mCameraForwardDir.y = kCameraRadius*cosf(mCameraPitch);
 
-void SceneCamera::Angle(float angle)
-{
-	mAngle = angle;
-	InitProjMatrix(mAngle, mClientWidth, mClientHeight, mNearest, mFarthest);
-}
+	// Build the view matrix.
+	XMVECTOR pos = XMVectorSet(mCameraPos.x, mCameraPos.y, mCameraPos.z, 1.0f);
+	XMVECTOR target = XMVectorSet(mCameraForwardDir.x, mCameraForwardDir.y, mCameraForwardDir.z, 1.0f);
+	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
-void SceneCamera::NearestPlane(float nearest)
-{
-	mNearest = nearest;
-	OnResize(mClientWidth, mClientHeight);
-}
+	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
+	XMStoreFloat4x4(&mViewMatrix, view);
 
-void SceneCamera::FarthestPlane(float farthest)
-{
-	mFarthest = farthest;
-	OnResize(mClientWidth, mClientHeight);
-}
-
-void SceneCamera::InitOrthoMatrix(const float clientWidth, const float clientHeight,
-		const float nearZ, const float fartherZ)
-{
-	XMStoreFloat4x4(&mOrtho, XMMatrixOrthographicLH(clientWidth, clientHeight, 0.0f, fartherZ));
-}
-
-void SceneCamera::OnResize(uint32_t new_width, uint32_t new_height)
-{
-	mClientWidth = new_width;
-	mClientHeight = new_height;
-	InitProjMatrix(mAngle, static_cast<float>(new_width), static_cast<float>(new_height), mNearest, mFarthest);
-	InitOrthoMatrix(static_cast<float>(new_width), static_cast<float>(new_height), 0.0f, mFarthest);
+	CreateProjectionMatrix();
 }

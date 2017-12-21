@@ -10,7 +10,6 @@
 #include <vector>
 
 #include "Structures.h"
-#include "CameraMouse.h"
 #include "DDSTextureLoader.h"
 #include "GameObject.h"
 #include "SceneLight.h"

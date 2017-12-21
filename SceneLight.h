@@ -7,7 +7,6 @@
 #include <directxcolors.h>
 #include "DDSTextureLoader.h"
 #include "resource.h"
-#include "CameraMouse.h"
 
 #include <vector>
 

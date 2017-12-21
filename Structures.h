@@ -8,10 +8,23 @@
 #include <string>
 
 #include "DDSTextureLoader.h"
-#include "CameraMouse.h"
+#include "SceneCamera.h"
 
 using namespace std;
 using namespace DirectX;
+
+#pragma region Consts
+
+static constexpr float kCameraLookSpeed = 0.25f; // Default 0.25f
+static constexpr float kCameraMoveSpeed = 0.03f; // Default 0.03f
+
+static constexpr float kPI = 3.1415926535f;
+static constexpr float kCameraRadius = 45.0f;
+static constexpr float kCameraMaxPitch = 1.570796327f;
+
+#pragma endregion
+
+#pragma region Structs
 
 struct SimpleVertex
 {
@@ -78,3 +91,5 @@ struct SMConstantBuffer
 	XMMATRIX View;
 	XMMATRIX Projection;
 };
+
+#pragma endregion

@@ -81,7 +81,7 @@ void Application::InitCamera()
 	XMFLOAT3 at = XMFLOAT3(0.0f, 2.0f, 0.0f);
 	XMFLOAT3 up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 
-	_pCamera = new CameraMouse(0.01f, 200.0f, DX11AppHelper::_pRenderWidth, DX11AppHelper::_pRenderHeight);
+	_pCamera = new SceneCamera(0.01f, 200.0f, DX11AppHelper::_pRenderWidth, DX11AppHelper::_pRenderHeight);
 
 	_pCamera->SetPosition(eye);
 	_pCamera->LookAt(eye, at, _pCamera->GetUp3f());
@@ -639,8 +639,8 @@ void Application::Draw()
 
 	cb.World = XMMatrixTranspose(_pGameObjects.at(0)->GetWorldMatrix());
 
-	viewAsFloats = _pCamera->GetView4x4f();
-	projectionAsFloats = _pCamera->GetProj4x4f();
+	viewAsFloats = _pCamera->GetViewMatrix();
+	projectionAsFloats = _pCamera->GetProjectionMatrix();
 
 	view = XMLoadFloat4x4(&viewAsFloats);
 	projection = XMLoadFloat4x4(&projectionAsFloats);

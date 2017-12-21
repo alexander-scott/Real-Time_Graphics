@@ -372,7 +372,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="CameraMouse.cpp" />
+    <ClCompile Include="SceneCamera.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="DX11AppHelper.cpp" />
     <ClCompile Include="GUIHandler.cpp" />
@@ -384,7 +384,6 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="RenderProcess.cpp" />
     <ClCompile Include="RenderToTextureProcess.cpp" />
-    <ClCompile Include="SceneCamera.cpp" />
     <ClCompile Include="SceneLight.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="TextureManager.cpp" />
@@ -436,7 +435,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
-    <ClInclude Include="CameraMouse.h" />
+    <ClInclude Include="SceneCamera.h" />
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="DX11AppHelper.h" />
     <ClInclude Include="GameObject.h" />
@@ -448,7 +447,6 @@
     <ClInclude Include="RenderProcess.h" />
     <ClInclude Include="RenderToTextureProcess.h" />
     <CLInclude Include="resource.h" />
-    <ClInclude Include="SceneCamera.h" />
     <ClInclude Include="SceneLight.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="stb_rect_pack.h" />

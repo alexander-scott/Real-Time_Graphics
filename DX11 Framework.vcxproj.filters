@@ -93,7 +93,6 @@
     <ClInclude Include="GUIHandler.h">
       <Filter>Managers</Filter>
     </ClInclude>
-    <ClInclude Include="CameraMouse.h" />
     <ClInclude Include="SceneCamera.h" />
   </ItemGroup>
   <ItemGroup>
@@ -134,7 +133,6 @@
     <ClCompile Include="GUIHandler.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
-    <ClCompile Include="CameraMouse.cpp" />
     <ClCompile Include="SceneCamera.cpp" />
   </ItemGroup>
   <ItemGroup>

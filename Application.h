@@ -13,7 +13,7 @@
 #include <memory>
 
 #include "Structures.h"
-#include "CameraMouse.h"
+#include "SceneCamera.h"
 #include "DDSTextureLoader.h"
 #include "GameObject.h"
 #include "SceneLight.h"
@@ -43,7 +43,7 @@ private:
 
 #pragma region Camera
 
-	CameraMouse* _pCamera;
+	SceneCamera* _pCamera;
 
 #pragma endregion
 
