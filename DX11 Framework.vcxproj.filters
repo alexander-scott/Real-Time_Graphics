@@ -94,6 +94,7 @@
       <Filter>Managers</Filter>
     </ClInclude>
     <ClInclude Include="CameraMouse.h" />
+    <ClInclude Include="SceneCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -134,6 +135,7 @@
       <Filter>Managers</Filter>
     </ClCompile>
     <ClCompile Include="CameraMouse.cpp" />
+    <ClCompile Include="SceneCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">

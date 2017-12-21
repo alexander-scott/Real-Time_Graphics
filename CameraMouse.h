@@ -96,6 +96,10 @@ public:
 	float mRadius;
 
 	float Pi = 3.1415926535f;
+	float maxPitch = 1.570796327f;
+
+	float mPitch = 0;
+	float mYaw = 0;
 
 private:
 

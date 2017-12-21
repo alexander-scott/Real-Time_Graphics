@@ -384,6 +384,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="RenderProcess.cpp" />
     <ClCompile Include="RenderToTextureProcess.cpp" />
+    <ClCompile Include="SceneCamera.cpp" />
     <ClCompile Include="SceneLight.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="TextureManager.cpp" />
@@ -447,6 +448,7 @@
     <ClInclude Include="RenderProcess.h" />
     <ClInclude Include="RenderToTextureProcess.h" />
     <CLInclude Include="resource.h" />
+    <ClInclude Include="SceneCamera.h" />
     <ClInclude Include="SceneLight.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="stb_rect_pack.h" />

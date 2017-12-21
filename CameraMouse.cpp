@@ -17,6 +17,13 @@ CameraMouse::CameraMouse(float nearDepth, float farDepth, float windowWidth, flo
 	mPhi = 1.134f;
 	mRadius = 41.9f;
 
+	mLook = XMFLOAT3(0, 0, -1);
+	mUp = XMFLOAT3(0, 1, 0);
+
+	/*XMVECTOR L = XMLoadFloat3(&mLook);
+	XMVECTOR U = XMLoadFloat3(&mUp);
+	mPitch = sinf(XMVector3Dot(L, U));*/
+
 	UpdateCameraView();
 }
 
@@ -289,31 +296,72 @@ void CameraMouse::OnMouseUp(int x, int y)
 
 void CameraMouse::OnMouseMove(int x, int y)
 {
+	//if (GetAsyncKeyState(MK_LBUTTON))
+	//{
+	//	// Make each pixel correspond to a quarter of a degree.
+	//	float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
+	//	float dy = XMConvertToRadians(0.25f*static_cast<float>(y - mLastMousePos.y));
+
+	//	// Update angles based on input to orbit camera around box.
+	//	mTheta -= dx;
+	//	mPhi -= dy;
+
+	//	// Restrict the angle mPhi.
+	//	mPhi = Clamp(mPhi, 0.1f, Pi - 0.1f);
+	//}
+	//else if (GetAsyncKeyState(MK_RBUTTON))
+	//{
+	//	// Make each pixel correspond to 0.2 unit in the scene.
+	//	float dx = 0.05f*static_cast<float>(x - mLastMousePos.x);
+	//	float dy = 0.05f*static_cast<float>(y - mLastMousePos.y);
+
+	//	// Update the camera radius based on input.
+	//	mRadius += dx - dy;
+
+	//	// Restrict the radius.
+	//	mRadius = Clamp(mRadius, 5.0f, 150.0f);
+	//}
+
 	if (GetAsyncKeyState(MK_LBUTTON))
 	{
-		// Make each pixel correspond to a quarter of a degree.
-		float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
-		float dy = XMConvertToRadians(0.25f*static_cast<float>(y - mLastMousePos.y));
+		// Pitch
+		mPitch = mPitch - XMConvertToRadians(0.25f*static_cast<float>(y - mLastMousePos.y));
+		// Yaw
+		mYaw = mYaw - XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
 
-		// Update angles based on input to orbit camera around box.
-		mTheta += dx;
-		mPhi += dy;
+		mPitch = min(maxPitch / 16, mPitch);
+		mPitch = max(-maxPitch * 2, mPitch);
 
-		// Restrict the angle mPhi.
-		mPhi = Clamp(mPhi, 0.1f, Pi - 0.1f);
+		if (mYaw > Pi)
+			mYaw -= Pi * 2;
+		else if (mYaw <= -Pi)
+			mYaw += Pi * 2;
 	}
-	else if (GetAsyncKeyState(MK_RBUTTON))
+
+	if (GetAsyncKeyState(VK_UP))
 	{
-		// Make each pixel correspond to 0.2 unit in the scene.
-		float dx = 0.05f*static_cast<float>(x - mLastMousePos.x);
-		float dy = 0.05f*static_cast<float>(y - mLastMousePos.y);
-
-		// Update the camera radius based on input.
-		mRadius += dx - dy;
-
-		// Restrict the radius.
-		mRadius = Clamp(mRadius, 5.0f, 150.0f);
+		Walk(0.03f);
 	}
+	else if (GetAsyncKeyState(VK_DOWN))
+	{
+		Walk(-0.03f);
+	}
+
+	if (GetAsyncKeyState(VK_LEFT))
+	{
+		Strafe(-0.5f);
+	}
+	else if (GetAsyncKeyState(VK_RIGHT))
+	{
+		Strafe(0.5f);
+	}
+
+	XMVECTOR lookAt = XMLoadFloat3(&mLook);
+	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	XMVECTOR right = XMVector3Normalize(XMVector3Cross(up, lookAt));
+	XMStoreFloat3(&mRight, right);
+
+	//UpdateViewMatrix();
 
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
@@ -322,13 +370,18 @@ void CameraMouse::OnMouseMove(int x, int y)
 void CameraMouse::UpdateCameraView()
 {
 	// Convert Spherical to Cartesian coordinates.
-	mPosition.x = mRadius*sinf(mPhi)*cosf(mTheta);
-	mPosition.z = mRadius*sinf(mPhi)*sinf(mTheta);
-	mPosition.y = mRadius*cosf(mPhi);
+	/*mPosition.x = 0;
+	mPosition.z = -50;
+	mPosition.y = 0;
+*/
+
+	mLook.x = mRadius*sinf(mPitch)*cosf(mYaw);
+	mLook.z = mRadius*sinf(mPitch)*sinf(mYaw);
+	mLook.y = mRadius*cosf(mPitch);
 
 	// Build the view matrix.
 	XMVECTOR pos = XMVectorSet(mPosition.x, mPosition.y, mPosition.z, 1.0f);
-	XMVECTOR target = XMVectorZero();
+	XMVECTOR target = XMVectorSet(mLook.x, mLook.y, mLook.z, 1.0f);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
 	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
