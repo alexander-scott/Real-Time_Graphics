@@ -1,0 +1,200 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns:atg="http://atg.xbox.com" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{8e114980-c1a3-4ada-ad7c-83caadf5daeb}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{2c3d4c8c-5d1a-459a-a05a-a4e4b608a44e}</UniqueIdentifier>
+      <Extensions>fx;fxh;hlsl</Extensions>
+    </Filter>
+    <Filter Include="Resource Files\Textures">
+      <UniqueIdentifier>{84a4d56f-682d-4b12-a7c9-064cc08bce09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Post Process Shaders">
+      <UniqueIdentifier>{693ebeae-84d8-487d-a5c0-49c0bf3304ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Post Process Shaders\Blur">
+      <UniqueIdentifier>{3e395ffb-0c49-4883-80f7-cb9c0f41cf4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Post Process Shaders\Shadow Mapping">
+      <UniqueIdentifier>{d15c9521-f871-4ce8-9b57-39c70652386c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Post Process Shaders\Basic">
+      <UniqueIdentifier>{21e7c2ec-f962-4dff-b941-b9a9696f37a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Deferred">
+      <UniqueIdentifier>{15c0c825-80da-4891-a5ea-f1e5b0b62630}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Deferred\G-Buffer Shaders">
+      <UniqueIdentifier>{56396a1d-beb6-4051-ab0a-941a5b8fd789}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\SSAO">
+      <UniqueIdentifier>{54e757d1-d735-49b8-83b9-ee5e0d7bb3f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render Process">
+      <UniqueIdentifier>{f9a465ec-cfd7-469a-9a6d-d310ee5bde77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Managers">
+      <UniqueIdentifier>{f86d18ca-79fb-4424-a2ea-324e35f33f8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Lighting Shaders">
+      <UniqueIdentifier>{ee87904c-9df5-4fbd-90e3-889743fc1ed5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI Libraries">
+      <UniqueIdentifier>{585cf594-4adb-4bcd-814a-cb4477cab82d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Application.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="SceneLight.h" />
+    <ClInclude Include="Structures.h" />
+    <ClInclude Include="RenderProcess.h">
+      <Filter>Render Process</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderToTextureProcess.h">
+      <Filter>Render Process</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="InputLayoutManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11AppHelper.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="DDSTextureLoader.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="imconfig.h">
+      <Filter>GUI Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui.h">
+      <Filter>GUI Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>GUI Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_rect_pack.h">
+      <Filter>GUI Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_textedit.h">
+      <Filter>GUI Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_truetype.h">
+      <Filter>GUI Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIHandler.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraMouse.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="SceneLight.cpp" />
+    <ClCompile Include="RenderProcess.cpp">
+      <Filter>Render Process</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderToTextureProcess.cpp">
+      <Filter>Render Process</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="InputLayoutManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11AppHelper.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="DDSTextureLoader.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui.cpp">
+      <Filter>GUI Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>GUI Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <Filter>GUI Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="GUIHandler.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraMouse.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CLInclude Include="resource.h">
+      <Filter>Resource Files</Filter>
+    </CLInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DX11 Framework.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="DX11 Framework Vertical Blur.fx">
+      <Filter>Shaders\Post Process Shaders\Blur</Filter>
+    </FxCompile>
+    <FxCompile Include="DX11 Framework Horizontal Blur.fx">
+      <Filter>Shaders\Post Process Shaders\Blur</Filter>
+    </FxCompile>
+    <FxCompile Include="DX11 Framework Basic.fx">
+      <Filter>Shaders\Lighting Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="DX11 Framework Pixel.fx">
+      <Filter>Shaders\Lighting Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="DX11 Framework Render To Texture.fx">
+      <Filter>Shaders\Post Process Shaders\Basic</Filter>
+    </FxCompile>
+    <FxCompile Include="DX11 Framework SSAO Ambient Map.fx">
+      <Filter>Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="DX11 Framework SSAO Normal Map.fx">
+      <Filter>Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="DX11 Framework Depth Mapping.fx">
+      <Filter>Shaders\Post Process Shaders\Shadow Mapping</Filter>
+    </FxCompile>
+    <FxCompile Include="DX11 Framework Deferred Lighting.fx">
+      <Filter>Shaders\Deferred</Filter>
+    </FxCompile>
+    <FxCompile Include="DX11 Framework DOF Hor Blur.fx">
+      <Filter>Shaders\Post Process Shaders\Blur</Filter>
+    </FxCompile>
+    <FxCompile Include="DX11 Framework DOF Vert Blur.fx">
+      <Filter>Shaders\Post Process Shaders\Blur</Filter>
+    </FxCompile>
+    <FxCompile Include="DX11 Framework Basic Depth Mapping.fx">
+      <Filter>Shaders\Lighting Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="DX11 Framework Parallax SS Diffuse Mapping.fx">
+      <Filter>Shaders\Lighting Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="DX11 Framework Parallax SS Deferred.fx">
+      <Filter>Shaders\Deferred\G-Buffer Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\floor.dds">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="Resources\stone.dds">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
