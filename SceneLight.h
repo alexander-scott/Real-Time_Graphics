@@ -12,7 +12,7 @@
 
 #include "GameObject.h"
 
-class SceneLight
+class SceneLight : public GameObject
 {
 
 	struct BoundingSphere
@@ -30,21 +30,12 @@ public:
 	void UpdateLightCube(float timeSinceStart, float deltaTime);
 	void ToggleLightOn();
 
-#pragma region Move Light
-
 	void HandleLightControls(float deltaTime);
-
-#pragma endregion
 
 	Light GetLight();
 
-#pragma region Get/Set Functions
-
 	string GetLightName() { return _pLightName; }
 	void SetLightName(string lightName) { _pLightName = lightName; }
-
-	GameObject* GetLightCubeGO() { return _pLightCube; }
-	void SetLightCubeGO(GameObject* newLightCube) { _pLightCube = newLightCube; }
 
 	XMFLOAT4X4 GetView() { return _pView; }
 	void SetView(XMFLOAT4X4 newView) { _pView = newView; }
@@ -76,14 +67,9 @@ public:
 	float GetLightOn() { return _pLightOn; }
 	void SetLightOn(float newLightOn) { _pLightOn = newLightOn; }
 
-#pragma endregion
-
-
 private:
 
 	string _pLightName;
-
-	GameObject* _pLightCube;
 
 	XMFLOAT4X4 _pView;
 	XMFLOAT4X4 _pProjection;

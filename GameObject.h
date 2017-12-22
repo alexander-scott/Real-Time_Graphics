@@ -39,24 +39,26 @@ public:
 	bool HasHeightMap() const { return mHeightMap ? true : false; }
 
 	void SetParent(GameObject* parent) { mParent = parent; }
+	void AddChild(GameObject* child) { mChildren.push_back(child); }
 
 	void Update(float t, float deltaTime);
 	void Draw(ID3D11DeviceContext* pImmediateContext);
 
 	void HandleControls();
 	void UpdateRotation(float deltaTime);
+	
+protected:
+	string						mType;
+
+	Geometry					mGeometry;
+	Material					mMaterial;
 
 private:
 	XMFLOAT3					mPosition;
 	XMFLOAT3					mRotation;
 	XMFLOAT3					mScale;
 
-	string						mType;
-
 	XMFLOAT4X4					mWorld;
-
-	Geometry					mGeometry;
-	Material					mMaterial;
 
 	ID3D11ShaderResourceView*	mTextureRV;
 	ID3D11ShaderResourceView*	mNormalMap;

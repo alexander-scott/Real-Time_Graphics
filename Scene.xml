@@ -5,26 +5,11 @@ X postive is right. Y postive is up.
 <!- -->
 
 <Scene name="1">
-  <GameObject type="Floor" texture="Floor Texture">
-    <Position x="0" y="0" z="0"></Position>
-    <Scale x="5" y="0.1" z="5"></Scale>
-    <Rotation x="0" y="0" z="0"></Rotation>
-  </GameObject>
-  <GameObject type="Floor" texture="Floor Texture">
-    <Position x="0" y="0" z="10"></Position>
-    <Scale x="5" y="0.1" z="5"></Scale>
-    <Rotation x="0" y="0" z="0"></Rotation>
-  </GameObject>
-  <GameObject type="Floor" texture="Floor Texture">
-    <Position x="10" y="0" z="0"></Position>
-    <Scale x="5" y="0.1" z="5"></Scale>
-    <Rotation x="0" y="0" z="0"></Rotation>
-  </GameObject>
-  <GameObject type="Floor" texture="Floor Texture">
-    <Position x="10" y="0" z="10"></Position>
-    <Scale x="5" y="0.1" z="5"></Scale>
-    <Rotation x="0" y="0" z="0"></Rotation>
-  </GameObject>
+  <Plane type="Floor" texture="Floor Texture" width="10" depth="10" step="10">
+    <Position x="0.0" y="0.0" z="0.0"></Position>
+    <BaseScale x="5.0" y="0.1" z="5.0"></BaseScale>
+    <BaseRotation x="0" y="0" z="0"></BaseRotation>
+  </Plane>
 
   <SceneLight type="White Light" texture="White Texture">
     <AmbientLight x="0.5" y="0.5" z="0.5" w="1.0"></AmbientLight>

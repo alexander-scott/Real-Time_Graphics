@@ -12,15 +12,6 @@ Scene::Scene(string name) : mSceneName(name)
 
 Scene::~Scene()
 {
-	for (auto sl : mSceneLights)
-	{
-		if (sl)
-		{
-			delete sl;
-			sl = nullptr;
-		}
-	}
-
 	for (auto go : mGameObjects)
 	{
 		if (go)

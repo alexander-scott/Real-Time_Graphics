@@ -51,6 +51,9 @@
     <Filter Include="Scene\SceneBuilding">
       <UniqueIdentifier>{d73e8525-1c90-4f5f-8a29-e1596ae98ace}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene\Objects">
+      <UniqueIdentifier>{23e5207f-bffa-4824-b798-4e453cf9c7a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -100,12 +103,6 @@
     <ClInclude Include="SceneCamera.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="SceneLight.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="rapidxml.hpp">
       <Filter>Scene\SceneBuilding</Filter>
     </ClInclude>
@@ -115,8 +112,14 @@
     <ClInclude Include="SceneBuilder.h">
       <Filter>Scene\SceneBuilding</Filter>
     </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Scene\Objects</Filter>
+    </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneLight.h">
+      <Filter>Scene\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -158,17 +161,17 @@
     <ClCompile Include="SceneCamera.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="SceneLight.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="SceneBuilder.cpp">
       <Filter>Scene\SceneBuilding</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Scene\Objects</Filter>
+    </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneLight.cpp">
+      <Filter>Scene\Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
