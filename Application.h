@@ -43,7 +43,6 @@ private:
 	void InitInputLayouts();
 	HRESULT InitRenderProcesses();
 
-	void InitCamera();
 	void InitTextures();
 	void InitScene(Geometry cubeGeometry, Material noSpecMaterial, Material shinyMaterial);
 	

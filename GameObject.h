@@ -45,18 +45,19 @@ public:
 
 	void HandleControls();
 	void UpdateRotation(float deltaTime);
+	
+protected:
+	string						mType;
+
+	Geometry					mGeometry;
+	Material					mMaterial;
 
 private:
 	XMFLOAT3					mPosition;
 	XMFLOAT3					mRotation;
 	XMFLOAT3					mScale;
 
-	string						mType;
-
 	XMFLOAT4X4					mWorld;
-
-	Geometry					mGeometry;
-	Material					mMaterial;
 
 	ID3D11ShaderResourceView*	mTextureRV;
 	ID3D11ShaderResourceView*	mNormalMap;

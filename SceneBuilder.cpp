@@ -125,7 +125,7 @@ Scene* SceneBuilder::BuildScene(string fileName, Geometry cubeGeometry, Material
 		xml_node<>* lightOnNode = sceneLightNode->first_node("LightOn");
 		sceneLight->SetLightOn((float)atof(lightOnNode->first_attribute("value")->value()));
 
-		sceneLight->GetLightCubeGO()->SetPosition(sceneLight->GetLightVecW());
+		sceneLight->SetPosition(sceneLight->GetLightVecW());
 
 		scene->AddSceneLight(sceneLight);
 

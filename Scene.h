@@ -21,7 +21,7 @@ public:
 	vector<GameObject*> GetGameObjects() { return mGameObjects; }
 	GameObject* GetGameObject(int index) { return mGameObjects.at(index); }
 
-	void AddSceneLight(SceneLight* sl) { mSceneLights.push_back(sl); mGameObjects.push_back(sl->GetLightCubeGO()); }
+	void AddSceneLight(SceneLight* sl) { mSceneLights.push_back(sl); mGameObjects.push_back(sl); }
 	vector<SceneLight*> GetSceneLights() { return mSceneLights; }
 	SceneLight* GetSceneLight(int index) { return mSceneLights.at(index); }
 

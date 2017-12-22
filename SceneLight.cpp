@@ -1,13 +1,12 @@
 #include "SceneLight.h"
 
-SceneLight::SceneLight(string type, ID3D11ShaderResourceView* texture, Geometry geometry, Material material)
+SceneLight::SceneLight(string type, ID3D11ShaderResourceView* texture, Geometry geometry, Material material) : GameObject(type, geometry, material)
 {
 	_pLightName = type;
 
-	_pLightCube = new GameObject(type, geometry, material);
-	_pLightCube->SetScale(0.5f, 0.5f, 0.5f);
-	_pLightCube->SetRotation(0.0f, 0.0f, 0.0f);
-	_pLightCube->SetTextureRV(texture);
+	SetScale(0.5f, 0.5f, 0.5f);
+	SetRotation(0.0f, 0.0f, 0.0f);
+	SetTextureRV(texture);
 
 	_pSceneBounds.Center = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	_pSceneBounds.Radius = sqrtf(10.0f*10.0f + 15.0f*15.0f);
@@ -38,7 +37,7 @@ void SceneLight::UpdateLight(float renderWidth, float renderHeight)
 
 void SceneLight::UpdateLightCube(float timeSinceStart, float deltaTime)
 {
-	_pLightCube->Update(timeSinceStart, deltaTime);
+	Update(timeSinceStart, deltaTime);
 }
 
 void SceneLight::HandleLightControls(float deltaTime)
@@ -69,7 +68,7 @@ void SceneLight::HandleLightControls(float deltaTime)
 		_pLightVecW.x += 0.01f * deltaTime;
 	}
 
-	_pLightCube->SetPosition(_pLightVecW);
+	SetPosition(_pLightVecW);
 }
 
 void SceneLight::ToggleLightOn()
