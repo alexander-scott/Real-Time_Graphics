@@ -1,0 +1,13 @@
+<!-- -
+<XmlTag variable="0" />
+Keep width as max X plus 1. Keep height as max Y plus 1.
+X postive is right. Y postive is up.
+<!- -->
+
+<Scene name="1">
+  <GameObject type="Floor" texture="Floor Texture">
+    <Postion x="0" y="0" z="0"></Postion>
+    <Scale x="5" y="5" z="5"></Scale>
+    <Rotation x="0" y="0" z="0"></Rotation>
+  </GameObject>
+</Scene>
