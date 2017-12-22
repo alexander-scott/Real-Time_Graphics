@@ -7,9 +7,6 @@
 #include <directxcolors.h>
 #include <string>
 
-#include "DDSTextureLoader.h"
-#include "SceneCamera.h"
-
 using namespace std;
 using namespace DirectX;
 
@@ -62,6 +59,24 @@ struct Light
 
 	XMFLOAT3 paddingLightAmount;
 	float lightOn;
+};
+
+struct Geometry
+{
+	ID3D11Buffer* vertexBuffer;
+	ID3D11Buffer* indexBuffer;
+	int numberOfIndices;
+
+	UINT vertexBufferStride;
+	UINT vertexBufferOffset;
+};
+
+struct Material
+{
+	XMFLOAT4 diffuse;
+	XMFLOAT4 ambient;
+	XMFLOAT4 specular;
+	float specularPower;
 };
 
 struct ConstantBuffer

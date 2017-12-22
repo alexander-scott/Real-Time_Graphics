@@ -28,24 +28,16 @@ using namespace DirectX;
 
 class Application
 {
-private:
-#pragma region Light Variables
+public:
+	Application();
+	~Application();
 
-	vector<SceneLight*> _pLights;
+	HRESULT Initialise(HINSTANCE hInstance, int nCmdShow);
 
-#pragma endregion
+	bool HandleKeyboard(MSG msg, float timeStep);
 
-#pragma region Game Objects
-
-	vector<GameObject*> _pGameObjects;
-
-#pragma endregion
-
-#pragma region Camera
-
-	SceneCamera* _pCamera;
-
-#pragma endregion
+	void Update(float deltaTime);
+	void Draw();
 
 private:
 	void Cleanup();
@@ -62,15 +54,8 @@ private:
 
 	void UpdateLightsControls(float deltaTime);
 
-public:
-	Application();
-	~Application();
-
-	HRESULT Initialise(HINSTANCE hInstance, int nCmdShow);
-
-	bool HandleKeyboard(MSG msg, float timeStep);
-
-	void Update(float deltaTime);
-	void Draw();
+	vector<SceneLight*>			mSceneLights;
+	vector<GameObject*>			mGameObjects;
+	SceneCamera*				mCamera;
 };
 

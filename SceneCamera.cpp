@@ -26,13 +26,11 @@ SceneCamera::~SceneCamera()
 void SceneCamera::SetPosition(float x, float y, float z)
 {
 	mCameraPos = XMFLOAT3(x, y, z);
-	mViewDirty = true;
 }
 
 void SceneCamera::SetPosition(const XMFLOAT3& v)
 {
 	mCameraPos = v;
-	mViewDirty = true;
 }
 
 void SceneCamera::CreateProjectionMatrix()
@@ -42,31 +40,6 @@ void SceneCamera::CreateProjectionMatrix()
 
 	XMMATRIX P = XMMatrixPerspectiveFovLH(mFovY, mAspect, mNearZ, mFarZ);
 	XMStoreFloat4x4(&mProjectionMatrix, P);
-}
-
-void SceneCamera::LookAt(FXMVECTOR pos, FXMVECTOR target, FXMVECTOR worldUp)
-{
-	XMVECTOR L = XMVector3Normalize(XMVectorSubtract(target, pos));
-	XMVECTOR R = XMVector3Normalize(XMVector3Cross(worldUp, L));
-	XMVECTOR U = XMVector3Cross(L, R);
-
-	XMStoreFloat3(&mCameraPos, pos);
-	XMStoreFloat3(&mCameraForwardDir, L);
-	XMStoreFloat3(&mCameraRightDir, R);
-	XMStoreFloat3(&mCameraUpDir, U);
-
-	mViewDirty = true;
-}
-
-void SceneCamera::LookAt(const XMFLOAT3& pos, const XMFLOAT3& target, const XMFLOAT3& up)
-{
-	XMVECTOR P = XMLoadFloat3(&pos);
-	XMVECTOR T = XMLoadFloat3(&target);
-	XMVECTOR U = XMLoadFloat3(&up);
-
-	LookAt(P, T, U);
-
-	mViewDirty = true;
 }
 
 XMFLOAT4X4 SceneCamera::GetViewMatrix()const
@@ -87,8 +60,6 @@ void SceneCamera::Strafe(float d)
 	XMVECTOR rightDir = XMLoadFloat3(&mCameraRightDir);
 	XMVECTOR position = XMLoadFloat3(&mCameraPos);
 	XMStoreFloat3(&mCameraPos, XMVectorMultiplyAdd(speed, rightDir, position));
-
-	mViewDirty = true;
 }
 
 void SceneCamera::Walk(float d)
@@ -99,8 +70,6 @@ void SceneCamera::Walk(float d)
 	XMVECTOR forwardDir = XMLoadFloat3(&mCameraForwardDir);
 	XMVECTOR position = XMLoadFloat3(&mCameraPos);
 	XMStoreFloat3(&mCameraPos, XMVectorMultiplyAdd(speed, forwardDir, position));
-
-	mViewDirty = true;
 }
 
 void SceneCamera::OnMouseMove(int x, int y)
@@ -113,9 +82,11 @@ void SceneCamera::OnMouseMove(int x, int y)
 		// Yaw
 		mCameraYaw = mCameraYaw - XMConvertToRadians(kCameraLookSpeed*static_cast<float>(x - mLastMousePos.x));
 
+		// Don't let the user look too far up or down
 		mCameraPitch = min(kCameraMaxPitch / 16, mCameraPitch);
 		mCameraPitch = max(-kCameraMaxPitch * 2, mCameraPitch);
 
+		// If the user looks too far left or right reset it so can continue moving in that direction allowing for 360 degree movement
 		if (mCameraYaw > kPI)
 			mCameraYaw -= kPI * 2;
 		else if (mCameraYaw <= -kPI)
@@ -138,12 +109,13 @@ void SceneCamera::OnMouseMove(int x, int y)
 		{
 			Strafe(kCameraMoveSpeed * 30);
 		}
-	}
 
-	XMVECTOR lookAt = XMLoadFloat3(&mCameraForwardDir);
-	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	XMVECTOR right = XMVector3Normalize(XMVector3Cross(up, lookAt));
-	XMStoreFloat3(&mCameraRightDir, right);
+		// Recalculate the right direction vector
+		XMVECTOR lookAt = XMLoadFloat3(&mCameraForwardDir);
+		XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+		XMVECTOR right = XMVector3Normalize(XMVector3Cross(up, lookAt));
+		XMStoreFloat3(&mCameraRightDir, right);
+	}
 
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;

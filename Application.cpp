@@ -78,13 +78,12 @@ void Application::InitCamera()
 {
 	// Setup Camera
 	XMFLOAT3 eye = XMFLOAT3(35.0f, 15.0f, -35.0f);
-	XMFLOAT3 at = XMFLOAT3(0.0f, 2.0f, 0.0f);
+	XMFLOAT3 at = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	XMFLOAT3 up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 
-	_pCamera = new SceneCamera(0.01f, 200.0f, DX11AppHelper::_pRenderWidth, DX11AppHelper::_pRenderHeight);
+	mCamera = new SceneCamera(0.01f, 200.0f, DX11AppHelper::_pRenderWidth, DX11AppHelper::_pRenderHeight);
 
-	_pCamera->SetPosition(eye);
-	_pCamera->LookAt(eye, at, _pCamera->GetUp3f());
+	mCamera->SetPosition(eye);
 }
 
 void Application::InitTextures()
@@ -147,15 +146,15 @@ void Application::InitLights(Geometry geometry, Material material)
 	blueLight->SetLightOn(0.0f);
 	blueLight->GetLightCubeGO()->SetPosition(blueLight->GetLightVecW());
 
-	_pLights.push_back(whiteLight);
-	_pLights.push_back(redLight);
-	_pLights.push_back(greenLight);
-	_pLights.push_back(blueLight);
+	mSceneLights.push_back(whiteLight);
+	mSceneLights.push_back(redLight);
+	mSceneLights.push_back(greenLight);
+	mSceneLights.push_back(blueLight);
 
-	_pGameObjects.push_back(whiteLight->GetLightCubeGO());
-	_pGameObjects.push_back(redLight->GetLightCubeGO());
-	_pGameObjects.push_back(greenLight->GetLightCubeGO());
-	_pGameObjects.push_back(blueLight->GetLightCubeGO());
+	mGameObjects.push_back(whiteLight->GetLightCubeGO());
+	mGameObjects.push_back(redLight->GetLightCubeGO());
+	mGameObjects.push_back(greenLight->GetLightCubeGO());
+	mGameObjects.push_back(blueLight->GetLightCubeGO());
 }
 
 void Application::InitGameObjectCubes(Geometry cubeGeometry, Material noSpecMaterial, Material shinyMaterial)
@@ -166,7 +165,7 @@ void Application::InitGameObjectCubes(Geometry cubeGeometry, Material noSpecMate
 	gameObject->SetRotation(0.0f, 0.0f, 0.0f);
 	gameObject->SetTextures(TextureManager::_pTextureList["Floor Texture"].get());
 
-	_pGameObjects.push_back(gameObject);
+	mGameObjects.push_back(gameObject);
 }
 
 void Application::InitInputLayouts()
@@ -179,8 +178,6 @@ void Application::InitInputLayouts()
 HRESULT Application::InitRenderProcesses()
 {
 	HRESULT hr;
-
-#pragma region Setup Sampler States
 
 	ID3D11SamplerState* _pSamplerLinear;
 	ID3D11SamplerState* _pSamplerClamp;
@@ -231,10 +228,6 @@ HRESULT Application::InitRenderProcesses()
 	if (FAILED(hr))
 		return hr;
 
-#pragma endregion
-
-#pragma region Setup Light Shadow Mapping Render Processes
-
 	if (FAILED(ShaderManager::AddDepthBufferShader("White Light Depth Map", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Depth Mapping.fx", InputLayoutManager::_pInputLayoutList["Layout 1"], DX11AppHelper::_pd3dDevice)))
 	{
 		return E_FAIL;
@@ -254,10 +247,6 @@ HRESULT Application::InitRenderProcesses()
 	{
 		return E_FAIL;
 	}
-
-#pragma endregion
-
-#pragma region Setup Base Scene Normal + Deferred Render Process
 
 	ShaderManager::AddCustomShader("Parrallax Scene", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight);
 
@@ -288,10 +277,6 @@ HRESULT Application::InitRenderProcesses()
 
 	ShaderManager::_pCurrentSceneRenderProcess = ShaderManager::_pShaderList["Parrallax Scene"].get();
 
-#pragma endregion
-
-#pragma region Setup Basic Scene Render Process
-
 	if (FAILED(ShaderManager::AddCommonShader("Basic Scene", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Basic.fx", InputLayoutManager::_pInputLayoutList["Layout 3"], DX11AppHelper::_pd3dDevice)))
 	{
 		return E_FAIL;
@@ -299,9 +284,6 @@ HRESULT Application::InitRenderProcesses()
 
 	ShaderManager::_pShaderList["Basic Scene"].get()->AddSamplerState(_pSamplerLinear);
 
-#pragma endregion
-
-#pragma region Setup Pixel Scene Render Process
 
 	if (FAILED(ShaderManager::AddCommonShader("Pixel Scene", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Pixel SS.fx", InputLayoutManager::_pInputLayoutList["Layout 2"], DX11AppHelper::_pd3dDevice)))
 	{
@@ -316,10 +298,6 @@ HRESULT Application::InitRenderProcesses()
 	ShaderManager::_pShaderList["Pixel Scene"].get()->AddShaderResource(ShaderManager::_pShaderList["Red Light Depth Map"].get()->GetDepthMapResourceView());
 	ShaderManager::_pShaderList["Pixel Scene"].get()->AddShaderResource(ShaderManager::_pShaderList["Green Light Depth Map"].get()->GetDepthMapResourceView());
 	ShaderManager::_pShaderList["Pixel Scene"].get()->AddShaderResource(ShaderManager::_pShaderList["Blue Light Depth Map"].get()->GetDepthMapResourceView());
-
-#pragma endregion
-
-#pragma region Setup Deferred Lighting Render Process
 
 	ShaderManager::AddCustomShader("Deferred Parrallax Scene", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight);
 
@@ -354,10 +332,6 @@ HRESULT Application::InitRenderProcesses()
 	ShaderManager::_pShaderList["Deferred Parrallax Scene"].get()->AddShaderResource(ShaderManager::_pCurrentSceneRenderProcess->GetShaderTargetTexture("WorldNormalMap"));
 	ShaderManager::_pShaderList["Deferred Parrallax Scene"].get()->AddShaderResource(ShaderManager::_pCurrentSceneRenderProcess->GetShaderTargetTexture("BiNormalMap"));
 
-#pragma endregion
-
-#pragma region Setup Horizontal Blur Render Process
-
 	if (FAILED(ShaderManager::AddRenderFromQuadShader("Effect HBlur", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Horizontal Blur.fx", InputLayoutManager::_pInputLayoutList["Layout 3"], DX11AppHelper::_pd3dDevice)))
 	{
 		return E_FAIL;
@@ -365,11 +339,6 @@ HRESULT Application::InitRenderProcesses()
 
 	ShaderManager::_pShaderList["Effect HBlur"].get()->AddSamplerState(_pSamplerLinear);
 	ShaderManager::_pShaderList["Effect HBlur"].get()->AddShaderResource(ShaderManager::_pShaderList["Parrallax Scene"].get()->GetShaderTargetTexture("ColourMap"));
-
-
-#pragma endregion
-
-#pragma region Setup Vertical Blur Render Process
 
 	if (FAILED(ShaderManager::AddRenderFromQuadShader("Effect VBlur", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Vertical Blur.fx", InputLayoutManager::_pInputLayoutList["Layout 3"], DX11AppHelper::_pd3dDevice)))
 	{
@@ -379,20 +348,12 @@ HRESULT Application::InitRenderProcesses()
 	ShaderManager::_pShaderList["Effect VBlur"].get()->AddSamplerState(_pSamplerLinear);
 	ShaderManager::_pShaderList["Effect VBlur"].get()->AddShaderResource(ShaderManager::_pShaderList["Effect HBlur"].get()->GetShaderTargetTexture("OutputText"));
 
-#pragma endregion
-
-#pragma region Setup DOF Depth Map Render Process
-
 	if (FAILED(ShaderManager::AddDepthBufferShader("DOF Depth Map", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Basic Depth Mapping.fx", InputLayoutManager::_pInputLayoutList["Layout 1"], DX11AppHelper::_pd3dDevice)))
 	{
 		return E_FAIL;
 	}
 
 	ShaderManager::_pShaderList["DOF Depth Map"].get()->SetClearColour(1.0f, 1.0f, 1.0f, 1.0f);
-
-#pragma endregion
-
-#pragma region Setup DOF H Blur Render Process
 
 	if (FAILED(ShaderManager::AddRenderFromQuadShader("Effect DOFHBlur", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework DOF Hor Blur.fx", InputLayoutManager::_pInputLayoutList["Layout 3"], DX11AppHelper::_pd3dDevice)))
 	{
@@ -404,10 +365,6 @@ HRESULT Application::InitRenderProcesses()
 	ShaderManager::_pShaderList["Effect DOFHBlur"].get()->AddShaderResource(ShaderManager::_pShaderList["Effect VBlur"].get()->GetShaderTargetTexture("OutputText"));
 	ShaderManager::_pShaderList["Effect DOFHBlur"].get()->AddShaderResource(ShaderManager::_pShaderList["DOF Depth Map"].get()->GetShaderTargetTexture("DepthMap"));
 
-#pragma endregion
-
-#pragma region Setup DOF V Blur Render Process
-
 	if (FAILED(ShaderManager::AddRenderFromQuadShader("Effect DOFVBlur", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework DOF Vert Blur.fx", InputLayoutManager::_pInputLayoutList["Layout 3"], DX11AppHelper::_pd3dDevice)))
 	{
 		return E_FAIL;
@@ -417,10 +374,6 @@ HRESULT Application::InitRenderProcesses()
 	ShaderManager::_pShaderList["Effect DOFVBlur"].get()->AddSamplerState(_pSamplerClamp);
 	ShaderManager::_pShaderList["Effect DOFVBlur"].get()->AddShaderResource(ShaderManager::_pShaderList["Effect DOFHBlur"].get()->GetShaderTargetTexture("OutputText"));
 	ShaderManager::_pShaderList["Effect DOFVBlur"].get()->AddShaderResource(ShaderManager::_pShaderList["DOF Depth Map"].get()->GetShaderTargetTexture("DepthMap"));
-
-#pragma endregion
-
-#pragma region Setup Final Pass Render Process
 
 	if (FAILED(ShaderManager::AddRenderToBackBufferShader("Final Pass", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Render To Texture.fx", InputLayoutManager::_pInputLayoutList["Layout 3"], DX11AppHelper::_pd3dDevice)))
 	{
@@ -432,8 +385,6 @@ HRESULT Application::InitRenderProcesses()
 
 	ShaderManager::_pShaderList["Final Pass"].get()->SetClearColour(0.0f, 0.0f, 1.0f, 1.0f);
 
-#pragma endregion
-
 	return hr;
 }
 
@@ -441,11 +392,7 @@ void Application::Cleanup()
 {
 	GUIHandler::ExitGUI();
 
-#pragma region Light Variables
-
-	vector<SceneLight*> _pLights;
-
-	for (auto light : _pLights)
+	for (auto light : mSceneLights)
 	{
 		if (light)
 		{
@@ -454,11 +401,7 @@ void Application::Cleanup()
 		}
 	}
 
-#pragma endregion
-
-#pragma region Game Objects
-
-	for (auto gameObject : _pGameObjects)
+	for (auto gameObject : mGameObjects)
 	{
 		if (gameObject)
 		{
@@ -467,18 +410,11 @@ void Application::Cleanup()
 		}
 	}
 
-#pragma endregion
-
-#pragma region Camera
-
-	if (_pCamera)
+	if (mCamera)
 	{
-		delete _pCamera;
-		_pCamera = nullptr;
+		delete mCamera;
+		mCamera = nullptr;
 	}
-
-#pragma endregion
-
 }
 
 Light Application::GetLightFromSceneLight(SceneLight* light)
@@ -506,7 +442,7 @@ void Application::UpdateLightsControls(float deltaTime)
 
 #pragma region Toggle Current Light
 
-	_pLights.at(GUIHandler::_pControlledLight)->HandleLightControls(deltaTime);
+	mSceneLights.at(GUIHandler::_pControlledLight)->HandleLightControls(deltaTime);
 
 #pragma endregion
 
@@ -515,38 +451,38 @@ void Application::UpdateLightsControls(float deltaTime)
 	// Toggle Lights ON/OFF
 	if (GUIHandler::_pWhiteLightOn)
 	{
-		_pLights.at(0)->SetLightOn(true);
+		mSceneLights.at(0)->SetLightOn(true);
 	}
 	else
 	{
-		_pLights.at(0)->SetLightOn(false);
+		mSceneLights.at(0)->SetLightOn(false);
 	}
 
 	if (GUIHandler::_pRedLightOn)
 	{
-		_pLights.at(1)->SetLightOn(true);
+		mSceneLights.at(1)->SetLightOn(true);
 	}
 	else
 	{
-		_pLights.at(1)->SetLightOn(false);
+		mSceneLights.at(1)->SetLightOn(false);
 	}
 
 	if (GUIHandler::_pGreenLightOn)
 	{
-		_pLights.at(2)->SetLightOn(true);
+		mSceneLights.at(2)->SetLightOn(true);
 	}
 	else
 	{
-		_pLights.at(2)->SetLightOn(false);
+		mSceneLights.at(2)->SetLightOn(false);
 	}
 
 	if (GUIHandler::_pBlueLightOn)
 	{
-		_pLights.at(3)->SetLightOn(true);
+		mSceneLights.at(3)->SetLightOn(true);
 	}
 	else
 	{
-		_pLights.at(3)->SetLightOn(false);
+		mSceneLights.at(3)->SetLightOn(false);
 	}
 
 #pragma endregion
@@ -573,7 +509,7 @@ void Application::Update(float deltaTime)
 		POINT p;
 		GetCursorPos(&p);
 
-		_pCamera->OnMouseMove(p.x, p.y);
+		mCamera->OnMouseMove(p.x, p.y);
 	}
 
 	// Update our time
@@ -589,14 +525,14 @@ void Application::Update(float deltaTime)
 
 #pragma region Update Camera
 
-	_pCamera->UpdateCameraView();
+	mCamera->UpdateCameraView();
 
 #pragma endregion
 
 #pragma region Update Game Objects
 
 	// Update objects
-	for (auto gameObject : _pGameObjects)
+	for (auto gameObject : mGameObjects)
 	{
 		gameObject->Update(timeSinceStart, deltaTime);
 	}
@@ -607,7 +543,7 @@ void Application::Update(float deltaTime)
 
 	UpdateLightsControls(deltaTime);
 
-	for (SceneLight* light : _pLights)
+	for (SceneLight* light : mSceneLights)
 	{
 		light->UpdateLightCube(timeSinceStart, deltaTime);
 		light->UpdateLight((float)  DX11AppHelper::_pRenderWidth, (float)  DX11AppHelper::_pRenderHeight);
@@ -619,45 +555,28 @@ void Application::Update(float deltaTime)
 
 void Application::Draw()
 {
+	XMMATRIX viewMatrix;
+	XMMATRIX projectionMatrix;
 
-#pragma region Initialise Draw Variables
-
-	SMConstantBuffer smCB;
-
-	XMFLOAT4X4 viewAsFloats;
-	XMFLOAT4X4 projectionAsFloats;
-	XMFLOAT4X4 shadowTransformAsFloats;
-	XMMATRIX view;
-	XMMATRIX projection;
-	XMMATRIX shadowTransform;
-
-#pragma endregion
-
-#pragma region Initialise Constant Buffer
+	viewMatrix = XMLoadFloat4x4(&mCamera->GetViewMatrix());
+	projectionMatrix = XMLoadFloat4x4(&mCamera->GetProjectionMatrix());
 
 	ConstantBuffer cb;
 
-	cb.World = XMMatrixTranspose(_pGameObjects.at(0)->GetWorldMatrix());
-
-	viewAsFloats = _pCamera->GetViewMatrix();
-	projectionAsFloats = _pCamera->GetProjectionMatrix();
-
-	view = XMLoadFloat4x4(&viewAsFloats);
-	projection = XMLoadFloat4x4(&projectionAsFloats);
-
-	cb.View = XMMatrixTranspose(view);
-	cb.Projection = XMMatrixTranspose(projection);
+	cb.World = XMMatrixTranspose(mGameObjects.at(0)->GetWorldMatrix());
+	cb.View = XMMatrixTranspose(viewMatrix);
+	cb.Projection = XMMatrixTranspose(projectionMatrix);
 
 	cb.surface.AmbientMtrl = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	cb.surface.DiffuseMtrl = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	cb.surface.SpecularMtrl = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	cb.lights[0] = GetLightFromSceneLight(_pLights.at(0));
-	cb.lights[1] = GetLightFromSceneLight(_pLights.at(1));
-	cb.lights[2] = GetLightFromSceneLight(_pLights.at(2));
-	cb.lights[3] = GetLightFromSceneLight(_pLights.at(3));
+	cb.lights[0] = GetLightFromSceneLight(mSceneLights.at(0));
+	cb.lights[1] = GetLightFromSceneLight(mSceneLights.at(1));
+	cb.lights[2] = GetLightFromSceneLight(mSceneLights.at(2));
+	cb.lights[3] = GetLightFromSceneLight(mSceneLights.at(3));
 
-	cb.EyePosW = _pCamera->GetPosition3f();
+	cb.EyePosW = mCamera->GetPosition3f();
 	cb.HasTexture = 0.0f;
 	cb.HasNormalMap = 0.0f;
 	cb.HasHeightMap = 0.0f;
@@ -673,9 +592,7 @@ void Application::Draw()
 		cb.selfShadowOn = 0.0f;
 	}
 
-#pragma endregion
-
-	ShaderManager::ExecuteShadersInOrder(&cb, _pLights, _pGameObjects);
+	ShaderManager::ExecuteShadersInOrder(&cb, mSceneLights, mGameObjects);
 
 	ImGui::Render();
 

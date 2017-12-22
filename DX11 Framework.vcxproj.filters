@@ -45,11 +45,12 @@
     <Filter Include="GUI Libraries">
       <UniqueIdentifier>{585cf594-4adb-4bcd-814a-cb4477cab82d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{e0bc05fb-0ca0-4c2f-9047-5b801dd1ab1f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="SceneLight.h" />
     <ClInclude Include="Structures.h" />
     <ClInclude Include="RenderProcess.h">
       <Filter>Render Process</Filter>
@@ -93,13 +94,19 @@
     <ClInclude Include="GUIHandler.h">
       <Filter>Managers</Filter>
     </ClInclude>
-    <ClInclude Include="SceneCamera.h" />
+    <ClInclude Include="SceneCamera.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneLight.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="SceneLight.cpp" />
     <ClCompile Include="RenderProcess.cpp">
       <Filter>Render Process</Filter>
     </ClCompile>
@@ -133,7 +140,15 @@
     <ClCompile Include="GUIHandler.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
-    <ClCompile Include="SceneCamera.cpp" />
+    <ClCompile Include="SceneCamera.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneLight.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">

@@ -40,10 +40,6 @@ public:
 	
 	// Get camera basis vectors.
 	XMFLOAT3 GetUp3f()const { return mCameraUpDir; }
-	
-	// Define camera space via LookAt parameters.
-	void LookAt(FXMVECTOR pos, FXMVECTOR target, FXMVECTOR worldUp);
-	void LookAt(const XMFLOAT3& pos, const XMFLOAT3& target, const XMFLOAT3& up);
 
 	XMFLOAT4X4 GetViewMatrix()const;
 	XMFLOAT4X4 GetProjectionMatrix()const;
@@ -78,8 +74,6 @@ private:
 	float mFovY = 0.0f;
 	float mNearWindowHeight = 0.0f;
 	float mFarWindowHeight = 0.0f;
-
-	bool mViewDirty = true;
 
 	// Cache View/Proj matrices.
 	XMFLOAT4X4 mViewMatrix = Identity4x4();

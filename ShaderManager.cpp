@@ -113,8 +113,6 @@ void ShaderManager::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLight*
 	XMMATRIX projection;
 	XMMATRIX shadowTransform;
 
-#pragma region Shadow Mapping Render Pass
-
 	if (GUIHandler::_pShadowMappingOn)
 	{
 		for (int i = 0; i < lights.size(); i++)
@@ -139,16 +137,8 @@ void ShaderManager::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLight*
 		}
 	}
 
-#pragma endregion
-
-#pragma region Base Scene Normal + Deferred Pass
-
 	_pCurrentSceneRenderProcess->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, true);
 	_pCurrentSceneRenderProcess->RenderGameObjects(DX11AppHelper::_pImmediateContext, gameObjects, DX11AppHelper::_pConstantBuffer, cb);
-
-#pragma endregion
-
-#pragma region Deferred Lighting Pass
 
 	if (_pDeferred)
 	{
@@ -156,27 +146,15 @@ void ShaderManager::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLight*
 		_pShaderList["Deferred Parrallax Scene"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
 	}
 
-#pragma endregion
-
-#pragma region Blur Passes
-
 	if (GUIHandler::_pBlurEffectPasses != 0)
 	{
 		for (int i = 0; i < GUIHandler::_pBlurEffectPasses; i++)
 		{
-#pragma region Post Process Horizontal Blur Pass
-
 			_pShaderList["Effect HBlur"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, false);
 			_pShaderList["Effect HBlur"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
 
-#pragma endregion
-
-#pragma region Post Process Vertical Blur Pass
-
 			_pShaderList["Effect VBlur"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, false);
 			_pShaderList["Effect VBlur"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
-
-#pragma endregion
 
 			if (i == 0)
 			{
@@ -190,60 +168,27 @@ void ShaderManager::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLight*
 	}
 	else
 	{
-#pragma region Post Process Horizontal Blur Pass
-
 		_pShaderList["Effect HBlur"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, false);
 		_pShaderList["Effect HBlur"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
 
-#pragma endregion
-
-#pragma region Post Process Vertical Blur Pass
-
 		_pShaderList["Effect VBlur"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, false);
 		_pShaderList["Effect VBlur"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
-
-#pragma endregion
 	}
-
-
-#pragma endregion
-
-#pragma region Basic Depth Map Pass
 
 	_pShaderList["DOF Depth Map"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, true);
 	_pShaderList["DOF Depth Map"].get()->RenderGameObjects(DX11AppHelper::_pImmediateContext, gameObjects, DX11AppHelper::_pConstantBuffer, cb);
 
-#pragma endregion
-
-#pragma region DOF Blur Pass
-
 	if (GUIHandler::_pDOFActive)
 	{
-#pragma region Post Process DOF Horizontol Blur Pass
-
 		_pShaderList["Effect DOFHBlur"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, false);
 		_pShaderList["Effect DOFHBlur"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
 
-#pragma endregion
-
-#pragma region Post Process DOF Vertical Blur Pass
-
 		_pShaderList["Effect DOFVBlur"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, false);
 		_pShaderList["Effect DOFVBlur"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
-
-#pragma endregion
-
 	}
-
-#pragma endregion
-
-#pragma region Post Process Final Pass
 
 	_pShaderList["Final Pass"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, false);
 	_pShaderList["Final Pass"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
-
-#pragma endregion
-
 }
 
 void ShaderManager::HandleShaderControls(float deltaTime, int selectedShaderOption)
