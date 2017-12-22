@@ -66,24 +66,11 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	noSpecMaterial.specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	noSpecMaterial.specularPower = 0.0f;
 
-	InitCamera();
 	InitTextures();
-	InitLights(cubeGeometry, shinyMaterial);
-	InitGameObjectCubes(cubeGeometry, noSpecMaterial, shinyMaterial);
+
+	InitScene(cubeGeometry, noSpecMaterial, shinyMaterial);
 
 	return S_OK;
-}
-
-void Application::InitCamera()
-{
-	// Setup Camera
-	XMFLOAT3 eye = XMFLOAT3(35.0f, 15.0f, -35.0f);
-	XMFLOAT3 at = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	XMFLOAT3 up = XMFLOAT3(0.0f, 1.0f, 0.0f);
-
-	mCamera = new SceneCamera(0.01f, 200.0f, DX11AppHelper::_pRenderWidth, DX11AppHelper::_pRenderHeight);
-
-	mCamera->SetPosition(eye);
 }
 
 void Application::InitTextures()
@@ -99,73 +86,9 @@ void Application::InitTextures()
 	TextureManager::AddTexture(  DX11AppHelper::_pd3dDevice, "Blue Texture", L"Resources\\blueColourTexture.dds", nullptr, nullptr);
 }
 
-void Application::InitLights(Geometry geometry, Material material)
+void Application::InitScene(Geometry cubeGeometry, Material noSpecMaterial, Material shinyMaterial)
 {
-	SceneLight* whiteLight = new SceneLight("White Light", TextureManager::_pTextureList["White Texture"].get()->texture, geometry, material);
-	SceneLight* redLight = new SceneLight("Red Light", TextureManager::_pTextureList["Red Texture"].get()->texture, geometry, material);
-	SceneLight* greenLight = new SceneLight("Green Light", TextureManager::_pTextureList["Green Texture"].get()->texture, geometry, material);
-	SceneLight* blueLight = new SceneLight("Blue Light", TextureManager::_pTextureList["Blue Texture"].get()->texture, geometry, material);
-
-	// Setup the scene's light
-	whiteLight->SetAmbientLight(XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
-	whiteLight->SetDiffuseLight(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
-	whiteLight->SetSpecularLight(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
-	whiteLight->SetSpecularPower(20.0f);
-	whiteLight->SetLightVecW(XMFLOAT3(-5.05f, 10.0f, 14.5f));
-	whiteLight->SetPaddingLightAmount(XMFLOAT3(0.0f, 0.0f, 0.0f));
-	whiteLight->SetLightOn(0.0f);
-	whiteLight->GetLightCubeGO()->SetPosition(whiteLight->GetLightVecW());
-
-	// Setup the scene's RED light
-	redLight->SetAmbientLight(XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
-	redLight->SetDiffuseLight(XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
-	redLight->SetSpecularLight(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
-	redLight->SetSpecularPower(20.0f);
-	redLight->SetLightVecW(XMFLOAT3(-0.45f, 10.0f, 12.7f));
-	redLight->SetPaddingLightAmount(XMFLOAT3(0.0f, 0.0f, 0.0f));
-	redLight->SetLightOn(1.0f);
-	redLight->GetLightCubeGO()->SetPosition(redLight->GetLightVecW());
-
-	// Setup the scene's GREEN light
-	greenLight->SetAmbientLight(XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
-	greenLight->SetDiffuseLight(XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
-	greenLight->SetSpecularLight(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
-	greenLight->SetSpecularPower(20.0f);
-	greenLight->SetLightVecW(XMFLOAT3(4.0f, 10.0f, 10.0f));
-	greenLight->SetPaddingLightAmount(XMFLOAT3(0.0f, 0.0f, 0.0f));
-	greenLight->SetLightOn(0.0f);
-	greenLight->GetLightCubeGO()->SetPosition(greenLight->GetLightVecW());
-
-	// Setup the scene's BLUE light
-	blueLight->SetAmbientLight(XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
-	blueLight->SetDiffuseLight(XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
-	blueLight->SetSpecularLight(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
-	blueLight->SetSpecularPower(20.0f);
-	blueLight->SetLightVecW(XMFLOAT3(8.0f, 10.0f, 10.0f));
-	blueLight->SetPaddingLightAmount(XMFLOAT3(0.0f, 0.0f, 0.0f));
-	blueLight->SetLightOn(0.0f);
-	blueLight->GetLightCubeGO()->SetPosition(blueLight->GetLightVecW());
-
-	mSceneLights.push_back(whiteLight);
-	mSceneLights.push_back(redLight);
-	mSceneLights.push_back(greenLight);
-	mSceneLights.push_back(blueLight);
-
-	mGameObjects.push_back(whiteLight->GetLightCubeGO());
-	mGameObjects.push_back(redLight->GetLightCubeGO());
-	mGameObjects.push_back(greenLight->GetLightCubeGO());
-	mGameObjects.push_back(blueLight->GetLightCubeGO());
-}
-
-void Application::InitGameObjectCubes(Geometry cubeGeometry, Material noSpecMaterial, Material shinyMaterial)
-{
-	GameObject* gameObject = new GameObject("Floor", cubeGeometry, noSpecMaterial);
-	gameObject->SetPosition(0.0f, 0.0f, 0.0f);
-	gameObject->SetScale(5.0f, 5.0f, 5.0f);
-	gameObject->SetRotation(0.0f, 0.0f, 0.0f);
-	gameObject->SetTextures(TextureManager::_pTextureList["Floor Texture"].get());
-
-	mGameObjects.push_back(gameObject);
+	mScene = SceneBuilder::BuildScene("Scene.xml", cubeGeometry, noSpecMaterial);
 }
 
 void Application::InitInputLayouts()
@@ -392,101 +315,11 @@ void Application::Cleanup()
 {
 	GUIHandler::ExitGUI();
 
-	for (auto light : mSceneLights)
+	if (mScene)
 	{
-		if (light)
-		{
-			delete light;
-			light = nullptr;
-		}
-	}
-
-	for (auto gameObject : mGameObjects)
-	{
-		if (gameObject)
-		{
-			delete gameObject;
-			gameObject = nullptr;
-		}
-	}
-
-	if (mCamera)
-	{
-		delete mCamera;
-		mCamera = nullptr;
-	}
-}
-
-Light Application::GetLightFromSceneLight(SceneLight* light)
-{
-	Light newLight;
-
-	XMMATRIX lightView = XMLoadFloat4x4(&light->GetView());
-	XMMATRIX lightProjection = XMLoadFloat4x4(&light->GetProjection());
-
-	newLight.View =					XMMatrixTranspose(lightView);
-	newLight.Projection =			XMMatrixTranspose(lightProjection);
-	newLight.AmbientLight =			light->GetAmbientLight();
-	newLight.DiffuseLight =			light->GetDiffuseLight();
-	newLight.SpecularLight =		light->GetSpecularLight();
-	newLight.SpecularPower =		light->GetSpecularPower();
-	newLight.LightVecW =			light->GetLightVecW();
-	newLight.paddingLightAmount =	light->GetPaddingLightAmount();
-	newLight.lightOn =				light->GetLightOn();
-
-	return newLight;
-}
-
-void Application::UpdateLightsControls(float deltaTime)
-{
-
-#pragma region Toggle Current Light
-
-	mSceneLights.at(GUIHandler::_pControlledLight)->HandleLightControls(deltaTime);
-
-#pragma endregion
-
-#pragma region Turn Lights ON/OFF
-
-	// Toggle Lights ON/OFF
-	if (GUIHandler::_pWhiteLightOn)
-	{
-		mSceneLights.at(0)->SetLightOn(true);
-	}
-	else
-	{
-		mSceneLights.at(0)->SetLightOn(false);
-	}
-
-	if (GUIHandler::_pRedLightOn)
-	{
-		mSceneLights.at(1)->SetLightOn(true);
-	}
-	else
-	{
-		mSceneLights.at(1)->SetLightOn(false);
-	}
-
-	if (GUIHandler::_pGreenLightOn)
-	{
-		mSceneLights.at(2)->SetLightOn(true);
-	}
-	else
-	{
-		mSceneLights.at(2)->SetLightOn(false);
-	}
-
-	if (GUIHandler::_pBlueLightOn)
-	{
-		mSceneLights.at(3)->SetLightOn(true);
-	}
-	else
-	{
-		mSceneLights.at(3)->SetLightOn(false);
-	}
-
-#pragma endregion
-
+		delete mScene;
+		mScene = nullptr;
+	}	
 }
 
 bool Application::HandleKeyboard(MSG msg, float deltaTime)
@@ -509,7 +342,7 @@ void Application::Update(float deltaTime)
 		POINT p;
 		GetCursorPos(&p);
 
-		mCamera->OnMouseMove(p.x, p.y);
+		mScene->OnMouseMove(p.x, p.y);
 	}
 
 	// Update our time
@@ -523,34 +356,8 @@ void Application::Update(float deltaTime)
 
 	timeSinceStart = (dwTimeCur - dwTimeStart) / 1000.0f;
 
-#pragma region Update Camera
-
-	mCamera->UpdateCameraView();
-
-#pragma endregion
-
-#pragma region Update Game Objects
-
-	// Update objects
-	for (auto gameObject : mGameObjects)
-	{
-		gameObject->Update(timeSinceStart, deltaTime);
-	}
-
-#pragma endregion
-
-#pragma region Update Lights
-
-	UpdateLightsControls(deltaTime);
-
-	for (SceneLight* light : mSceneLights)
-	{
-		light->UpdateLightCube(timeSinceStart, deltaTime);
-		light->UpdateLight((float)  DX11AppHelper::_pRenderWidth, (float)  DX11AppHelper::_pRenderHeight);
-	}
-
-#pragma endregion
-
+	// Update scene
+	mScene->Update(timeSinceStart, deltaTime);
 }
 
 void Application::Draw()
@@ -558,12 +365,12 @@ void Application::Draw()
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;
 
-	viewMatrix = XMLoadFloat4x4(&mCamera->GetViewMatrix());
-	projectionMatrix = XMLoadFloat4x4(&mCamera->GetProjectionMatrix());
+	viewMatrix = XMLoadFloat4x4(&mScene->GetCamera()->GetViewMatrix());
+	projectionMatrix = XMLoadFloat4x4(&mScene->GetCamera()->GetProjectionMatrix());
 
 	ConstantBuffer cb;
 
-	cb.World = XMMatrixTranspose(mGameObjects.at(0)->GetWorldMatrix());
+	cb.World = XMMatrixTranspose(mScene->GetGameObject(0)->GetWorldMatrix());
 	cb.View = XMMatrixTranspose(viewMatrix);
 	cb.Projection = XMMatrixTranspose(projectionMatrix);
 
@@ -571,12 +378,12 @@ void Application::Draw()
 	cb.surface.DiffuseMtrl = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	cb.surface.SpecularMtrl = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	cb.lights[0] = GetLightFromSceneLight(mSceneLights.at(0));
-	cb.lights[1] = GetLightFromSceneLight(mSceneLights.at(1));
-	cb.lights[2] = GetLightFromSceneLight(mSceneLights.at(2));
-	cb.lights[3] = GetLightFromSceneLight(mSceneLights.at(3));
+	cb.lights[0] = mScene->GetSceneLight(0)->GetLight();
+	cb.lights[1] = mScene->GetSceneLight(1)->GetLight();
+	cb.lights[2] = mScene->GetSceneLight(2)->GetLight();
+	cb.lights[3] = mScene->GetSceneLight(3)->GetLight();
 
-	cb.EyePosW = mCamera->GetPosition3f();
+	cb.EyePosW = mScene->GetCamera()->GetPosition3f();
 	cb.HasTexture = 0.0f;
 	cb.HasNormalMap = 0.0f;
 	cb.HasHeightMap = 0.0f;
@@ -592,7 +399,7 @@ void Application::Draw()
 		cb.selfShadowOn = 0.0f;
 	}
 
-	ShaderManager::ExecuteShadersInOrder(&cb, mSceneLights, mGameObjects);
+	ShaderManager::ExecuteShadersInOrder(&cb, mScene->GetSceneLights(), mScene->GetGameObjects());
 
 	ImGui::Render();
 

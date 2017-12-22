@@ -15,7 +15,6 @@ SceneLight::SceneLight(string type, ID3D11ShaderResourceView* texture, Geometry 
 	_pLightVecW = XMFLOAT3(-0.57735f, -0.57735f, 0.57735f);
 }
 
-
 SceneLight::~SceneLight()
 {
 }
@@ -83,4 +82,24 @@ void SceneLight::ToggleLightOn()
 	{
 		_pLightOn = 1.0f;
 	}
+}
+
+Light SceneLight::GetLight()
+{
+	Light newLight;
+
+	XMMATRIX lightView = XMLoadFloat4x4(&GetView());
+	XMMATRIX lightProjection = XMLoadFloat4x4(&GetProjection());
+
+	newLight.View = XMMatrixTranspose(lightView);
+	newLight.Projection = XMMatrixTranspose(lightProjection);
+	newLight.AmbientLight = GetAmbientLight();
+	newLight.DiffuseLight = GetDiffuseLight();
+	newLight.SpecularLight = GetSpecularLight();
+	newLight.SpecularPower = GetSpecularPower();
+	newLight.LightVecW = GetLightVecW();
+	newLight.paddingLightAmount = GetPaddingLightAmount();
+	newLight.lightOn = GetLightOn();
+
+	return newLight;
 }

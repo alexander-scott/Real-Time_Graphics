@@ -372,6 +372,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneBuilder.cpp" />
     <ClCompile Include="SceneCamera.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="DX11AppHelper.cpp" />
@@ -435,6 +437,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="rapidxml.hpp" />
+    <ClInclude Include="rapidxml_print.hpp" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneBuilder.h" />
     <ClInclude Include="SceneCamera.h" />
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="DX11AppHelper.h" />
