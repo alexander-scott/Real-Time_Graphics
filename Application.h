@@ -48,16 +48,12 @@ private:
 
 	void InitCamera();
 	void InitTextures();
-	void InitLights(Geometry geometry, Material material);
 	void InitScene(Geometry cubeGeometry, Material noSpecMaterial, Material shinyMaterial);
 	
 	Light GetLightFromSceneLight(SceneLight* light);
 
-	void UpdateLightsControls(float deltaTime);
-
 	Scene*						mScene;
 
-	vector<SceneLight*>			mSceneLights;
 	SceneCamera*				mCamera;
 };
 

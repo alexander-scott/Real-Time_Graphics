@@ -32,6 +32,9 @@ Scene* SceneBuilder::BuildScene(string fileName, Geometry cubeGeometry, Material
 	// Initalise the scene with the scene name
 	Scene* scene = new Scene(string(root->first_attribute("name")->value()));
 
+	////////////////////////////////////////////////////
+	// Extract all the GameObjects
+	////////////////////////////////////////////////////
 	xml_node<>* gameObjectNode = root->first_node("GameObject");
 	while (gameObjectNode)
 	{
@@ -65,6 +68,70 @@ Scene* SceneBuilder::BuildScene(string fileName, Geometry cubeGeometry, Material
 		// Move to the next gameobject in the XML file
 		gameObjectNode = gameObjectNode->next_sibling("GameObject");
 	}
+
+	////////////////////////////////////////////////////
+	// Extract all the SceneLights
+	////////////////////////////////////////////////////
+	xml_node<>* sceneLightNode = root->first_node("SceneLight");
+	while (sceneLightNode)
+	{
+		SceneLight* sceneLight = new SceneLight(string(sceneLightNode->first_attribute("type")->value()),
+			TextureManager::_pTextureList[string(sceneLightNode->first_attribute("texture")->value())].get()->texture,
+			cubeGeometry, noSpecMaterial);
+
+		// Set ambient light
+		xml_node<>* ambientLightNode = sceneLightNode->first_node("AmbientLight");
+		sceneLight->SetAmbientLight(XMFLOAT4(
+			(float)atof(ambientLightNode->first_attribute("x")->value()), 
+			(float)atof(ambientLightNode->first_attribute("y")->value()), 
+			(float)atof(ambientLightNode->first_attribute("z")->value()), 
+			(float)atof(ambientLightNode->first_attribute("w")->value())));
+
+		// Set diffuse light
+		xml_node<>* diffuseLightNode = sceneLightNode->first_node("DiffuseLight");
+		sceneLight->SetDiffuseLight(XMFLOAT4(
+			(float)atof(diffuseLightNode->first_attribute("x")->value()),
+			(float)atof(diffuseLightNode->first_attribute("y")->value()),
+			(float)atof(diffuseLightNode->first_attribute("z")->value()),
+			(float)atof(diffuseLightNode->first_attribute("w")->value())));
+
+		// Set specular light
+		xml_node<>* specularLightNode = sceneLightNode->first_node("SpecularLight");
+		sceneLight->SetSpecularLight(XMFLOAT4(
+			(float)atof(specularLightNode->first_attribute("x")->value()),
+			(float)atof(specularLightNode->first_attribute("y")->value()),
+			(float)atof(specularLightNode->first_attribute("z")->value()),
+			(float)atof(specularLightNode->first_attribute("w")->value())));
+
+		// Set specular power
+		xml_node<>* specularPowerNode = sceneLightNode->first_node("SpecularPower");
+		sceneLight->SetSpecularPower((float)atof(specularPowerNode->first_attribute("value")->value()));
+
+		// Set light vec w
+		xml_node<>* lightVecWNode = sceneLightNode->first_node("LightVecW");
+		sceneLight->SetLightVecW(XMFLOAT3(
+			(float)atof(lightVecWNode->first_attribute("x")->value()),
+			(float)atof(lightVecWNode->first_attribute("y")->value()),
+			(float)atof(lightVecWNode->first_attribute("z")->value())));
+
+		// Set padding light amount
+		xml_node<>* paddingLightAmountNode = sceneLightNode->first_node("PaddingLightAmount");
+		sceneLight->SetPaddingLightAmount(XMFLOAT3(
+			(float)atof(paddingLightAmountNode->first_attribute("x")->value()),
+			(float)atof(paddingLightAmountNode->first_attribute("y")->value()),
+			(float)atof(paddingLightAmountNode->first_attribute("z")->value())));
+
+		// Set light on
+		xml_node<>* lightOnNode = sceneLightNode->first_node("LightOn");
+		sceneLight->SetLightOn((float)atof(lightOnNode->first_attribute("value")->value()));
+
+		sceneLight->GetLightCubeGO()->SetPosition(sceneLight->GetLightVecW());
+
+		scene->AddSceneLight(sceneLight);
+
+		sceneLightNode = sceneLightNode->next_sibling("SceneLight");
+	}
+
 
 	return scene;
 }

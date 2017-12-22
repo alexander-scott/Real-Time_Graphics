@@ -1,6 +1,8 @@
 #pragma once
 
 #include "GameObject.h"
+#include "SceneLight.h"
+#include "GUIHandler.h"
 
 using namespace std;
 
@@ -18,7 +20,14 @@ public:
 	vector<GameObject*> GetGameObjects() { return mGameObjects; }
 	GameObject* GetGameObject(int index) { return mGameObjects.at(index); }
 
+	void AddSceneLight(SceneLight* sl) { mSceneLights.push_back(sl); mGameObjects.push_back(sl->GetLightCubeGO()); }
+	vector<SceneLight*> GetSceneLights() { return mSceneLights; }
+	SceneLight* GetSceneLight(int index) { return mSceneLights.at(index); }
+
 private:
+	void UpdateLightControls(float deltaTime);
+
 	string						mSceneName;
 	vector<GameObject*>			mGameObjects;
+	vector<SceneLight*>			mSceneLights;
 };

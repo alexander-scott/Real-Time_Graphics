@@ -10,4 +10,40 @@ X postive is right. Y postive is up.
     <Scale x="5" y="5" z="5"></Scale>
     <Rotation x="0" y="0" z="0"></Rotation>
   </GameObject>
+  <SceneLight type="White Light" texture="White Texture">
+    <AmbientLight x="0.5" y="0.5" z="0.5" w="1.0"></AmbientLight>
+    <DiffuseLight x="1.0" y="1.0" z="1.0" w="1.0"></DiffuseLight>
+    <SpecularLight x="0.8" y="0.8" z="0.8" w="1.0"></SpecularLight>
+    <SpecularPower value="20"></SpecularPower>
+    <LightVecW x="-5.05" y="10.0" z="14.5"></LightVecW>
+    <PaddingLightAmount x="0.0" y="0.0" z="0.0"></PaddingLightAmount>
+    <LightOn value="0"></LightOn>
+  </SceneLight>
+  <SceneLight type="Red Light" texture="Red Texture">
+    <AmbientLight x="0.5" y="0.5" z="0.5" w="1.0"></AmbientLight>
+    <DiffuseLight x="1.0" y="0.0" z="0.0" w="1.0"></DiffuseLight>
+    <SpecularLight x="0.8" y="0.8" z="0.8" w="1.0"></SpecularLight>
+    <SpecularPower value="20"></SpecularPower>
+    <LightVecW x="-0.45" y="10.0" z="12.7"></LightVecW>
+    <PaddingLightAmount x="0.0" y="0.0" z="0.0"></PaddingLightAmount>
+    <LightOn value="1"></LightOn>
+  </SceneLight>
+  <SceneLight type="Green Light" texture="Green Texture">
+    <AmbientLight x="0.5" y="0.5" z="0.5" w="1.0"></AmbientLight>
+    <DiffuseLight x="0.0" y="1.0" z="0.0" w="1.0"></DiffuseLight>
+    <SpecularLight x="0.8" y="0.8" z="0.8" w="1.0"></SpecularLight>
+    <SpecularPower value="20"></SpecularPower>
+    <LightVecW x="4.0" y="10.0" z="10.0"></LightVecW>
+    <PaddingLightAmount x="0.0" y="0.0" z="0.0"></PaddingLightAmount>
+    <LightOn value="0"></LightOn>
+  </SceneLight>
+  <SceneLight type="Blue Light" texture="Blue Texture">
+    <AmbientLight x="0.5" y="0.5" z="0.5" w="1.0"></AmbientLight>
+    <DiffuseLight x="0.0" y="0.0" z="1.0" w="1.0"></DiffuseLight>
+    <SpecularLight x="0.8" y="0.8" z="0.8" w="1.0"></SpecularLight>
+    <SpecularPower value="20"></SpecularPower>
+    <LightVecW x="8.0" y="10.0" z="10.0"></LightVecW>
+    <PaddingLightAmount x="0.0" y="0.0" z="0.0"></PaddingLightAmount>
+    <LightOn value="0"></LightOn>
+  </SceneLight>
 </Scene>
