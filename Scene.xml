@@ -6,7 +6,7 @@ X postive is right. Y postive is up.
 
 <Scene name="1">
   <GameObject type="Floor" texture="Floor Texture">
-    <Postion x="0" y="0" z="0"></Postion>
+    <Position x="0" y="0" z="0"></Position>
     <Scale x="5" y="5" z="5"></Scale>
     <Rotation x="0" y="0" z="0"></Rotation>
   </GameObject>

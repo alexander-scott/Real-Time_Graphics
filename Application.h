@@ -16,6 +16,7 @@
 #include "SceneCamera.h"
 #include "DDSTextureLoader.h"
 #include "GameObject.h"
+#include "SceneBuilder.h"
 #include "SceneLight.h"
 #include "RenderToTextureProcess.h"
 #include "TextureManager.h"
@@ -48,14 +49,15 @@ private:
 	void InitCamera();
 	void InitTextures();
 	void InitLights(Geometry geometry, Material material);
-	void InitGameObjectCubes(Geometry cubeGeometry, Material noSpecMaterial, Material shinyMaterial);
+	void InitScene(Geometry cubeGeometry, Material noSpecMaterial, Material shinyMaterial);
 	
 	Light GetLightFromSceneLight(SceneLight* light);
 
 	void UpdateLightsControls(float deltaTime);
 
+	Scene*						mScene;
+
 	vector<SceneLight*>			mSceneLights;
-	vector<GameObject*>			mGameObjects;
 	SceneCamera*				mCamera;
 };
 

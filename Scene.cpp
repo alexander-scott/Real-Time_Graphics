@@ -11,7 +11,18 @@ Scene::~Scene()
 {
 	for (auto go : mGameObjects)
 	{
-		delete go;
-		go = nullptr;
+		if (go)
+		{
+			delete go;
+			go = nullptr;
+		}
+	}
+}
+
+void Scene::Update(float timeSinceStart, float deltaTime)
+{
+	for (auto go : mGameObjects)
+	{
+		go->Update(timeSinceStart, deltaTime);
 	}
 }

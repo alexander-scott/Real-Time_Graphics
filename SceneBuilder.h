@@ -11,6 +11,6 @@ using namespace rapidxml;
 
 namespace SceneBuilder
 {
-	Scene* LoadScene(string fileName, Geometry cubeGeometry, Material noSpecMaterial);
+	Scene* BuildScene(string fileName, Geometry cubeGeometry, Material noSpecMaterial);
 };
 

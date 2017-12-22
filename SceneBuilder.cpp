@@ -1,6 +1,6 @@
 #include "SceneBuilder.h"
 
-Scene* SceneBuilder::LoadScene(string fileName, Geometry cubeGeometry, Material noSpecMaterial)
+Scene* SceneBuilder::BuildScene(string fileName, Geometry cubeGeometry, Material noSpecMaterial)
 {
 	//Load the file
 	std::ifstream inFile(fileName);
@@ -36,7 +36,7 @@ Scene* SceneBuilder::LoadScene(string fileName, Geometry cubeGeometry, Material 
 	while (gameObjectNode)
 	{
 		// Initalise the new gameobject
-		GameObject* gameObject = new GameObject(string(root->first_attribute("type")->value()), cubeGeometry, noSpecMaterial);
+		GameObject* gameObject = new GameObject(string(gameObjectNode->first_attribute("type")->value()), cubeGeometry, noSpecMaterial);
 
 		// Set the gameobjects position
 		xml_node<>* positionNode = gameObjectNode->first_node("Position");
@@ -46,18 +46,18 @@ Scene* SceneBuilder::LoadScene(string fileName, Geometry cubeGeometry, Material 
 
 		// Set the gameobjects scale
 		xml_node<>* scaleNode = gameObjectNode->first_node("Scale");
-		gameObject->SetPosition((float)atof(scaleNode->first_attribute("x")->value()),
+		gameObject->SetScale((float)atof(scaleNode->first_attribute("x")->value()),
 								(float)atof(scaleNode->first_attribute("y")->value()),
 								(float)atof(scaleNode->first_attribute("z")->value()));
 
 		// Set the gameobjects rotation
 		xml_node<>* rotationNode = gameObjectNode->first_node("Rotation");
-		gameObject->SetPosition((float)atof(rotationNode->first_attribute("x")->value()),
+		gameObject->SetRotation((float)atof(rotationNode->first_attribute("x")->value()),
 								(float)atof(rotationNode->first_attribute("y")->value()),
 								(float)atof(rotationNode->first_attribute("z")->value()));
 
 		// Set the gameobjects textures
-		gameObject->SetTextures(TextureManager::_pTextureList[string(root->first_attribute("texture")->value())].get());
+		gameObject->SetTextures(TextureManager::_pTextureList[string(gameObjectNode->first_attribute("texture")->value())].get());
 
 		// Add the gameobject to the scene
 		scene->AddGameObject(gameObject);

@@ -68,8 +68,9 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 	InitCamera();
 	InitTextures();
+
+	InitScene(cubeGeometry, noSpecMaterial, shinyMaterial);
 	InitLights(cubeGeometry, shinyMaterial);
-	InitGameObjectCubes(cubeGeometry, noSpecMaterial, shinyMaterial);
 
 	return S_OK;
 }
@@ -151,21 +152,15 @@ void Application::InitLights(Geometry geometry, Material material)
 	mSceneLights.push_back(greenLight);
 	mSceneLights.push_back(blueLight);
 
-	mGameObjects.push_back(whiteLight->GetLightCubeGO());
-	mGameObjects.push_back(redLight->GetLightCubeGO());
-	mGameObjects.push_back(greenLight->GetLightCubeGO());
-	mGameObjects.push_back(blueLight->GetLightCubeGO());
+	mScene->AddGameObject(whiteLight->GetLightCubeGO());
+	mScene->AddGameObject(redLight->GetLightCubeGO());
+	mScene->AddGameObject(greenLight->GetLightCubeGO());
+	mScene->AddGameObject(blueLight->GetLightCubeGO());
 }
 
-void Application::InitGameObjectCubes(Geometry cubeGeometry, Material noSpecMaterial, Material shinyMaterial)
+void Application::InitScene(Geometry cubeGeometry, Material noSpecMaterial, Material shinyMaterial)
 {
-	GameObject* gameObject = new GameObject("Floor", cubeGeometry, noSpecMaterial);
-	gameObject->SetPosition(0.0f, 0.0f, 0.0f);
-	gameObject->SetScale(5.0f, 5.0f, 5.0f);
-	gameObject->SetRotation(0.0f, 0.0f, 0.0f);
-	gameObject->SetTextures(TextureManager::_pTextureList["Floor Texture"].get());
-
-	mGameObjects.push_back(gameObject);
+	mScene = SceneBuilder::BuildScene("Scene.xml", cubeGeometry, noSpecMaterial);
 }
 
 void Application::InitInputLayouts()
@@ -401,14 +396,11 @@ void Application::Cleanup()
 		}
 	}
 
-	for (auto gameObject : mGameObjects)
+	if (mScene)
 	{
-		if (gameObject)
-		{
-			delete gameObject;
-			gameObject = nullptr;
-		}
-	}
+		delete mScene;
+		mScene = nullptr;
+	}	
 
 	if (mCamera)
 	{
@@ -532,10 +524,7 @@ void Application::Update(float deltaTime)
 #pragma region Update Game Objects
 
 	// Update objects
-	for (auto gameObject : mGameObjects)
-	{
-		gameObject->Update(timeSinceStart, deltaTime);
-	}
+	mScene->Update(timeSinceStart, deltaTime);
 
 #pragma endregion
 
@@ -563,7 +552,7 @@ void Application::Draw()
 
 	ConstantBuffer cb;
 
-	cb.World = XMMatrixTranspose(mGameObjects.at(0)->GetWorldMatrix());
+	cb.World = XMMatrixTranspose(mScene->GetGameObject(0)->GetWorldMatrix());
 	cb.View = XMMatrixTranspose(viewMatrix);
 	cb.Projection = XMMatrixTranspose(projectionMatrix);
 
@@ -592,7 +581,7 @@ void Application::Draw()
 		cb.selfShadowOn = 0.0f;
 	}
 
-	ShaderManager::ExecuteShadersInOrder(&cb, mSceneLights, mGameObjects);
+	ShaderManager::ExecuteShadersInOrder(&cb, mSceneLights, mScene->GetGameObjects());
 
 	ImGui::Render();
 
