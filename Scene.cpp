@@ -4,6 +4,9 @@
 
 Scene::Scene(string name) : mSceneName(name)
 {
+	XMFLOAT3 eye = XMFLOAT3(35.0f, 15.0f, -35.0f);
+	mSceneCamera = new SceneCamera(0.01f, 200.0f, DX11AppHelper::_pRenderWidth, DX11AppHelper::_pRenderHeight);
+	mSceneCamera->SetPosition(eye);
 }
 
 
@@ -26,10 +29,18 @@ Scene::~Scene()
 			go = nullptr;
 		}
 	}
+
+	if (mSceneCamera)
+	{
+		delete mSceneCamera;
+		mSceneCamera = nullptr;
+	}
 }
 
 void Scene::Update(float timeSinceStart, float deltaTime)
 {
+	mSceneCamera->UpdateCameraView();
+
 	for (auto go : mGameObjects)
 	{
 		go->Update(timeSinceStart, deltaTime);
@@ -84,4 +95,9 @@ void Scene::UpdateLightControls(float deltaTime)
 	{
 		mSceneLights.at(3)->SetLightOn(false);
 	}
+}
+
+void Scene::OnMouseMove(float x, float y)
+{
+	mSceneCamera->OnMouseMove(x, y);
 }

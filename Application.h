@@ -13,11 +13,8 @@
 #include <memory>
 
 #include "Structures.h"
-#include "SceneCamera.h"
 #include "DDSTextureLoader.h"
-#include "GameObject.h"
 #include "SceneBuilder.h"
-#include "SceneLight.h"
 #include "RenderToTextureProcess.h"
 #include "TextureManager.h"
 #include "DX11AppHelper.h"
@@ -53,7 +50,5 @@ private:
 	Light GetLightFromSceneLight(SceneLight* light);
 
 	Scene*						mScene;
-
-	SceneCamera*				mCamera;
 };
 

@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "SceneLight.h"
+#include "SceneCamera.h"
 #include "GUIHandler.h"
 
 using namespace std;
@@ -24,10 +25,14 @@ public:
 	vector<SceneLight*> GetSceneLights() { return mSceneLights; }
 	SceneLight* GetSceneLight(int index) { return mSceneLights.at(index); }
 
+	void OnMouseMove(float x, float y);
+	SceneCamera* GetCamera() { return mSceneCamera; }
+
 private:
 	void UpdateLightControls(float deltaTime);
 
 	string						mSceneName;
+	SceneCamera*				mSceneCamera;
 	vector<GameObject*>			mGameObjects;
 	vector<SceneLight*>			mSceneLights;
 };

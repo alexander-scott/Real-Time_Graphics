@@ -66,24 +66,11 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	noSpecMaterial.specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	noSpecMaterial.specularPower = 0.0f;
 
-	InitCamera();
 	InitTextures();
 
 	InitScene(cubeGeometry, noSpecMaterial, shinyMaterial);
 
 	return S_OK;
-}
-
-void Application::InitCamera()
-{
-	// Setup Camera
-	XMFLOAT3 eye = XMFLOAT3(35.0f, 15.0f, -35.0f);
-	XMFLOAT3 at = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	XMFLOAT3 up = XMFLOAT3(0.0f, 1.0f, 0.0f);
-
-	mCamera = new SceneCamera(0.01f, 200.0f, DX11AppHelper::_pRenderWidth, DX11AppHelper::_pRenderHeight);
-
-	mCamera->SetPosition(eye);
 }
 
 void Application::InitTextures()
@@ -333,12 +320,6 @@ void Application::Cleanup()
 		delete mScene;
 		mScene = nullptr;
 	}	
-
-	if (mCamera)
-	{
-		delete mCamera;
-		mCamera = nullptr;
-	}
 }
 
 Light Application::GetLightFromSceneLight(SceneLight* light)
@@ -381,7 +362,7 @@ void Application::Update(float deltaTime)
 		POINT p;
 		GetCursorPos(&p);
 
-		mCamera->OnMouseMove(p.x, p.y);
+		mScene->OnMouseMove(p.x, p.y);
 	}
 
 	// Update our time
@@ -395,12 +376,6 @@ void Application::Update(float deltaTime)
 
 	timeSinceStart = (dwTimeCur - dwTimeStart) / 1000.0f;
 
-#pragma region Update Camera
-
-	mCamera->UpdateCameraView();
-
-#pragma endregion
-
 	// Update scene
 	mScene->Update(timeSinceStart, deltaTime);
 }
@@ -410,8 +385,8 @@ void Application::Draw()
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;
 
-	viewMatrix = XMLoadFloat4x4(&mCamera->GetViewMatrix());
-	projectionMatrix = XMLoadFloat4x4(&mCamera->GetProjectionMatrix());
+	viewMatrix = XMLoadFloat4x4(&mScene->GetCamera()->GetViewMatrix());
+	projectionMatrix = XMLoadFloat4x4(&mScene->GetCamera()->GetProjectionMatrix());
 
 	ConstantBuffer cb;
 
@@ -428,7 +403,7 @@ void Application::Draw()
 	cb.lights[2] = GetLightFromSceneLight(mScene->GetSceneLight(2));
 	cb.lights[3] = GetLightFromSceneLight(mScene->GetSceneLight(3));
 
-	cb.EyePosW = mCamera->GetPosition3f();
+	cb.EyePosW = mScene->GetCamera()->GetPosition3f();
 	cb.HasTexture = 0.0f;
 	cb.HasNormalMap = 0.0f;
 	cb.HasHeightMap = 0.0f;
