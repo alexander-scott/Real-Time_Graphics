@@ -322,26 +322,6 @@ void Application::Cleanup()
 	}	
 }
 
-Light Application::GetLightFromSceneLight(SceneLight* light)
-{
-	Light newLight;
-
-	XMMATRIX lightView = XMLoadFloat4x4(&light->GetView());
-	XMMATRIX lightProjection = XMLoadFloat4x4(&light->GetProjection());
-
-	newLight.View =					XMMatrixTranspose(lightView);
-	newLight.Projection =			XMMatrixTranspose(lightProjection);
-	newLight.AmbientLight =			light->GetAmbientLight();
-	newLight.DiffuseLight =			light->GetDiffuseLight();
-	newLight.SpecularLight =		light->GetSpecularLight();
-	newLight.SpecularPower =		light->GetSpecularPower();
-	newLight.LightVecW =			light->GetLightVecW();
-	newLight.paddingLightAmount =	light->GetPaddingLightAmount();
-	newLight.lightOn =				light->GetLightOn();
-
-	return newLight;
-}
-
 bool Application::HandleKeyboard(MSG msg, float deltaTime)
 {
 	if (GetAsyncKeyState(VK_ESCAPE))
@@ -398,10 +378,10 @@ void Application::Draw()
 	cb.surface.DiffuseMtrl = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	cb.surface.SpecularMtrl = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	cb.lights[0] = GetLightFromSceneLight(mScene->GetSceneLight(0));
-	cb.lights[1] = GetLightFromSceneLight(mScene->GetSceneLight(1));
-	cb.lights[2] = GetLightFromSceneLight(mScene->GetSceneLight(2));
-	cb.lights[3] = GetLightFromSceneLight(mScene->GetSceneLight(3));
+	cb.lights[0] = mScene->GetSceneLight(0)->GetLight();
+	cb.lights[1] = mScene->GetSceneLight(1)->GetLight();
+	cb.lights[2] = mScene->GetSceneLight(2)->GetLight();
+	cb.lights[3] = mScene->GetSceneLight(3)->GetLight();
 
 	cb.EyePosW = mScene->GetCamera()->GetPosition3f();
 	cb.HasTexture = 0.0f;

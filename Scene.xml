@@ -7,9 +7,25 @@ X postive is right. Y postive is up.
 <Scene name="1">
   <GameObject type="Floor" texture="Floor Texture">
     <Position x="0" y="0" z="0"></Position>
-    <Scale x="5" y="5" z="5"></Scale>
+    <Scale x="5" y="0.1" z="5"></Scale>
     <Rotation x="0" y="0" z="0"></Rotation>
   </GameObject>
+  <GameObject type="Floor" texture="Floor Texture">
+    <Position x="0" y="0" z="10"></Position>
+    <Scale x="5" y="0.1" z="5"></Scale>
+    <Rotation x="0" y="0" z="0"></Rotation>
+  </GameObject>
+  <GameObject type="Floor" texture="Floor Texture">
+    <Position x="10" y="0" z="0"></Position>
+    <Scale x="5" y="0.1" z="5"></Scale>
+    <Rotation x="0" y="0" z="0"></Rotation>
+  </GameObject>
+  <GameObject type="Floor" texture="Floor Texture">
+    <Position x="10" y="0" z="10"></Position>
+    <Scale x="5" y="0.1" z="5"></Scale>
+    <Rotation x="0" y="0" z="0"></Rotation>
+  </GameObject>
+
   <SceneLight type="White Light" texture="White Texture">
     <AmbientLight x="0.5" y="0.5" z="0.5" w="1.0"></AmbientLight>
     <DiffuseLight x="1.0" y="1.0" z="1.0" w="1.0"></DiffuseLight>

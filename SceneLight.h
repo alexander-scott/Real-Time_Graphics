@@ -36,6 +36,7 @@ public:
 
 #pragma endregion
 
+	Light GetLight();
 
 #pragma region Get/Set Functions
 

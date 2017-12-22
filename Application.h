@@ -47,8 +47,6 @@ private:
 	void InitTextures();
 	void InitScene(Geometry cubeGeometry, Material noSpecMaterial, Material shinyMaterial);
 	
-	Light GetLightFromSceneLight(SceneLight* light);
-
 	Scene*						mScene;
 };
 
