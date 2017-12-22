@@ -17,6 +17,7 @@ public:
 
 	string GetSceneName() { return mSceneName; }
 
+	void AddGameObjects(vector<GameObject*> gos) { mGameObjects.insert(mGameObjects.end(), gos.begin(), gos.end()); }
 	void AddGameObject(GameObject* go) { mGameObjects.push_back(go); }
 	vector<GameObject*> GetGameObjects() { return mGameObjects; }
 	GameObject* GetGameObject(int index) { return mGameObjects.at(index); }

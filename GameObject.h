@@ -39,6 +39,7 @@ public:
 	bool HasHeightMap() const { return mHeightMap ? true : false; }
 
 	void SetParent(GameObject* parent) { mParent = parent; }
+	void AddChild(GameObject* child) { mChildren.push_back(child); }
 
 	void Update(float t, float deltaTime);
 	void Draw(ID3D11DeviceContext* pImmediateContext);
