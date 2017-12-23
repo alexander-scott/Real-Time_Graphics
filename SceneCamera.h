@@ -37,35 +37,28 @@ public:
 	XMFLOAT3 GetPosition3f()const { return mCameraPos; }
 	void SetPosition(float x, float y, float z);
 	void SetPosition(const XMFLOAT3& v);
-	
-	// Get camera basis vectors.
-	XMFLOAT3 GetUp3f()const { return mCameraUpDir; }
 
-	XMFLOAT4X4 GetViewMatrix()const;
-	XMFLOAT4X4 GetProjectionMatrix()const;
+	XMFLOAT4X4 GetViewMatrix()const { return mViewMatrix; }
+	XMFLOAT4X4 GetProjectionMatrix()const { return mProjectionMatrix; }
 
 	void OnMouseMove(int x, int y);
 
 	void UpdateCameraView();
 
 private:
-	// Strafe/Walk the camera a distance d.
-	void Strafe(float d);
-	void Walk(float d);
-
 	// Set frustum.
 	void CreateProjectionMatrix();
 
 	float mCameraPitch = 0;
 	float mCameraYaw = 0;
 
+	float moveLeftRight = 0.0f;
+	float moveBackForward = 0.0f;
+
 	POINT mLastMousePos;
 
 	// Camera coordinate system with coordinates relative to world space.
 	XMFLOAT3 mCameraPos = { 0.0f, 0.0f, 0.0f };
-	XMFLOAT3 mCameraRightDir = { 1.0f, 0.0f, 0.0f };
-	XMFLOAT3 mCameraUpDir = { 0.0f, 1.0f, 0.0f };
-	XMFLOAT3 mCameraForwardDir = { 0.0f, 0.0f, 1.0f };
 
 	// Cache frustum properties.
 	float mNearZ = 0.0f;

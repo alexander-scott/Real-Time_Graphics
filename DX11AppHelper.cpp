@@ -91,7 +91,7 @@ HRESULT DX11AppHelper::InitWindow(HINSTANCE hInstance, int nCmdShow)
 	_hInst = hInstance;
 	RECT rc = { 0, 0, _pRenderWidth, _pRenderHeight };
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-	_hWnd = CreateWindow(L"TutorialWindowClass", L"FGGC Semester 2 Framework", WS_OVERLAPPEDWINDOW,
+	_hWnd = CreateWindow(L"TutorialWindowClass", L"Real-Time Graphics for Games", WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, hInstance,
 		nullptr);
 	if (!_hWnd)

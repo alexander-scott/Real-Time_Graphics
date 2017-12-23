@@ -13,11 +13,39 @@ using namespace DirectX;
 #pragma region Consts
 
 static constexpr float kCameraLookSpeed = 0.25f; // Default 0.25f
-static constexpr float kCameraMoveSpeed = 0.03f; // Default 0.03f
+static constexpr float kCameraMoveSpeed = 0.5f; // Default 0.5f
 
 static constexpr float kPI = 3.1415926535f;
 static constexpr float kCameraRadius = 45.0f;
-static constexpr float kCameraMaxPitch = 1.570796327f;
+static constexpr float kCameraMaxPitch = 1.2566370616f;
+
+#pragma endregion
+
+#pragma region Useful Functions
+
+inline XMVECTOR XMFLOAT3ToXMVECTOR(XMFLOAT3& val)
+{
+	return XMLoadFloat3(&val);
+}
+
+inline XMFLOAT3 XMVECTORToXMFLOAT3(XMVECTOR& vec)
+{
+	XMFLOAT3 val;
+	XMStoreFloat3(&val, vec);
+	return val;
+}
+
+inline XMMATRIX XMFLOAT4X4ToXMMATRIX(XMFLOAT4X4& val)
+{
+	return XMLoadFloat4x4(&val);
+}
+
+inline XMFLOAT4X4 XMMATRIXToXMFLOAT4X4(XMMATRIX& matrix)
+{
+	XMFLOAT4X4 val;
+	XMStoreFloat4x4(&val, matrix);
+	return val;
+}
 
 #pragma endregion
 

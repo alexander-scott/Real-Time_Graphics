@@ -13,10 +13,8 @@ SceneCamera::SceneCamera(float nearDepth, float farDepth, float windowWidth, flo
 	mNearZ = nearDepth;
 	mFarZ = farDepth;
 
-	mCameraForwardDir = XMFLOAT3(0, 0, -1);
-	mCameraUpDir = XMFLOAT3(0, 1, 0);
-
 	UpdateCameraView();
+	CreateProjectionMatrix();
 }
 
 SceneCamera::~SceneCamera()
@@ -33,6 +31,7 @@ void SceneCamera::SetPosition(const XMFLOAT3& v)
 	mCameraPos = v;
 }
 
+// This function needs to be called if the window size changes
 void SceneCamera::CreateProjectionMatrix()
 {
 	mNearWindowHeight = 2.0f * mNearZ * tanf(0.5f*mFovY);
@@ -42,79 +41,43 @@ void SceneCamera::CreateProjectionMatrix()
 	XMStoreFloat4x4(&mProjectionMatrix, P);
 }
 
-XMFLOAT4X4 SceneCamera::GetViewMatrix()const
-{
-	return mViewMatrix;
-}
-
-XMFLOAT4X4 SceneCamera::GetProjectionMatrix()const
-{
-	return mProjectionMatrix;
-}
-
-void SceneCamera::Strafe(float d)
-{
-	// mPosition += d*mRight
-
-	XMVECTOR speed = XMVectorReplicate(d);
-	XMVECTOR rightDir = XMLoadFloat3(&mCameraRightDir);
-	XMVECTOR position = XMLoadFloat3(&mCameraPos);
-	XMStoreFloat3(&mCameraPos, XMVectorMultiplyAdd(speed, rightDir, position));
-}
-
-void SceneCamera::Walk(float d)
-{
-	// mPosition += d*mLook
-
-	XMVECTOR speed = XMVectorReplicate(d);
-	XMVECTOR forwardDir = XMLoadFloat3(&mCameraForwardDir);
-	XMVECTOR position = XMLoadFloat3(&mCameraPos);
-	XMStoreFloat3(&mCameraPos, XMVectorMultiplyAdd(speed, forwardDir, position));
-}
-
 void SceneCamera::OnMouseMove(int x, int y)
 {
 	// If right mouse button pressed
 	if (GetAsyncKeyState(MK_RBUTTON))
 	{
 		// Pitch
-		mCameraPitch = mCameraPitch - XMConvertToRadians(kCameraLookSpeed*static_cast<float>(y - mLastMousePos.y));
+		mCameraPitch = mCameraPitch + XMConvertToRadians(kCameraLookSpeed*static_cast<float>(y - mLastMousePos.y));
 		// Yaw
-		mCameraYaw = mCameraYaw - XMConvertToRadians(kCameraLookSpeed*static_cast<float>(x - mLastMousePos.x));
+		mCameraYaw = mCameraYaw + XMConvertToRadians(kCameraLookSpeed*static_cast<float>(x - mLastMousePos.x));
 
 		// Don't let the user look too far up or down
-		mCameraPitch = min(kCameraMaxPitch / 16, mCameraPitch);
-		mCameraPitch = max(-kCameraMaxPitch * 2, mCameraPitch);
+		mCameraPitch = min(kCameraMaxPitch, mCameraPitch);
+		mCameraPitch = max(-kCameraMaxPitch, mCameraPitch);
 
 		// If the user looks too far left or right reset it so can continue moving in that direction allowing for 360 degree movement
-		if (mCameraYaw > kPI)
+		/*if (mCameraYaw > kPI)
 			mCameraYaw -= kPI * 2;
 		else if (mCameraYaw <= -kPI)
-			mCameraYaw += kPI * 2;
+			mCameraYaw += kPI * 2;*/
 
 		if (GetAsyncKeyState(VK_UP))
 		{
-			Walk(kCameraMoveSpeed);
+			moveBackForward += kCameraMoveSpeed;
 		}
 		else if (GetAsyncKeyState(VK_DOWN))
 		{
-			Walk(-kCameraMoveSpeed);
+			moveBackForward -= kCameraMoveSpeed;
 		}
 
 		if (GetAsyncKeyState(VK_LEFT))
 		{
-			Strafe(-kCameraMoveSpeed * 30);
+			moveLeftRight -= kCameraMoveSpeed;
 		}
 		else if (GetAsyncKeyState(VK_RIGHT))
 		{
-			Strafe(kCameraMoveSpeed * 30);
+			moveLeftRight += kCameraMoveSpeed;
 		}
-
-		// Recalculate the right direction vector
-		XMVECTOR lookAt = XMLoadFloat3(&mCameraForwardDir);
-		XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-		XMVECTOR right = XMVector3Normalize(XMVector3Cross(up, lookAt));
-		XMStoreFloat3(&mCameraRightDir, right);
 	}
 
 	mLastMousePos.x = x;
@@ -123,17 +86,38 @@ void SceneCamera::OnMouseMove(int x, int y)
 
 void SceneCamera::UpdateCameraView()
 {
-	mCameraForwardDir.x = kCameraRadius*sinf(mCameraPitch)*cosf(mCameraYaw);
-	mCameraForwardDir.z = kCameraRadius*sinf(mCameraPitch)*sinf(mCameraYaw);
-	mCameraForwardDir.y = kCameraRadius*cosf(mCameraPitch);
+	// Generate a rotation matrix based on the current pitch and yaw of the camera
+	XMMATRIX camRotationMatrix = XMMatrixRotationRollPitchYaw(mCameraPitch, mCameraYaw, 0);
 
-	// Build the view matrix.
-	XMVECTOR pos = XMVectorSet(mCameraPos.x, mCameraPos.y, mCameraPos.z, 1.0f);
-	XMVECTOR target = XMVectorSet(mCameraForwardDir.x, mCameraForwardDir.y, mCameraForwardDir.z, 1.0f);
-	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	// Calculate the target by multiplying the default forward vector by the rotation matrix
+	XMVECTOR camTarget = XMVector3TransformCoord(XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f), camRotationMatrix);
+	camTarget = XMVector3Normalize(camTarget);
 
-	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-	XMStoreFloat4x4(&mViewMatrix, view);
+	// Generate a rotation matrix just based on yaw
+	XMMATRIX rotateYTempMatrix;
+	rotateYTempMatrix = XMMatrixRotationY(mCameraYaw);
 
-	CreateProjectionMatrix();
+	// Calculate the right, forward and up vectors by multiplying their defaults vectors by the rotation matrix
+	XMVECTOR camRight = XMVector3TransformCoord(XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f), rotateYTempMatrix);
+	XMVECTOR camForward = XMVector3TransformCoord(XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f), rotateYTempMatrix);
+	XMVECTOR camUp = XMVector3TransformCoord(XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f), rotateYTempMatrix);
+	
+	// Load the stored camera pos in as a vector
+	XMVECTOR camPos = XMLoadFloat3(&mCameraPos);
+
+	// Move the position forward/back or left/right depending on user input
+	camPos += moveLeftRight * camRight;
+	camPos += moveBackForward * camTarget; // CHANGE THIS TO camForward TO ENABLE WALKING
+
+	moveLeftRight = 0.0f;
+	moveBackForward = 0.0f;
+
+	// Move the target by the change in position
+	camTarget = camPos + camTarget;
+
+	// Store the new camera position
+	XMStoreFloat3(&mCameraPos, camPos);
+
+	// Generate and store the new view matrix based on the camera position and target and up vectors
+	XMStoreFloat4x4(&mViewMatrix, XMMatrixLookAtLH(camPos, camTarget, camUp));
 }
