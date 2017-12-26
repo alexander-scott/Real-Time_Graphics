@@ -38,6 +38,10 @@ public:
 	void SetPosition(float x, float y, float z);
 	void SetPosition(const XMFLOAT3& v);
 
+	XMVECTOR GetRightDirection() { return camRight; }
+	XMVECTOR GetUpDirection() { return camForward; }
+	XMVECTOR GetForwardDirection() { return camForward; }
+
 	XMFLOAT4X4 GetViewMatrix()const { return mViewMatrix; }
 	XMFLOAT4X4 GetProjectionMatrix()const { return mProjectionMatrix; }
 
@@ -59,6 +63,11 @@ private:
 
 	// Camera coordinate system with coordinates relative to world space.
 	XMFLOAT3 mCameraPos = { 0.0f, 0.0f, 0.0f };
+
+	// Direction vectors
+	XMVECTOR camRight;
+	XMVECTOR camForward;
+	XMVECTOR camUp;
 
 	// Cache frustum properties.
 	float mNearZ = 0.0f;

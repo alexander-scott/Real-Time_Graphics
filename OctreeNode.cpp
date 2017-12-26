@@ -178,7 +178,7 @@ void OctreeNode::SetValues(float baseLengthVal, float minSizeVal, XMFLOAT3 cente
 
 void OctreeNode::SetChildNodes(std::vector<OctreeNode*> childNodes)
 {
-	if (mChildNodes.size() != 8)
+	if (childNodes.size() != 8)
 	{
 		return;
 	}
@@ -207,8 +207,14 @@ void OctreeNode::SubAdd(OctreeItem obj)
 			{
 				OctreeItem existingObj = mObjects[i];
 				bestFitChild = BestFitChild(existingObj);
+
+				mChildNodes[bestFitChild]->SubAdd(existingObj);
+				mObjects.erase(mObjects.begin() + i);
 			}
 		}
+
+		bestFitChild = BestFitChild(obj);
+		mChildNodes[bestFitChild]->SubAdd(obj);
 	}
 }
 
@@ -322,10 +328,96 @@ bool OctreeNode::IntersectsBounds(Bounds bounds1, Bounds bounds2)
 	{
 		return true;
 	}
+
 	return false;
+}
+
+bool OctreeNode::IntersectsBounds(Bounds bounds1, XMFLOAT3 rayOrigin, XMFLOAT3 rayDir)
+{
+	float tmin = (bounds1.Min.x - rayOrigin.x) / rayDir.x;
+	float tmax = (bounds1.Max.x - rayOrigin.x) / rayDir.x;
+
+	if (tmin > tmax) swap(tmin, tmax);
+
+	/*float tymin = (bounds1.Min.y - rayOrigin.y) / rayDir.y;
+	float tymax = (bounds1.Max.y - rayOrigin.y) / rayDir.y;
+
+	if (tymin > tymax) swap(tymin, tymax);
+
+	if ((tmin > tymax) || (tymin > tmax))
+		return false;
+
+	if (tymin > tmin)
+		tmin = tymin;
+
+	if (tymax < tmax)
+		tmax = tymax;*/
+
+	float tzmin = (bounds1.Min.z - rayOrigin.z) / rayDir.z;
+	float tzmax = (bounds1.Max.z - rayOrigin.z) / rayDir.z;
+
+	if (tzmin > tzmax) swap(tzmin, tzmax);
+
+	if ((tmin > tzmax) || (tzmin > tmax))
+		return false;
+
+	if (tzmin > tmin)
+		tmin = tzmin;
+
+	if (tzmax < tmax)
+		tmax = tzmax;
+
+	return true;
 }
 
 int OctreeNode::BestFitChild(OctreeItem obj)
 {
-	return (obj.GameObject->GetPosition().x <= mOrigin.x ? 0 : 1) + (obj.GameObject->GetPosition().y >= mOrigin.y ? 0 : 4) + (obj.GameObject->GetPosition().z <= mOrigin.z ? 0 : 2);
+	int xVal = (obj.GameObject->GetPosition().x <= mOrigin.x ? 0 : 1);
+	int yVal = (obj.GameObject->GetPosition().y >= mOrigin.y ? 0 : 4);
+	int zVal = (obj.GameObject->GetPosition().z <= mOrigin.z ? 0 : 2);
+	return xVal + yVal + zVal;
+}
+
+void OctreeNode::GetGameObjectsInBounds(std::vector<GameObject*> &gameObjects, Bounds b)
+{
+	for (auto go : mObjects)
+	{
+		if (IntersectsBounds(go.Bounds, b))
+		{
+			gameObjects.push_back(go.GameObject);
+		}
+	}
+
+	if (mChildNodes.size() != 0)
+	{
+		for (auto node : mChildNodes)
+		{
+			if (IntersectsBounds(node->mNodeBounds, b))
+			{
+				node->GetGameObjectsInBounds(gameObjects, b);
+			}
+		}
+	}
+}
+
+void OctreeNode::GetGameObjectsInRay(std::vector<GameObject*> &gameObjects, XMFLOAT3 rayOrigin, XMFLOAT3 rayDir)
+{
+	for (auto go : mObjects)
+	{
+		if (IntersectsBounds(go.Bounds, rayOrigin, rayDir))
+		{
+			gameObjects.push_back(go.GameObject);
+		}
+	}
+
+	if (mChildNodes.size() != 0)
+	{
+		for (auto node : mChildNodes)
+		{
+			if (IntersectsBounds(node->mNodeBounds, rayOrigin, rayDir))
+			{
+				node->GetGameObjectsInRay(gameObjects, rayOrigin, rayDir);
+			}
+		}
+	}
 }

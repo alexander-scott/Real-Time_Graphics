@@ -12,6 +12,9 @@ public:
 	void Add(OctreeItem obj);
 	bool Remove(OctreeItem obj);
 
+	std::vector<GameObject*> GetGameObjectsInBounds(Bounds b);
+	std::vector<GameObject*> GetGameObjectsInRay(XMFLOAT3 rayOrigin, XMFLOAT3 rayDir);
+
 private:
 	void Grow(XMFLOAT3 direction);
 	void Shrink();

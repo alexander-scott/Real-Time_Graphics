@@ -22,6 +22,9 @@ public:
 	void SetChildNodes(std::vector<OctreeNode*> childNodes);
 	OctreeNode* ShrinkOctree(float minSideLength);
 
+	void GetGameObjectsInBounds(std::vector<GameObject*> &gameObjects, Bounds b);
+	void GetGameObjectsInRay(std::vector<GameObject*> &gameObjects, XMFLOAT3 rayOrigin, XMFLOAT3 rayDir);
+
 	XMFLOAT3					mOrigin;
 	float						mNodeSideLength;
 
@@ -37,6 +40,7 @@ private:
 	void MergeNodes();
 
 	bool IntersectsBounds(Bounds bounds1, Bounds bounds2);
+	bool IntersectsBounds(Bounds bounds1, XMFLOAT3 rayOrigin, XMFLOAT3 rayDir);
 	int BestFitChild(OctreeItem obj);
 
 	float						mMinimumNodeSize;

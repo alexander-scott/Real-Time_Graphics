@@ -42,6 +42,8 @@ bool GUIHandler::_pDOFActive = false;
 
 bool GUIHandler::_pSelfShadingOn = true;
 
+bool GUIHandler::_pTestButton = false;
+
 ImGuiIO& GUIHandler::io = ImGui::GetIO();
 
 #pragma endregion
@@ -201,6 +203,12 @@ void GUIHandler::UpdateGUI()
 			_pShadowMappingOn = false;
 		}
 	}
+
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	ImGui::Checkbox("Text Button", &_pTestButton);
 }
 
 void GUIHandler::ResetBlurOptions()

@@ -50,6 +50,8 @@ public:
 
 	static bool _pSelfShadingOn;
 
+	static bool _pTestButton;
+
 	static ImGuiIO& io;
 
 private:

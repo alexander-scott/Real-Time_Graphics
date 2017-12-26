@@ -4,7 +4,7 @@
 #include "SceneLight.h"
 #include "SceneCamera.h"
 #include "GUIHandler.h"
-#include "OctreeNode.h"
+#include "Octree.h"
 
 using namespace std;
 
@@ -18,8 +18,8 @@ public:
 
 	string GetSceneName() { return mSceneName; }
 
-	void AddGameObjects(vector<GameObject*> gos) { mGameObjects.insert(mGameObjects.end(), gos.begin(), gos.end()); }
-	void AddGameObject(GameObject* go) { mGameObjects.push_back(go); }
+	void AddGameObjects(vector<GameObject*> gos);
+	void AddGameObject(GameObject* go);
 	vector<GameObject*> GetGameObjects() { return mGameObjects; }
 	GameObject* GetGameObject(int index) { return mGameObjects.at(index); }
 
@@ -36,6 +36,8 @@ private:
 
 	string						mSceneName;
 	SceneCamera*				mSceneCamera;
+	Octree*						mOctree;
+
 	vector<GameObject*>			mGameObjects;
 	vector<SceneLight*>			mSceneLights;
 };

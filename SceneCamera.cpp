@@ -98,9 +98,9 @@ void SceneCamera::UpdateCameraView()
 	rotateYTempMatrix = XMMatrixRotationY(mCameraYaw);
 
 	// Calculate the right, forward and up vectors by multiplying their defaults vectors by the rotation matrix
-	XMVECTOR camRight = XMVector3TransformCoord(XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f), rotateYTempMatrix);
-	XMVECTOR camForward = XMVector3TransformCoord(XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f), rotateYTempMatrix);
-	XMVECTOR camUp = XMVector3TransformCoord(XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f), rotateYTempMatrix);
+	camRight = XMVector3TransformCoord(XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f), rotateYTempMatrix);
+	camForward = XMVector3TransformCoord(XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f), rotateYTempMatrix);
+	camUp = XMVector3TransformCoord(XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f), rotateYTempMatrix);
 	
 	// Load the stored camera pos in as a vector
 	XMVECTOR camPos = XMLoadFloat3(&mCameraPos);
