@@ -16,14 +16,17 @@ public:
 	OctreeNode(float baseLengthVal, float minSizeVal, XMFLOAT3 centerVal);
 	~OctreeNode();
 
-private:
 	bool AddObject(OctreeItem obj);
 	bool RemoveObject(OctreeItem obj);
 
+	void SetChildNodes(std::vector<OctreeNode*> childNodes);
 	OctreeNode* ShrinkOctree(float minSideLength);
 
+	XMFLOAT3					mOrigin;
+	float						mNodeSideLength;
+
+private:
 	void SetValues(float baseLengthVal, float minSizeVal, XMFLOAT3 centerVal);
-	void SetChildNodes(std::vector<OctreeNode*> childNodes);
 	void SubAdd(OctreeItem obj);
 
 	void Split();
@@ -35,9 +38,6 @@ private:
 
 	bool IntersectsBounds(Bounds bounds1, Bounds bounds2);
 	int BestFitChild(OctreeItem obj);
-
-	XMFLOAT3					mOrigin;
-	float						mNodeSideLength;
 
 	float						mMinimumNodeSize;
 	Bounds						mNodeBounds;
