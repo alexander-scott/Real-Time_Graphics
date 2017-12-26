@@ -4,6 +4,7 @@
 #include "SceneLight.h"
 #include "SceneCamera.h"
 #include "GUIHandler.h"
+#include "OctreeNode.h"
 
 using namespace std;
 
@@ -25,6 +26,7 @@ public:
 	void AddSceneLight(SceneLight* sl) { mSceneLights.push_back(sl); mGameObjects.push_back(sl); }
 	vector<SceneLight*> GetSceneLights() { return mSceneLights; }
 	SceneLight* GetSceneLight(int index) { return mSceneLights.at(index); }
+	float GetSceneLightsCount() { return mSceneLights.size(); }
 
 	void OnMouseMove(float x, float y);
 	SceneCamera* GetCamera() { return mSceneCamera; }

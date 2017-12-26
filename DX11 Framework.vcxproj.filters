@@ -121,6 +121,9 @@
     <ClInclude Include="SceneLight.h">
       <Filter>Scene\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="OctreeNode.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -172,6 +175,9 @@
     </ClCompile>
     <ClCompile Include="SceneLight.cpp">
       <Filter>Scene\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="OctreeNode.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
