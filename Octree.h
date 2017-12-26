@@ -14,6 +14,7 @@ public:
 
 	std::vector<GameObject*> GetGameObjectsInBounds(Bounds b);
 	std::vector<GameObject*> GetGameObjectsInRay(XMFLOAT3 rayOrigin, XMFLOAT3 rayDir);
+	std::vector<GameObject*> GetGameObjectsInFrustums(std::vector<XMFLOAT4>& frustums);
 
 private:
 	void Grow(XMFLOAT3 direction);

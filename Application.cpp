@@ -399,7 +399,7 @@ void Application::Draw()
 		cb.selfShadowOn = 0.0f;
 	}
 
-	ShaderManager::ExecuteShadersInOrder(&cb, mScene->GetSceneLights(), mScene->GetGameObjects());
+	ShaderManager::ExecuteShadersInOrder(&cb, mScene->GetSceneLights(), mScene->GetGameObjectsInFrustum());
 
 	ImGui::Render();
 

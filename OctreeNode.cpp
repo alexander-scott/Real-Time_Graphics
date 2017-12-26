@@ -370,6 +370,51 @@ bool OctreeNode::IntersectsBounds(Bounds bounds1, XMFLOAT3 rayOrigin, XMFLOAT3 r
 	return true;
 }
 
+bool OctreeNode::IntersectsBounds(Bounds bounds1, std::vector<XMFLOAT4>& frustums)
+{
+	bool intersects = true;
+
+	// Loop through each frustum plane
+	for (int planeID = 0; planeID < 6; ++planeID)
+	{
+		XMVECTOR planeNormal = XMVectorSet(frustums[planeID].x, frustums[planeID].y, frustums[planeID].z, 0.0f);
+		float planeConstant = frustums[planeID].w;
+
+		// Check each axis (x,y,z) to get the AABB vertex furthest away from the direction the plane is facing (plane normal)
+		XMFLOAT3 axisVert;
+
+		// x-axis
+		if (frustums[planeID].x < 0.0f)    // Which AABB vertex is furthest down (plane normals direction) the x axis
+			axisVert.x = mNodeBounds.Min.x; // min x plus tree positions x
+		else
+			axisVert.x = mNodeBounds.Max.x; // max x plus tree positions x
+
+											// y-axis
+		if (frustums[planeID].y < 0.0f)    // Which AABB vertex is furthest down (plane normals direction) the y axis
+			axisVert.y = mNodeBounds.Min.y; // min y plus tree positions y
+		else
+			axisVert.y = mNodeBounds.Max.y; // max y plus tree positions y
+
+											// z-axis
+		if (frustums[planeID].z < 0.0f)    // Which AABB vertex is furthest down (plane normals direction) the z axis
+			axisVert.z = mNodeBounds.Min.z; // min z plus tree positions z
+		else
+			axisVert.z = mNodeBounds.Max.z; // max z plus tree positions z
+
+											// Now we get the signed distance from the AABB vertex that's furthest down the frustum planes normal,
+											// and if the signed distance is negative, then the entire bounding box is behind the frustum plane, which means
+											// that it should be culled
+		if (XMVectorGetX(XMVector3Dot(planeNormal, XMLoadFloat3(&axisVert))) + planeConstant < 0.0f)
+		{
+			intersects = false;
+			// Skip remaining planes to check and move on to next tree
+			break;
+		}
+	}
+
+	return intersects;
+}
+
 int OctreeNode::BestFitChild(OctreeItem obj)
 {
 	int xVal = (obj.GameObject->GetPosition().x <= mOrigin.x ? 0 : 1);
@@ -417,6 +462,28 @@ void OctreeNode::GetGameObjectsInRay(std::vector<GameObject*> &gameObjects, XMFL
 			if (IntersectsBounds(node->mNodeBounds, rayOrigin, rayDir))
 			{
 				node->GetGameObjectsInRay(gameObjects, rayOrigin, rayDir);
+			}
+		}
+	}
+}
+
+void OctreeNode::GetGameObjectsInFrustum(std::vector<GameObject*>& gameObjects, std::vector<XMFLOAT4>& frustums)
+{
+	for (auto go : mObjects)
+	{
+		if (IntersectsBounds(go.Bounds, frustums))
+		{
+			gameObjects.push_back(go.GameObject);
+		}
+	}
+
+	if (mChildNodes.size() != 0)
+	{
+		for (auto node : mChildNodes)
+		{
+			if (IntersectsBounds(node->mNodeBounds, frustums))
+			{
+				node->GetGameObjectsInFrustum(gameObjects, frustums);
 			}
 		}
 	}

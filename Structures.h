@@ -19,7 +19,7 @@ static constexpr float kPI = 3.1415926535f;
 static constexpr float kCameraRadius = 45.0f;
 static constexpr float kCameraMaxPitch = 1.2566370616f;
 
-static constexpr float kOctreeNodeMaxObjects = 15;
+static constexpr float kOctreeNodeMaxObjects = 10;
 
 #pragma endregion
 

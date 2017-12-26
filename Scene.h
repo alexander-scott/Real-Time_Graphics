@@ -31,6 +31,8 @@ public:
 	void OnMouseMove(float x, float y);
 	SceneCamera* GetCamera() { return mSceneCamera; }
 
+	std::vector<GameObject*> GetGameObjectsInFrustum() { return mOctree->GetGameObjectsInFrustums(mSceneCamera->GetFrustumPlanes()); }
+
 private:
 	void UpdateLightControls(float deltaTime);
 

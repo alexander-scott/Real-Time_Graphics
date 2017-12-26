@@ -45,6 +45,8 @@ public:
 	XMFLOAT4X4 GetViewMatrix()const { return mViewMatrix; }
 	XMFLOAT4X4 GetProjectionMatrix()const { return mProjectionMatrix; }
 
+	std::vector<XMFLOAT4> GetFrustumPlanes();
+
 	void OnMouseMove(int x, int y);
 
 	void UpdateCameraView();

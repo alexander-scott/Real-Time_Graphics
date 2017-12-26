@@ -55,11 +55,14 @@ void Scene::Update(float timeSinceStart, float deltaTime)
 		std::vector<GameObject*> gameobjs = mOctree->GetGameObjectsInBounds(b);
 		int count = gameobjs.size();*/
 
-		XMFLOAT3 dir, pos;
+		/*XMFLOAT3 dir, pos;
 		XMStoreFloat3(&pos, mSceneCamera->GetPosition());
 		XMStoreFloat3(&dir, mSceneCamera->GetForwardDirection());
 		std::vector<GameObject*> gameobjs = mOctree->GetGameObjectsInRay(pos, dir);
-		int count = gameobjs.size();
+		int count = gameobjs.size();*/
+
+		/*std::vector<GameObject*> gameobjs = mOctree->GetGameObjectsInFrustums(mSceneCamera->GetFrustumPlanes());
+		int count = gameobjs.size();*/
 	}
 }
 
