@@ -18,6 +18,9 @@ public:
 	void SetScale(float x, float y, float z) { mScale.x = x; mScale.y = y; mScale.z = z; }
 	void SetRotation(float x, float y, float z) { mRotation.x = x; mRotation.y = y; mRotation.z = z; }
 
+	XMFLOAT3 GetPosition() { return mPosition; }
+	XMFLOAT3 GetScale() { return mScale; }
+
 	// Getters for object details
 	string GetType() const { return mType; }
 	Geometry GetGeometryData() const { return mGeometry; }
