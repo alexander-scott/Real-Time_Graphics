@@ -103,7 +103,7 @@ int Octree::GetRootPosIndex(int xDir, int yDir, int zDir)
 	return result;
 }
 
-std::vector<GameObject*> Octree::GetGameObjectsInBounds(Bounds b)
+std::vector<GameObject*> Octree::GetGameObjectsInBounds(BoundingBox b)
 {
 	std::vector<GameObject*> returnVector;
 	mRootNode->GetGameObjectsInBounds(returnVector, b);
@@ -114,5 +114,12 @@ std::vector<GameObject*> Octree::GetGameObjectsInRay(XMFLOAT3 rayOrigin, XMFLOAT
 {
 	std::vector<GameObject*> returnVector;
 	mRootNode->GetGameObjectsInRay(returnVector, rayOrigin, rayDir);
+	return returnVector;
+}
+
+std::vector<GameObject*> Octree::GetGameObjectsInFrustums(std::vector<XMFLOAT4>& frustums)
+{
+	std::vector<GameObject*> returnVector;
+	mRootNode->GetGameObjectsInFrustum(returnVector, frustums);
 	return returnVector;
 }

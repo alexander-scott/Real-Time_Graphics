@@ -29,15 +29,29 @@ public:
 	float GetSceneLightsCount() { return mSceneLights.size(); }
 
 	void OnMouseMove(float x, float y);
-	SceneCamera* GetCamera() { return mSceneCamera; }
+	SceneCamera* GetRenderCamera() 
+	{ 
+		if (mFlyCameraActive)
+			return mSceneCameraFly;
+		else
+			return mSceneCameraWalk;
+	}
+
+	std::vector<GameObject*> GetGameObjectsInFrustumOctree();
+	std::vector<GameObject*> GetGameObjectsInFrustum();
 
 private:
 	void UpdateLightControls(float deltaTime);
 
 	string						mSceneName;
-	SceneCamera*				mSceneCamera;
+	SceneCamera*				mSceneCameraWalk;
+	SceneCamera*				mSceneCameraFly;
 	Octree*						mOctree;
 
 	vector<GameObject*>			mGameObjects;
 	vector<SceneLight*>			mSceneLights;
+	vector<OctreeItem>			mGameObjects2;
+
+	bool						mFlyCameraActive;
+	bool						mSwitchCameraPressed;
 };

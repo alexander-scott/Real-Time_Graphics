@@ -4,6 +4,7 @@
 #include <d3d11_1.h>
 #include <d3dcompiler.h>
 #include <directxmath.h>
+#include <DirectXCollision.h>
 #include <directxcolors.h>
 #include <string>
 
@@ -19,7 +20,7 @@ static constexpr float kPI = 3.1415926535f;
 static constexpr float kCameraRadius = 45.0f;
 static constexpr float kCameraMaxPitch = 1.2566370616f;
 
-static constexpr float kOctreeNodeMaxObjects = 15;
+static constexpr float kOctreeNodeMaxObjects = 10;
 
 #pragma endregion
 
@@ -135,34 +136,6 @@ struct SMConstantBuffer
 	XMMATRIX World;
 	XMMATRIX View;
 	XMMATRIX Projection;
-};
-
-struct Bounds
-{
-public:
-	XMFLOAT3 Centre; // The center of the bounding box.
-	XMFLOAT3 Extents; // The extents of the Bounding Box. This is always half of the size of the Bounds.
-	XMFLOAT3 Max; // The maximal point of the box. This is always equal to center+extents.
-	XMFLOAT3 Min; // The minimal point of the box. This is always equal to center-extents.
-	XMFLOAT3 Size; // The total size of the box. This is always twice as large as the extents.
-
-	Bounds()
-	{
-		Centre = XMFLOAT3(0.0f, 0.0f, 0.0f);
-		Extents = XMFLOAT3(0.0f, 0.0f, 0.0f);
-		Max = XMFLOAT3(0.0f, 0.0f, 0.0f);
-		Min = XMFLOAT3(0.0f, 0.0f, 0.0f);
-		Size = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	}
-
-	Bounds(XMFLOAT3 origin, XMFLOAT3 actualBoundsSize)
-	{
-		Centre = origin;
-		Size = actualBoundsSize;
-		Extents = XMFLOAT3(Size.x / 2, Size.y / 2, Size.z / 2);
-		Max = XMFLOAT3(Centre.x + Extents.x, Centre.y + Extents.y, Centre.z + Extents.z);
-		Min = XMFLOAT3(Centre.x - Extents.x, Centre.y - Extents.y, Centre.z - Extents.z);
-	}
 };
 
 #pragma endregion

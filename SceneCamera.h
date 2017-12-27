@@ -29,7 +29,7 @@ using namespace DirectX;
 class SceneCamera
 {
 public:
-	SceneCamera(float nearDepth, float farDepth, float windowWidth, float windowHeight);
+	SceneCamera(float nearDepth, float farDepth, float windowWidth, float windowHeight, bool canFly);
 	~SceneCamera();
 
 	// Get/Set world camera position.
@@ -42,8 +42,12 @@ public:
 	XMVECTOR GetUpDirection() { return camForward; }
 	XMVECTOR GetForwardDirection() { return camForward; }
 
-	XMFLOAT4X4 GetViewMatrix()const { return mViewMatrix; }
-	XMFLOAT4X4 GetProjectionMatrix()const { return mProjectionMatrix; }
+	XMMATRIX GetViewMatrix()const { return mViewMatrix; }
+	XMMATRIX GetProjectionMatrix()const { return mProjectionMatrix; }
+
+	BoundingFrustum GetBoundingFrustum();
+
+	std::vector<XMFLOAT4> GetFrustumPlanes();
 
 	void OnMouseMove(int x, int y);
 
@@ -77,13 +81,15 @@ private:
 	float mNearWindowHeight = 0.0f;
 	float mFarWindowHeight = 0.0f;
 
-	// Cache View/Proj matrices.
-	XMFLOAT4X4 mViewMatrix = Identity4x4();
-	XMFLOAT4X4 mProjectionMatrix = Identity4x4();
+	bool mCanFly;
 
-	XMFLOAT4X4 Identity4x4()
+	// Cache View/Proj matrices.
+	XMMATRIX mViewMatrix = Identity4x4();
+	XMMATRIX mProjectionMatrix = Identity4x4();
+
+	XMMATRIX Identity4x4()
 	{
-		static XMFLOAT4X4 I(
+		static XMMATRIX I(
 			1.0f, 0.0f, 0.0f, 0.0f,
 			0.0f, 1.0f, 0.0f, 0.0f,
 			0.0f, 0.0f, 1.0f, 0.0f,
