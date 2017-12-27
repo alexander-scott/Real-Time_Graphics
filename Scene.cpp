@@ -72,7 +72,7 @@ void Scene::AddGameObjects(vector<GameObject*> gos)
 	{
 		OctreeItem obj;
 		obj.GameObject = go;
-		obj.Bounds = Bounds(go->GetPosition(), XMFLOAT3(2 * go->GetScale().x, 2 * go->GetScale().y, 2 * go->GetScale().z));
+		obj.Bounds = BoundingBox(go->GetPosition(), XMFLOAT3(2 * go->GetScale().x, 2 * go->GetScale().y, 2 * go->GetScale().z));
 
 		mOctree->Add(obj);
 
@@ -85,7 +85,7 @@ void Scene::AddGameObject(GameObject * go)
 {
 	OctreeItem obj;
 	obj.GameObject = go;
-	obj.Bounds = Bounds(go->GetPosition(), XMFLOAT3(2 * go->GetScale().x, 2 * go->GetScale().y, 2 * go->GetScale().z));
+	obj.Bounds = BoundingBox(go->GetPosition(), XMFLOAT3(2 * go->GetScale().x, 2 * go->GetScale().y, 2 * go->GetScale().z));
 
 	mOctree->Add(obj);
 
@@ -165,21 +165,21 @@ std::vector<GameObject*> Scene::GetGameObjectsInFrustum()
 
 			// x-axis
 			if (frustums[planeID].x < 0.0f)    // Which AABB vertex is furthest down (plane normals direction) the x axis
-				axisVert.x = mGameObjects2[i].Bounds.Min.x; // min x plus tree positions x
+				axisVert.x = mGameObjects2[i].Bounds.Center.x - mGameObjects2[i].Bounds.Extents.x; // min x plus tree positions x
 			else
-				axisVert.x = mGameObjects2[i].Bounds.Max.x; // max x plus tree positions x
+				axisVert.x = mGameObjects2[i].Bounds.Center.x + mGameObjects2[i].Bounds.Extents.x; // max x plus tree positions x
 
-												// y-axis
+																		   // y-axis
 			if (frustums[planeID].y < 0.0f)    // Which AABB vertex is furthest down (plane normals direction) the y axis
-				axisVert.y = mGameObjects2[i].Bounds.Min.y; // min y plus tree positions y
+				axisVert.y = mGameObjects2[i].Bounds.Center.y - mGameObjects2[i].Bounds.Extents.y; // min y plus tree positions y
 			else
-				axisVert.y = mGameObjects2[i].Bounds.Max.y; // max y plus tree positions y
+				axisVert.y = mGameObjects2[i].Bounds.Center.y + mGameObjects2[i].Bounds.Extents.y; // max y plus tree positions y
 
-												// z-axis
+																		   // z-axis
 			if (frustums[planeID].z < 0.0f)    // Which AABB vertex is furthest down (plane normals direction) the z axis
-				axisVert.z = mGameObjects2[i].Bounds.Min.z; // min z plus tree positions z
+				axisVert.z = mGameObjects2[i].Bounds.Center.z - mGameObjects2[i].Bounds.Extents.z; // min z plus tree positions z
 			else
-				axisVert.z = mGameObjects2[i].Bounds.Max.z; // max z plus tree positions z
+				axisVert.z = mGameObjects2[i].Bounds.Center.z + mGameObjects2[i].Bounds.Extents.z; // max z plus tree positions z
 
 												// Now we get the signed distance from the AABB vertex that's furthest down the frustum planes normal,
 												// and if the signed distance is negative, then the entire bounding box is behind the frustum plane, which means

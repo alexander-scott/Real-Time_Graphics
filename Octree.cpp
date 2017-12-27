@@ -103,7 +103,7 @@ int Octree::GetRootPosIndex(int xDir, int yDir, int zDir)
 	return result;
 }
 
-std::vector<GameObject*> Octree::GetGameObjectsInBounds(Bounds b)
+std::vector<GameObject*> Octree::GetGameObjectsInBounds(BoundingBox b)
 {
 	std::vector<GameObject*> returnVector;
 	mRootNode->GetGameObjectsInBounds(returnVector, b);

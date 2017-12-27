@@ -12,7 +12,7 @@ public:
 	void Add(OctreeItem obj);
 	bool Remove(OctreeItem obj);
 
-	std::vector<GameObject*> GetGameObjectsInBounds(Bounds b);
+	std::vector<GameObject*> GetGameObjectsInBounds(BoundingBox b);
 	std::vector<GameObject*> GetGameObjectsInRay(XMFLOAT3 rayOrigin, XMFLOAT3 rayDir);
 	std::vector<GameObject*> GetGameObjectsInFrustums(std::vector<XMFLOAT4>& frustums);
 

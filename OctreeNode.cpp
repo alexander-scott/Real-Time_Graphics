@@ -112,7 +112,7 @@ OctreeNode * OctreeNode::ShrinkOctree(float minSideLength)
 
 	if (mChildNodes.size() == 0)
 	{
-		SetValues(mNodeSideLength / 2, mMinimumNodeSize, mChildNodeBounds[bestFit].Centre);
+		SetValues(mNodeSideLength / 2, mMinimumNodeSize, mChildNodeBounds[bestFit].Center);
 		return this;
 	}
 
@@ -126,7 +126,7 @@ void OctreeNode::SetValues(float baseLengthVal, float minSizeVal, XMFLOAT3 cente
 	mOrigin = centerVal;
 
 	mActualBoundsSize = XMFLOAT3(mNodeSideLength, mNodeSideLength, mNodeSideLength);
-	mNodeBounds = Bounds(mOrigin, mActualBoundsSize);
+	mNodeBounds = BoundingBox(mOrigin, mActualBoundsSize);
 
 	float quarter = mNodeSideLength / 4;
 	float childActualLength = mNodeSideLength / 2;
@@ -138,42 +138,42 @@ void OctreeNode::SetValues(float baseLengthVal, float minSizeVal, XMFLOAT3 cente
 	// 0
 	XMFLOAT3 temp = XMFLOAT3(-quarter, quarter, -quarter);
 	XMFLOAT3 newOrigin = XMFLOAT3(mOrigin.x + temp.x, mOrigin.y + temp.y, mOrigin.z + temp.z);
-	mChildNodeBounds.push_back(Bounds(newOrigin, childActualSize));
+	mChildNodeBounds.push_back(BoundingBox(newOrigin, childActualSize));
 
 	// 1
 	temp = XMFLOAT3(quarter, quarter, -quarter);
 	newOrigin = XMFLOAT3(mOrigin.x + temp.x, mOrigin.y + temp.y, mOrigin.z + temp.z);
-	mChildNodeBounds.push_back(Bounds(newOrigin, childActualSize));
+	mChildNodeBounds.push_back(BoundingBox(newOrigin, childActualSize));
 
 	// 2
 	temp = XMFLOAT3(-quarter, quarter, quarter);
 	newOrigin = XMFLOAT3(mOrigin.x + temp.x, mOrigin.y + temp.y, mOrigin.z + temp.z);
-	mChildNodeBounds.push_back(Bounds(newOrigin, childActualSize));
+	mChildNodeBounds.push_back(BoundingBox(newOrigin, childActualSize));
 
 	// 3
 	temp = XMFLOAT3(quarter, quarter, quarter);
 	newOrigin = XMFLOAT3(mOrigin.x + temp.x, mOrigin.y + temp.y, mOrigin.z + temp.z);
-	mChildNodeBounds.push_back(Bounds(newOrigin, childActualSize));
+	mChildNodeBounds.push_back(BoundingBox(newOrigin, childActualSize));
 
 	// 4
 	temp = XMFLOAT3(-quarter, -quarter, -quarter);
 	newOrigin = XMFLOAT3(mOrigin.x + temp.x, mOrigin.y + temp.y, mOrigin.z + temp.z);
-	mChildNodeBounds.push_back(Bounds(newOrigin, childActualSize));
+	mChildNodeBounds.push_back(BoundingBox(newOrigin, childActualSize));
 
 	// 5
 	temp = XMFLOAT3(quarter, -quarter, -quarter);
 	newOrigin = XMFLOAT3(mOrigin.x + temp.x, mOrigin.y + temp.y, mOrigin.z + temp.z);
-	mChildNodeBounds.push_back(Bounds(newOrigin, childActualSize));
+	mChildNodeBounds.push_back(BoundingBox(newOrigin, childActualSize));
 
 	// 6
 	temp = XMFLOAT3(-quarter, -quarter, quarter);
 	newOrigin = XMFLOAT3(mOrigin.x + temp.x, mOrigin.y + temp.y, mOrigin.z + temp.z);
-	mChildNodeBounds.push_back(Bounds(newOrigin, childActualSize));
+	mChildNodeBounds.push_back(BoundingBox(newOrigin, childActualSize));
 
 	// 7
 	temp = XMFLOAT3(quarter, -quarter, quarter);
 	newOrigin = XMFLOAT3(mOrigin.x + temp.x, mOrigin.y + temp.y, mOrigin.z + temp.z);
-	mChildNodeBounds.push_back(Bounds(newOrigin, childActualSize));
+	mChildNodeBounds.push_back(BoundingBox(newOrigin, childActualSize));
 }
 
 void OctreeNode::SetChildNodes(std::vector<OctreeNode*> childNodes)
@@ -320,11 +320,11 @@ void OctreeNode::MergeNodes()
 	mChildNodes.clear();
 }
 
-bool OctreeNode::IntersectsBounds(Bounds bounds1, Bounds bounds2)
+bool OctreeNode::IntersectsBounds(BoundingBox bounds1, BoundingBox bounds2)
 {
-	if ((bounds1.Min.x <= bounds2.Max.x && bounds1.Max.x >= bounds2.Min.x) &&
-		(bounds1.Min.y <= bounds2.Max.y && bounds1.Max.y >= bounds2.Min.y) &&
-		(bounds1.Min.z <= bounds2.Max.z && bounds1.Max.z >= bounds2.Min.z))
+	if ((bounds1.Center.x - bounds1.Extents.x <= bounds1.Center.x + bounds1.Extents.x && bounds1.Center.x + bounds1.Extents.x >= bounds1.Center.x - bounds1.Extents.x) &&
+		(bounds1.Center.y - bounds1.Extents.y <= bounds1.Center.y + bounds1.Extents.y && bounds1.Center.y + bounds1.Extents.y >= bounds1.Center.y - bounds1.Extents.y) &&
+		(bounds1.Center.z - bounds1.Extents.z <= bounds1.Center.z + bounds1.Extents.z && bounds1.Center.z + bounds1.Extents.z >= bounds1.Center.z - bounds1.Extents.z))
 	{
 		return true;
 	}
@@ -332,10 +332,10 @@ bool OctreeNode::IntersectsBounds(Bounds bounds1, Bounds bounds2)
 	return false;
 }
 
-bool OctreeNode::IntersectsBounds(Bounds bounds1, XMFLOAT3 rayOrigin, XMFLOAT3 rayDir)
+bool OctreeNode::IntersectsBounds(BoundingBox bounds1, XMFLOAT3 rayOrigin, XMFLOAT3 rayDir)
 {
-	float tmin = (bounds1.Min.x - rayOrigin.x) / rayDir.x;
-	float tmax = (bounds1.Max.x - rayOrigin.x) / rayDir.x;
+	float tmin = (bounds1.Center.x - bounds1.Extents.x - rayOrigin.x) / rayDir.x;
+	float tmax = (bounds1.Center.x + bounds1.Extents.x - rayOrigin.x) / rayDir.x;
 
 	if (tmin > tmax) swap(tmin, tmax);
 
@@ -353,8 +353,8 @@ bool OctreeNode::IntersectsBounds(Bounds bounds1, XMFLOAT3 rayOrigin, XMFLOAT3 r
 	if (tymax < tmax)
 		tmax = tymax;*/
 
-	float tzmin = (bounds1.Min.z - rayOrigin.z) / rayDir.z;
-	float tzmax = (bounds1.Max.z - rayOrigin.z) / rayDir.z;
+	float tzmin = (bounds1.Center.z - bounds1.Extents.z - rayOrigin.z) / rayDir.z;
+	float tzmax = (bounds1.Center.z + bounds1.Extents.z - rayOrigin.z) / rayDir.z;
 
 	if (tzmin > tzmax) swap(tzmin, tzmax);
 
@@ -370,7 +370,7 @@ bool OctreeNode::IntersectsBounds(Bounds bounds1, XMFLOAT3 rayOrigin, XMFLOAT3 r
 	return true;
 }
 
-bool OctreeNode::IntersectsBounds(Bounds bounds1, std::vector<XMFLOAT4>& frustums)
+bool OctreeNode::IntersectsBounds(BoundingBox bounds1, std::vector<XMFLOAT4>& frustums)
 {
 	bool intersects = true;
 
@@ -385,21 +385,21 @@ bool OctreeNode::IntersectsBounds(Bounds bounds1, std::vector<XMFLOAT4>& frustum
 
 		// x-axis
 		if (frustums[planeID].x < 0.0f)    // Which AABB vertex is furthest down (plane normals direction) the x axis
-			axisVert.x = mNodeBounds.Min.x; // min x plus tree positions x
+			axisVert.x = mNodeBounds.Center.x - mNodeBounds.Extents.x; // min x plus tree positions x
 		else
-			axisVert.x = mNodeBounds.Max.x; // max x plus tree positions x
+			axisVert.x = mNodeBounds.Center.x + mNodeBounds.Extents.x; // max x plus tree positions x
 
 											// y-axis
 		if (frustums[planeID].y < 0.0f)    // Which AABB vertex is furthest down (plane normals direction) the y axis
-			axisVert.y = mNodeBounds.Min.y; // min y plus tree positions y
+			axisVert.y = mNodeBounds.Center.y - mNodeBounds.Extents.y; // min y plus tree positions y
 		else
-			axisVert.y = mNodeBounds.Max.y; // max y plus tree positions y
+			axisVert.y = mNodeBounds.Center.y + mNodeBounds.Extents.y; // max y plus tree positions y
 
 											// z-axis
 		if (frustums[planeID].z < 0.0f)    // Which AABB vertex is furthest down (plane normals direction) the z axis
-			axisVert.z = mNodeBounds.Min.z; // min z plus tree positions z
+			axisVert.z = mNodeBounds.Center.z - mNodeBounds.Extents.z; // min z plus tree positions z
 		else
-			axisVert.z = mNodeBounds.Max.z; // max z plus tree positions z
+			axisVert.z = mNodeBounds.Center.z + mNodeBounds.Extents.z; // max z plus tree positions z
 
 											// Now we get the signed distance from the AABB vertex that's furthest down the frustum planes normal,
 											// and if the signed distance is negative, then the entire bounding box is behind the frustum plane, which means
@@ -423,7 +423,7 @@ int OctreeNode::BestFitChild(OctreeItem obj)
 	return xVal + yVal + zVal;
 }
 
-void OctreeNode::GetGameObjectsInBounds(std::vector<GameObject*> &gameObjects, Bounds b)
+void OctreeNode::GetGameObjectsInBounds(std::vector<GameObject*> &gameObjects, BoundingBox b)
 {
 	for (auto go : mObjects)
 	{
