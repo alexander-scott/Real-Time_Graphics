@@ -1,13 +1,13 @@
 #include "Scene.h"
 
-
-
 Scene::Scene(string name) : mSceneName(name)
 {
+	// Setup the walking camera
 	XMFLOAT3 eyeWalking = XMFLOAT3(0.0f, 10.0f, 0.0f);
 	mSceneCameraWalk = new SceneCamera(0.01f, 2000.0f, DX11AppHelper::_pRenderWidth, DX11AppHelper::_pRenderHeight, false);
 	mSceneCameraWalk->SetPosition(eyeWalking);
 
+	// Setup the flying camera
 	XMFLOAT3 eyeFly = XMFLOAT3(35.0f, 15.0f, -35.0f);
 	mSceneCameraFly = new SceneCamera(0.01f, 2000.0f, DX11AppHelper::_pRenderWidth, DX11AppHelper::_pRenderHeight, true);
 	mSceneCameraFly->SetPosition(eyeFly);
@@ -45,15 +45,18 @@ Scene::~Scene()
 
 void Scene::Update(float timeSinceStart, float deltaTime)
 {
-	mSceneCameraFly->UpdateCameraView();
-	mSceneCameraWalk->UpdateCameraView();
+	UpdateLightControls(deltaTime);
+
+	// Update the view matrix of the current render camera
+	if (mFlyCameraActive)
+		mSceneCameraFly->UpdateCameraViewMatrix();
+	else
+		mSceneCameraWalk->UpdateCameraViewMatrix();
 
 	for (auto go : mGameObjects)
 	{
 		go->Update(timeSinceStart, deltaTime);
 	}
-
-	UpdateLightControls(deltaTime);
 
 	for (auto sl : mSceneLights)
 	{
@@ -61,6 +64,7 @@ void Scene::Update(float timeSinceStart, float deltaTime)
 		sl->UpdateLight((float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight);
 	}
 
+	// This if statement can be used to test functionality through a GUI click event
 	if (GUIHandler::_pTestButton)
 	{
 		GUIHandler::_pTestButton = false;
@@ -112,41 +116,26 @@ void Scene::UpdateLightControls(float deltaTime)
 
 	// Toggle Lights ON/OFF
 	if (GUIHandler::_pWhiteLightOn)
-	{
 		mSceneLights.at(0)->SetLightOn(true);
-	}
 	else
-	{
 		mSceneLights.at(0)->SetLightOn(false);
-	}
 
 	if (GUIHandler::_pRedLightOn)
-	{
 		mSceneLights.at(1)->SetLightOn(true);
-	}
 	else
-	{
 		mSceneLights.at(1)->SetLightOn(false);
-	}
 
 	if (GUIHandler::_pGreenLightOn)
-	{
 		mSceneLights.at(2)->SetLightOn(true);
-	}
 	else
-	{
 		mSceneLights.at(2)->SetLightOn(false);
-	}
 
 	if (GUIHandler::_pBlueLightOn)
-	{
 		mSceneLights.at(3)->SetLightOn(true);
-	}
 	else
-	{
 		mSceneLights.at(3)->SetLightOn(false);
-	}
 
+	// If C is pressed swap the render camera
 	if (GetAsyncKeyState('C') && !mSwitchCameraPressed)
 	{
 		mSwitchCameraPressed = true;
@@ -166,14 +155,23 @@ void Scene::OnMouseMove(float x, float y)
 		mSceneCameraWalk->OnMouseMove(x, y);
 }
 
+SceneCamera * Scene::GetRenderCamera()
+{
+	if (mFlyCameraActive)
+		return mSceneCameraFly;
+	else
+		return mSceneCameraWalk;
+}
+
 std::vector<GameObject*> Scene::GetGameObjectsInFrustumOctree()
 {
-	return mOctree->GetGameObjectsInFrustums(mSceneCameraFly->GetFrustumPlanes());
+	//return mOctree->GetGameObjectsInFrustums(mSceneCameraFly->GetFrustumPlanes());
+	return std::vector<GameObject*>();
 }
 
 std::vector<GameObject*> Scene::GetGameObjectsInFrustum()
 {
-	std::vector<GameObject*> returnObjs;
+	std::vector<GameObject*> renderedObjs;
 
 	XMVECTOR detView = XMMatrixDeterminant(mSceneCameraWalk->GetViewMatrix());
 	XMMATRIX invView = XMMatrixInverse(&detView, mSceneCameraWalk->GetViewMatrix());
@@ -186,16 +184,23 @@ std::vector<GameObject*> Scene::GetGameObjectsInFrustum()
 		// View space to the object's local space.
 		XMMATRIX toLocal = XMMatrixMultiply(invView, invWorld);
 
+		// Get the walking cameras frustum
 		BoundingFrustum worldSpaceFrustum = mSceneCameraWalk->GetBoundingFrustum();
+
+		// Transform it to gameObject2[i]'s local space
 		BoundingFrustum localSpaceFrustum;
 		worldSpaceFrustum.Transform(localSpaceFrustum, toLocal);
+
+		// Move the frustum to the view matrix position
 		worldSpaceFrustum.Transform(localSpaceFrustum, invView);
 
+		// If the gameobject intersects the gameobjects bounds the it can be seen
 		if (localSpaceFrustum.Intersects(mGameObjects2[i].Bounds))
 		{
-			returnObjs.push_back(mGameObjects2[i].GameObject);
+			// Add it to the renderedObjects vector
+			renderedObjs.push_back(mGameObjects2[i].GameObject);
 		}
 	}
 
-	return returnObjs;
+	return renderedObjs;
 }

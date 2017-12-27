@@ -15,6 +15,7 @@ bool OctreeNode::AddObject(OctreeItem obj)
 	{
 		return false;
 	}
+
 	SubAdd(obj);
 	return true;
 }

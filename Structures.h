@@ -92,6 +92,26 @@ struct Light
 	float lightOn;
 };
 
+struct SceneLightData
+{
+public:
+	string		LightName;
+
+	XMFLOAT4X4	ViewMatrix;
+	XMFLOAT4X4	ProjectionMatrix;
+	XMFLOAT4X4	ShadowTransform;
+
+	XMFLOAT4	AmbientLight;
+	XMFLOAT4	DiffuseLight;
+	XMFLOAT4	SpecularLight;
+
+	float		SpecularPower;
+	XMFLOAT3	LightVecW;
+
+	XMFLOAT3	PaddingLightAmount;
+	float		LightOn;
+};
+
 struct Geometry
 {
 	ID3D11Buffer* vertexBuffer;

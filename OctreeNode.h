@@ -46,8 +46,8 @@ private:
 	int BestFitChild(OctreeItem obj);
 
 	float						mMinimumNodeSize;
-	BoundingBox						mNodeBounds;
-	std::vector<BoundingBox>			mChildNodeBounds;
+	BoundingBox					mNodeBounds;
+	std::vector<BoundingBox>	mChildNodeBounds;
 	XMFLOAT3					mActualBoundsSize;
 
 	std::vector<OctreeItem>		mObjects;

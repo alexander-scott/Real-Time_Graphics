@@ -117,11 +117,12 @@ void ShaderManager::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLight*
 	{
 		for (int i = 0; i < lights.size(); i++)
 		{
-			if (lights.at(i)->GetLightOn())
+			SceneLightData data = lights.at(i)->GetSceneLightData();
+			if (data.LightOn)
 			{
-				viewAsFloats = lights.at(i)->GetView();
-				projectionAsFloats = lights.at(i)->GetProjection();
-				shadowTransformAsFloats = lights.at(i)->GetShadowTransform();
+				viewAsFloats = data.ViewMatrix;
+				projectionAsFloats = data.ProjectionMatrix;
+				shadowTransformAsFloats = data.ShadowTransform;
 
 				view = XMLoadFloat4x4(&viewAsFloats);
 				projection = XMLoadFloat4x4(&projectionAsFloats);
@@ -130,7 +131,7 @@ void ShaderManager::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLight*
 				smCB.View = XMMatrixTranspose(view);
 				smCB.Projection = XMMatrixTranspose(projection);
 
-				string shaderName = lights.at(i)->GetLightName() + " Depth Map";
+				string shaderName = data.LightName + " Depth Map";
 
 				_pShaderList[shaderName].get()->RenderSceneDepthMap(DX11AppHelper::_pImmediateContext, gameObjects, DX11AppHelper::_pSMConstantBuffer, &smCB);
 			}

@@ -32,29 +32,24 @@ public:
 	SceneCamera(float nearDepth, float farDepth, float windowWidth, float windowHeight, bool canFly);
 	~SceneCamera();
 
-	// Get/Set world camera position.
-	XMVECTOR GetPosition()const { return XMLoadFloat3(&mCameraPos);	}
+	// Get position and view/proj matricies
 	XMFLOAT3 GetPosition3f()const { return mCameraPos; }
-	void SetPosition(float x, float y, float z);
-	void SetPosition(const XMFLOAT3& v);
-
-	XMVECTOR GetRightDirection() { return camRight; }
-	XMVECTOR GetUpDirection() { return camForward; }
-	XMVECTOR GetForwardDirection() { return camForward; }
-
 	XMMATRIX GetViewMatrix()const { return mViewMatrix; }
 	XMMATRIX GetProjectionMatrix()const { return mProjectionMatrix; }
 
-	BoundingFrustum GetBoundingFrustum();
+	// Get the bounding frustum of this camera
+	BoundingFrustum GetBoundingFrustum() { return BoundingFrustum(mProjectionMatrix); }
 
-	std::vector<XMFLOAT4> GetFrustumPlanes();
+	// Set camera position
+	void SetPosition(float x, float y, float z);
+	void SetPosition(const XMFLOAT3& v);
 
 	void OnMouseMove(int x, int y);
 
-	void UpdateCameraView();
+	void UpdateCameraViewMatrix();
 
 private:
-	// Set frustum.
+	// Create the cameras projection matrix
 	void CreateProjectionMatrix();
 
 	float mCameraPitch = 0;
@@ -68,11 +63,6 @@ private:
 	// Camera coordinate system with coordinates relative to world space.
 	XMFLOAT3 mCameraPos = { 0.0f, 0.0f, 0.0f };
 
-	// Direction vectors
-	XMVECTOR camRight;
-	XMVECTOR camForward;
-	XMVECTOR camUp;
-
 	// Cache frustum properties.
 	float mNearZ = 0.0f;
 	float mFarZ = 0.0f;
@@ -81,6 +71,7 @@ private:
 	float mNearWindowHeight = 0.0f;
 	float mFarWindowHeight = 0.0f;
 
+	// If the camera can fly or just walk
 	bool mCanFly;
 
 	// Cache View/Proj matrices.

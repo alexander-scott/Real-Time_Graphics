@@ -208,7 +208,7 @@ void GUIHandler::UpdateGUI()
 	ImGui::Separator();
 	ImGui::Spacing();
 
-	ImGui::Checkbox("Text Button", &_pTestButton);
+	ImGui::Checkbox("Test Button", &_pTestButton);
 }
 
 void GUIHandler::ResetBlurOptions()

@@ -207,7 +207,6 @@ HRESULT Application::InitRenderProcesses()
 
 	ShaderManager::_pShaderList["Basic Scene"].get()->AddSamplerState(_pSamplerLinear);
 
-
 	if (FAILED(ShaderManager::AddCommonShader("Pixel Scene", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Pixel SS.fx", InputLayoutManager::_pInputLayoutList["Layout 2"], DX11AppHelper::_pd3dDevice)))
 	{
 		return E_FAIL;
@@ -342,6 +341,7 @@ void Application::Update(float deltaTime)
 		POINT p;
 		GetCursorPos(&p);
 
+		// Send mouse move events to our camera so the camera's rotation gets updated
 		mScene->OnMouseMove(p.x, p.y);
 	}
 
@@ -378,10 +378,10 @@ void Application::Draw()
 	cb.surface.DiffuseMtrl = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	cb.surface.SpecularMtrl = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	cb.lights[0] = mScene->GetSceneLight(0)->GetLight();
-	cb.lights[1] = mScene->GetSceneLight(1)->GetLight();
-	cb.lights[2] = mScene->GetSceneLight(2)->GetLight();
-	cb.lights[3] = mScene->GetSceneLight(3)->GetLight();
+	cb.lights[0] = mScene->GetSceneLight(0)->BuildCBLight();
+	cb.lights[1] = mScene->GetSceneLight(1)->BuildCBLight();
+	cb.lights[2] = mScene->GetSceneLight(2)->BuildCBLight();
+	cb.lights[3] = mScene->GetSceneLight(3)->BuildCBLight();
 
 	cb.EyePosW = mScene->GetRenderCamera()->GetPosition3f();
 	cb.HasTexture = 0.0f;
@@ -391,13 +391,9 @@ void Application::Draw()
 	cb.screenHeight = DX11AppHelper::_pRenderHeight;
 
 	if (GUIHandler::_pSelfShadingOn)
-	{
 		cb.selfShadowOn = 1.0f;
-	}
 	else
-	{
 		cb.selfShadowOn = 0.0f;
-	}
 
 	ShaderManager::ExecuteShadersInOrder(&cb, mScene->GetSceneLights(), mScene->GetGameObjectsInFrustum());
 

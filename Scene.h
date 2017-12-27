@@ -16,27 +16,27 @@ public:
 
 	void Update(float timeSinceStart, float deltaTime);
 
-	string GetSceneName() { return mSceneName; }
-
+	// Add game objects to the scene from the scene builder
 	void AddGameObjects(vector<GameObject*> gos);
 	void AddGameObject(GameObject* go);
-	vector<GameObject*> GetGameObjects() { return mGameObjects; }
+
+	// Get a gameobject at a specific index
 	GameObject* GetGameObject(int index) { return mGameObjects.at(index); }
 
+	// Add a scene light to the sceen from the scene builder
 	void AddSceneLight(SceneLight* sl) { mSceneLights.push_back(sl); mGameObjects.push_back(sl); }
+
+	// Get scene lights
 	vector<SceneLight*> GetSceneLights() { return mSceneLights; }
 	SceneLight* GetSceneLight(int index) { return mSceneLights.at(index); }
-	float GetSceneLightsCount() { return mSceneLights.size(); }
 
+	// Called from the main windows message loop and used to update camera rotation based on mouse movement
 	void OnMouseMove(float x, float y);
-	SceneCamera* GetRenderCamera() 
-	{ 
-		if (mFlyCameraActive)
-			return mSceneCameraFly;
-		else
-			return mSceneCameraWalk;
-	}
 
+	// Get the current active render camera
+	SceneCamera* GetRenderCamera();
+
+	// Get all the game objects in a camera frustum
 	std::vector<GameObject*> GetGameObjectsInFrustumOctree();
 	std::vector<GameObject*> GetGameObjectsInFrustum();
 
