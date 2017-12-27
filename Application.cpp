@@ -365,8 +365,8 @@ void Application::Draw()
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;
 
-	viewMatrix = mScene->GetCamera()->GetViewMatrix();
-	projectionMatrix = mScene->GetCamera()->GetProjectionMatrix();
+	viewMatrix = mScene->GetRenderCamera()->GetViewMatrix();
+	projectionMatrix = mScene->GetRenderCamera()->GetProjectionMatrix();
 
 	ConstantBuffer cb;
 
@@ -383,7 +383,7 @@ void Application::Draw()
 	cb.lights[2] = mScene->GetSceneLight(2)->GetLight();
 	cb.lights[3] = mScene->GetSceneLight(3)->GetLight();
 
-	cb.EyePosW = mScene->GetCamera()->GetPosition3f();
+	cb.EyePosW = mScene->GetRenderCamera()->GetPosition3f();
 	cb.HasTexture = 0.0f;
 	cb.HasNormalMap = 0.0f;
 	cb.HasHeightMap = 0.0f;

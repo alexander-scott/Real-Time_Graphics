@@ -4,11 +4,18 @@
 
 Scene::Scene(string name) : mSceneName(name)
 {
-	XMFLOAT3 eye = XMFLOAT3(0.0f, 15.0f, 0.0f);
-	mSceneCamera = new SceneCamera(0.01f, 2000.0f, DX11AppHelper::_pRenderWidth, DX11AppHelper::_pRenderHeight);
-	mSceneCamera->SetPosition(eye);
+	XMFLOAT3 eyeWalking = XMFLOAT3(0.0f, 10.0f, 0.0f);
+	mSceneCameraWalk = new SceneCamera(0.01f, 2000.0f, DX11AppHelper::_pRenderWidth, DX11AppHelper::_pRenderHeight, false);
+	mSceneCameraWalk->SetPosition(eyeWalking);
+
+	XMFLOAT3 eyeFly = XMFLOAT3(35.0f, 15.0f, -35.0f);
+	mSceneCameraFly = new SceneCamera(0.01f, 2000.0f, DX11AppHelper::_pRenderWidth, DX11AppHelper::_pRenderHeight, true);
+	mSceneCameraFly->SetPosition(eyeFly);
 
 	mOctree = new Octree(100, XMFLOAT3(0, 0, 0), 25);
+
+	mFlyCameraActive = false;
+	mSwitchCameraPressed = false;
 }
 
 
@@ -23,16 +30,23 @@ Scene::~Scene()
 		}
 	}
 
-	if (mSceneCamera)
+	if (mSceneCameraWalk)
 	{
-		delete mSceneCamera;
-		mSceneCamera = nullptr;
+		delete mSceneCameraWalk;
+		mSceneCameraWalk = nullptr;
+	}
+
+	if (mSceneCameraFly)
+	{
+		delete mSceneCameraFly;
+		mSceneCameraFly = nullptr;
 	}
 }
 
 void Scene::Update(float timeSinceStart, float deltaTime)
 {
-	mSceneCamera->UpdateCameraView();
+	mSceneCameraFly->UpdateCameraView();
+	mSceneCameraWalk->UpdateCameraView();
 
 	for (auto go : mGameObjects)
 	{
@@ -132,24 +146,37 @@ void Scene::UpdateLightControls(float deltaTime)
 	{
 		mSceneLights.at(3)->SetLightOn(false);
 	}
+
+	if (GetAsyncKeyState('C') && !mSwitchCameraPressed)
+	{
+		mSwitchCameraPressed = true;
+		mFlyCameraActive = !mFlyCameraActive;
+	}
+	else if (!GetAsyncKeyState('C'))
+	{
+		mSwitchCameraPressed = false;
+	}
 }
 
 void Scene::OnMouseMove(float x, float y)
 {
-	mSceneCamera->OnMouseMove(x, y);
+	if (mFlyCameraActive)
+		mSceneCameraFly->OnMouseMove(x, y);
+	else
+		mSceneCameraWalk->OnMouseMove(x, y);
 }
 
 std::vector<GameObject*> Scene::GetGameObjectsInFrustumOctree()
 {
-	return mOctree->GetGameObjectsInFrustums(mSceneCamera->GetFrustumPlanes());
+	return mOctree->GetGameObjectsInFrustums(mSceneCameraFly->GetFrustumPlanes());
 }
 
 std::vector<GameObject*> Scene::GetGameObjectsInFrustum()
 {
 	std::vector<GameObject*> returnObjs;
 
-	XMVECTOR detView = XMMatrixDeterminant(mSceneCamera->GetViewMatrix());
-	XMMATRIX invView = XMMatrixInverse(&detView, mSceneCamera->GetViewMatrix());
+	XMVECTOR detView = XMMatrixDeterminant(mSceneCameraWalk->GetViewMatrix());
+	XMMATRIX invView = XMMatrixInverse(&detView, mSceneCameraWalk->GetViewMatrix());
 
 	for (int i = 0; i < mGameObjects2.size(); i++)
 	{
@@ -159,7 +186,7 @@ std::vector<GameObject*> Scene::GetGameObjectsInFrustum()
 		// View space to the object's local space.
 		XMMATRIX toLocal = XMMatrixMultiply(invView, invWorld);
 
-		BoundingFrustum worldSpaceFrustum = mSceneCamera->GetBoundingFrustum();
+		BoundingFrustum worldSpaceFrustum = mSceneCameraWalk->GetBoundingFrustum();
 		BoundingFrustum localSpaceFrustum;
 		worldSpaceFrustum.Transform(localSpaceFrustum, toLocal);
 		worldSpaceFrustum.Transform(localSpaceFrustum, invView);

@@ -6,12 +6,14 @@
 
 using namespace DirectX;
 
-SceneCamera::SceneCamera(float nearDepth, float farDepth, float windowWidth, float windowHeight)
+SceneCamera::SceneCamera(float nearDepth, float farDepth, float windowWidth, float windowHeight, bool canFly)
 {
 	mFovY = 0.25f * kPI;
 	mAspect = windowWidth / windowHeight;
 	mNearZ = nearDepth;
 	mFarZ = farDepth;
+
+	mCanFly = canFly;
 
 	UpdateCameraView();
 	CreateProjectionMatrix();
@@ -176,7 +178,10 @@ void SceneCamera::UpdateCameraView()
 
 	// Move the position forward/back or left/right depending on user input
 	camPos += moveLeftRight * camRight;
-	camPos += moveBackForward * camTarget; // CHANGE THIS TO camForward TO ENABLE WALKING
+	if (mCanFly)
+		camPos += moveBackForward * camTarget;
+	else
+		camPos += moveBackForward * camForward;
 
 	moveLeftRight = 0.0f;
 	moveBackForward = 0.0f;

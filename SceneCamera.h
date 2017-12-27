@@ -29,7 +29,7 @@ using namespace DirectX;
 class SceneCamera
 {
 public:
-	SceneCamera(float nearDepth, float farDepth, float windowWidth, float windowHeight);
+	SceneCamera(float nearDepth, float farDepth, float windowWidth, float windowHeight, bool canFly);
 	~SceneCamera();
 
 	// Get/Set world camera position.
@@ -80,6 +80,8 @@ private:
 	float mFovY = 0.0f;
 	float mNearWindowHeight = 0.0f;
 	float mFarWindowHeight = 0.0f;
+
+	bool mCanFly;
 
 	// Cache View/Proj matrices.
 	XMMATRIX mViewMatrix = Identity4x4();
