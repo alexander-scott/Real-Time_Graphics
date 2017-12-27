@@ -4,7 +4,7 @@
 
 Scene::Scene(string name) : mSceneName(name)
 {
-	XMFLOAT3 eye = XMFLOAT3(35.0f, 15.0f, -35.0f);
+	XMFLOAT3 eye = XMFLOAT3(0.0f, 15.0f, 0.0f);
 	mSceneCamera = new SceneCamera(0.01f, 2000.0f, DX11AppHelper::_pRenderWidth, DX11AppHelper::_pRenderHeight);
 	mSceneCamera->SetPosition(eye);
 
@@ -159,8 +159,10 @@ std::vector<GameObject*> Scene::GetGameObjectsInFrustum()
 		// View space to the object's local space.
 		XMMATRIX toLocal = XMMatrixMultiply(invView, invWorld);
 
+		BoundingFrustum worldSpaceFrustum = mSceneCamera->GetBoundingFrustum();
 		BoundingFrustum localSpaceFrustum;
-		mSceneCamera->GetBoundingFrustum().Transform(localSpaceFrustum, toLocal);
+		worldSpaceFrustum.Transform(localSpaceFrustum, toLocal);
+		worldSpaceFrustum.Transform(localSpaceFrustum, invView);
 
 		if (localSpaceFrustum.Intersects(mGameObjects2[i].Bounds))
 		{

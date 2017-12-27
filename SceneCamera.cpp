@@ -42,9 +42,7 @@ void SceneCamera::CreateProjectionMatrix()
 
 BoundingFrustum SceneCamera::GetBoundingFrustum()
 {
-	BoundingFrustum f;
-	BoundingFrustum::CreateFromMatrix(f, mProjectionMatrix);
-	return f;
+	return BoundingFrustum(mProjectionMatrix);
 }
 
 std::vector<XMFLOAT4> SceneCamera::GetFrustumPlanes()
