@@ -146,57 +146,27 @@ std::vector<GameObject*> Scene::GetGameObjectsInFrustumOctree()
 
 std::vector<GameObject*> Scene::GetGameObjectsInFrustum()
 {
-	auto frustums = mSceneCamera->GetFrustumPlanes();
-	std::vector<GameObject*> returnObjects;
+	std::vector<GameObject*> returnObjs;
 
-	bool cull = false;
+	XMVECTOR detView = XMMatrixDeterminant(mSceneCamera->GetViewMatrix());
+	XMMATRIX invView = XMMatrixInverse(&detView, mSceneCamera->GetViewMatrix());
 
 	for (int i = 0; i < mGameObjects2.size(); i++)
 	{
-		cull = false;
-		// Loop through each frustum plane
-		for (int planeID = 0; planeID < 6; ++planeID)
+		XMMATRIX W = mGameObjects2[i].GameObject->GetWorldMatrix();
+		XMMATRIX invWorld = XMMatrixInverse(&XMMatrixDeterminant(W), W);
+
+		// View space to the object's local space.
+		XMMATRIX toLocal = XMMatrixMultiply(invView, invWorld);
+
+		BoundingFrustum localSpaceFrustum;
+		mSceneCamera->GetBoundingFrustum().Transform(localSpaceFrustum, toLocal);
+
+		if (localSpaceFrustum.Intersects(mGameObjects2[i].Bounds))
 		{
-			XMVECTOR planeNormal = XMVectorSet(frustums[planeID].x, frustums[planeID].y, frustums[planeID].z, 0.0f);
-			float planeConstant = frustums[planeID].w;
-
-			// Check each axis (x,y,z) to get the AABB vertex furthest away from the direction the plane is facing (plane normal)
-			XMFLOAT3 axisVert;
-
-			// x-axis
-			if (frustums[planeID].x < 0.0f)    // Which AABB vertex is furthest down (plane normals direction) the x axis
-				axisVert.x = mGameObjects2[i].Bounds.Center.x - mGameObjects2[i].Bounds.Extents.x; // min x plus tree positions x
-			else
-				axisVert.x = mGameObjects2[i].Bounds.Center.x + mGameObjects2[i].Bounds.Extents.x; // max x plus tree positions x
-
-																		   // y-axis
-			if (frustums[planeID].y < 0.0f)    // Which AABB vertex is furthest down (plane normals direction) the y axis
-				axisVert.y = mGameObjects2[i].Bounds.Center.y - mGameObjects2[i].Bounds.Extents.y; // min y plus tree positions y
-			else
-				axisVert.y = mGameObjects2[i].Bounds.Center.y + mGameObjects2[i].Bounds.Extents.y; // max y plus tree positions y
-
-																		   // z-axis
-			if (frustums[planeID].z < 0.0f)    // Which AABB vertex is furthest down (plane normals direction) the z axis
-				axisVert.z = mGameObjects2[i].Bounds.Center.z - mGameObjects2[i].Bounds.Extents.z; // min z plus tree positions z
-			else
-				axisVert.z = mGameObjects2[i].Bounds.Center.z + mGameObjects2[i].Bounds.Extents.z; // max z plus tree positions z
-
-												// Now we get the signed distance from the AABB vertex that's furthest down the frustum planes normal,
-												// and if the signed distance is negative, then the entire bounding box is behind the frustum plane, which means
-												// that it should be culled
-			if (XMVectorGetX(XMVector3Dot(planeNormal, XMLoadFloat3(&axisVert))) + planeConstant < 0.0f)
-			{
-				cull = true;
-				// Skip remaining planes to check and move on to next tree
-				break;
-			}
-		}
-
-		if (!cull)
-		{
-			returnObjects.push_back(mGameObjects2[i].GameObject);
+			returnObjs.push_back(mGameObjects2[i].GameObject);
 		}
 	}
 
-	return returnObjects;
+	return returnObjs;
 }

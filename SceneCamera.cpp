@@ -37,58 +37,66 @@ void SceneCamera::CreateProjectionMatrix()
 	mNearWindowHeight = 2.0f * mNearZ * tanf(0.5f*mFovY);
 	mFarWindowHeight = 2.0f * mFarZ * tanf(0.5f*mFovY);
 
-	XMMATRIX P = XMMatrixPerspectiveFovLH(mFovY, mAspect, mNearZ, mFarZ);
-	XMStoreFloat4x4(&mProjectionMatrix, P);
+	mProjectionMatrix = XMMatrixPerspectiveFovLH(mFovY, mAspect, mNearZ, mFarZ);
+}
+
+BoundingFrustum SceneCamera::GetBoundingFrustum()
+{
+	BoundingFrustum f;
+	BoundingFrustum::CreateFromMatrix(f, mProjectionMatrix);
+	return f;
 }
 
 std::vector<XMFLOAT4> SceneCamera::GetFrustumPlanes()
 {
+	XMFLOAT4X4 viewMat = XMMATRIXToXMFLOAT4X4(mViewMatrix);
+
 	// x, y, z, and w represent A, B, C and D in the plane equation
 	// where ABC are the xyz of the planes normal, and D is the plane constant
 	std::vector<XMFLOAT4> tempFrustumPlane(6);
 
 	// Left Frustum Plane
 	// Add first column of the matrix to the fourth column
-	tempFrustumPlane[0].x = mViewMatrix._14 + mViewMatrix._11;
-	tempFrustumPlane[0].y = mViewMatrix._24 + mViewMatrix._21;
-	tempFrustumPlane[0].z = mViewMatrix._34 + mViewMatrix._31;
-	tempFrustumPlane[0].w = mViewMatrix._44 + mViewMatrix._41;
+	tempFrustumPlane[0].x = viewMat._14 + viewMat._11;
+	tempFrustumPlane[0].y = viewMat._24 + viewMat._21;
+	tempFrustumPlane[0].z = viewMat._34 + viewMat._31;
+	tempFrustumPlane[0].w = viewMat._44 + viewMat._41;
 
 	// Right Frustum Plane
 	// Subtract first column of matrix from the fourth column
-	tempFrustumPlane[1].x = mViewMatrix._14 - mViewMatrix._11;
-	tempFrustumPlane[1].y = mViewMatrix._24 - mViewMatrix._21;
-	tempFrustumPlane[1].z = mViewMatrix._34 - mViewMatrix._31;
-	tempFrustumPlane[1].w = mViewMatrix._44 - mViewMatrix._41;
+	tempFrustumPlane[1].x = viewMat._14 - viewMat._11;
+	tempFrustumPlane[1].y = viewMat._24 - viewMat._21;
+	tempFrustumPlane[1].z = viewMat._34 - viewMat._31;
+	tempFrustumPlane[1].w = viewMat._44 - viewMat._41;
 
 	// Top Frustum Plane
 	// Subtract second column of matrix from the fourth column
-	tempFrustumPlane[2].x = mViewMatrix._14 - mViewMatrix._12;
-	tempFrustumPlane[2].y = mViewMatrix._24 - mViewMatrix._22;
-	tempFrustumPlane[2].z = mViewMatrix._34 - mViewMatrix._32;
-	tempFrustumPlane[2].w = mViewMatrix._44 - mViewMatrix._42;
+	tempFrustumPlane[2].x = viewMat._14 - viewMat._12;
+	tempFrustumPlane[2].y = viewMat._24 - viewMat._22;
+	tempFrustumPlane[2].z = viewMat._34 - viewMat._32;
+	tempFrustumPlane[2].w = viewMat._44 - viewMat._42;
 
 	// Bottom Frustum Plane
 	// Add second column of the matrix to the fourth column
-	tempFrustumPlane[3].x = mViewMatrix._14 + mViewMatrix._12;
-	tempFrustumPlane[3].y = mViewMatrix._24 + mViewMatrix._22;
-	tempFrustumPlane[3].z = mViewMatrix._34 + mViewMatrix._32;
-	tempFrustumPlane[3].w = mViewMatrix._44 + mViewMatrix._42;
+	tempFrustumPlane[3].x = viewMat._14 + viewMat._12;
+	tempFrustumPlane[3].y = viewMat._24 + viewMat._22;
+	tempFrustumPlane[3].z = viewMat._34 + viewMat._32;
+	tempFrustumPlane[3].w = viewMat._44 + viewMat._42;
 
 	// Near Frustum Plane
 	// We could add the third column to the fourth column to get the near plane,
 	// but we don't have to do this because the third column IS the near plane
-	tempFrustumPlane[4].x = mViewMatrix._13;
-	tempFrustumPlane[4].y = mViewMatrix._23;
-	tempFrustumPlane[4].z = mViewMatrix._33;
-	tempFrustumPlane[4].w = mViewMatrix._43;
+	tempFrustumPlane[4].x = viewMat._13;
+	tempFrustumPlane[4].y = viewMat._23;
+	tempFrustumPlane[4].z = viewMat._33;
+	tempFrustumPlane[4].w = viewMat._43;
 
 	// Far Frustum Plane
 	// Subtract third column of matrix from the fourth column
-	tempFrustumPlane[5].x = mViewMatrix._14 - mViewMatrix._13;
-	tempFrustumPlane[5].y = mViewMatrix._24 - mViewMatrix._23;
-	tempFrustumPlane[5].z = mViewMatrix._34 - mViewMatrix._33;
-	tempFrustumPlane[5].w = mViewMatrix._44 - mViewMatrix._43;
+	tempFrustumPlane[5].x = viewMat._14 - viewMat._13;
+	tempFrustumPlane[5].y = viewMat._24 - viewMat._23;
+	tempFrustumPlane[5].z = viewMat._34 - viewMat._33;
+	tempFrustumPlane[5].w = viewMat._44 - viewMat._43;
 
 	// Normalize plane normals (A, B and C (xyz))
 	// Also take note that planes face inward
@@ -182,5 +190,5 @@ void SceneCamera::UpdateCameraView()
 	XMStoreFloat3(&mCameraPos, camPos);
 
 	// Generate and store the new view matrix based on the camera position and target and up vectors
-	XMStoreFloat4x4(&mViewMatrix, XMMatrixLookAtLH(camPos, camTarget, camUp));
+	mViewMatrix = XMMatrixLookAtLH(camPos, camTarget, camUp);
 }

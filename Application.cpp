@@ -365,8 +365,8 @@ void Application::Draw()
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;
 
-	viewMatrix = XMLoadFloat4x4(&mScene->GetCamera()->GetViewMatrix());
-	projectionMatrix = XMLoadFloat4x4(&mScene->GetCamera()->GetProjectionMatrix());
+	viewMatrix = mScene->GetCamera()->GetViewMatrix();
+	projectionMatrix = mScene->GetCamera()->GetProjectionMatrix();
 
 	ConstantBuffer cb;
 
