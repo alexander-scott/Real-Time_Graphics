@@ -165,7 +165,7 @@ SceneCamera * Scene::GetRenderCamera()
 
 std::vector<GameObject*> Scene::GetGameObjectsInFrustumOctree()
 {
-	return mOctree->GetGameObjectsInBoundingFrustum(mSceneCameraFly->GetBoundingFrustum());
+	return mOctree->GetGameObjectsInBoundingFrustum(mSceneCameraWalk->GetBoundingFrustum());
 }
 
 std::vector<GameObject*> Scene::GetGameObjectsInFrustum()

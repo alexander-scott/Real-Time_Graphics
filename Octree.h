@@ -14,7 +14,7 @@ public:
 
 	std::vector<GameObject*> GetGameObjectsInBounds(BoundingBox b);
 	std::vector<GameObject*> GetGameObjectsInRay(XMFLOAT3 rayOrigin, XMFLOAT3 rayDir);
-	std::vector<GameObject*> GetGameObjectsInBoundingFrustum(BoundingFrustum frustum);
+	std::vector<GameObject*> GetGameObjectsInBoundingFrustum(BoundingFrustum &frustum);
 
 private:
 	void Grow(XMFLOAT3 direction);

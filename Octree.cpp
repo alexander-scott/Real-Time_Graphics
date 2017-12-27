@@ -117,7 +117,7 @@ std::vector<GameObject*> Octree::GetGameObjectsInRay(XMFLOAT3 rayOrigin, XMFLOAT
 	return returnVector;
 }
 
-std::vector<GameObject*> Octree::GetGameObjectsInBoundingFrustum(BoundingFrustum frustum)
+std::vector<GameObject*> Octree::GetGameObjectsInBoundingFrustum(BoundingFrustum &frustum)
 {
 	std::vector<GameObject*> returnVector;
 	mRootNode->GetGameObjectsInFrustum(returnVector, frustum);
