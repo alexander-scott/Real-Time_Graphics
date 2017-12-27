@@ -5,7 +5,7 @@
 Scene::Scene(string name) : mSceneName(name)
 {
 	XMFLOAT3 eye = XMFLOAT3(35.0f, 15.0f, -35.0f);
-	mSceneCamera = new SceneCamera(0.01f, 200.0f, DX11AppHelper::_pRenderWidth, DX11AppHelper::_pRenderHeight);
+	mSceneCamera = new SceneCamera(0.01f, 2000.0f, DX11AppHelper::_pRenderWidth, DX11AppHelper::_pRenderHeight);
 	mSceneCamera->SetPosition(eye);
 
 	mOctree = new Octree(100, XMFLOAT3(0, 0, 0), 25);
@@ -72,11 +72,12 @@ void Scene::AddGameObjects(vector<GameObject*> gos)
 	{
 		OctreeItem obj;
 		obj.GameObject = go;
-		obj.Bounds = Bounds(go->GetPosition(), XMFLOAT3(10 * go->GetScale().x, 10 * go->GetScale().y, 10 * go->GetScale().z));
+		obj.Bounds = Bounds(go->GetPosition(), XMFLOAT3(2 * go->GetScale().x, 2 * go->GetScale().y, 2 * go->GetScale().z));
 
 		mOctree->Add(obj);
 
 		mGameObjects.push_back(go);
+		mGameObjects2.push_back(obj);
 	}
 }
 
@@ -84,7 +85,7 @@ void Scene::AddGameObject(GameObject * go)
 {
 	OctreeItem obj;
 	obj.GameObject = go;
-	obj.Bounds = Bounds(go->GetPosition(), XMFLOAT3(10 * go->GetScale().x, 10 * go->GetScale().y, 10 * go->GetScale().z));
+	obj.Bounds = Bounds(go->GetPosition(), XMFLOAT3(2 * go->GetScale().x, 2 * go->GetScale().y, 2 * go->GetScale().z));
 
 	mOctree->Add(obj);
 
@@ -136,4 +137,66 @@ void Scene::UpdateLightControls(float deltaTime)
 void Scene::OnMouseMove(float x, float y)
 {
 	mSceneCamera->OnMouseMove(x, y);
+}
+
+std::vector<GameObject*> Scene::GetGameObjectsInFrustumOctree()
+{
+	return mOctree->GetGameObjectsInFrustums(mSceneCamera->GetFrustumPlanes());
+}
+
+std::vector<GameObject*> Scene::GetGameObjectsInFrustum()
+{
+	auto frustums = mSceneCamera->GetFrustumPlanes();
+	std::vector<GameObject*> returnObjects;
+
+	bool cull = false;
+
+	for (int i = 0; i < mGameObjects2.size(); i++)
+	{
+		cull = false;
+		// Loop through each frustum plane
+		for (int planeID = 0; planeID < 6; ++planeID)
+		{
+			XMVECTOR planeNormal = XMVectorSet(frustums[planeID].x, frustums[planeID].y, frustums[planeID].z, 0.0f);
+			float planeConstant = frustums[planeID].w;
+
+			// Check each axis (x,y,z) to get the AABB vertex furthest away from the direction the plane is facing (plane normal)
+			XMFLOAT3 axisVert;
+
+			// x-axis
+			if (frustums[planeID].x < 0.0f)    // Which AABB vertex is furthest down (plane normals direction) the x axis
+				axisVert.x = mGameObjects2[i].Bounds.Min.x; // min x plus tree positions x
+			else
+				axisVert.x = mGameObjects2[i].Bounds.Max.x; // max x plus tree positions x
+
+												// y-axis
+			if (frustums[planeID].y < 0.0f)    // Which AABB vertex is furthest down (plane normals direction) the y axis
+				axisVert.y = mGameObjects2[i].Bounds.Min.y; // min y plus tree positions y
+			else
+				axisVert.y = mGameObjects2[i].Bounds.Max.y; // max y plus tree positions y
+
+												// z-axis
+			if (frustums[planeID].z < 0.0f)    // Which AABB vertex is furthest down (plane normals direction) the z axis
+				axisVert.z = mGameObjects2[i].Bounds.Min.z; // min z plus tree positions z
+			else
+				axisVert.z = mGameObjects2[i].Bounds.Max.z; // max z plus tree positions z
+
+												// Now we get the signed distance from the AABB vertex that's furthest down the frustum planes normal,
+												// and if the signed distance is negative, then the entire bounding box is behind the frustum plane, which means
+												// that it should be culled
+			if (XMVectorGetX(XMVector3Dot(planeNormal, XMLoadFloat3(&axisVert))) + planeConstant < 0.0f)
+			{
+				cull = true;
+				// Skip remaining planes to check and move on to next tree
+				break;
+			}
+		}
+
+		if (!cull)
+		{
+			returnObjects.push_back(mGameObjects2[i].GameObject);
+		}
+	}
+
+	return returnObjects;
 }
