@@ -38,7 +38,7 @@ public:
 	XMMATRIX GetProjectionMatrix()const { return mProjectionMatrix; }
 
 	// Get the bounding frustum of this camera
-	BoundingFrustum GetBoundingFrustum() { return BoundingFrustum(mProjectionMatrix); }
+	BoundingFrustum GetBoundingFrustum();
 
 	// Set camera position
 	void SetPosition(float x, float y, float z);

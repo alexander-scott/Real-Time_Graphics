@@ -468,11 +468,11 @@ void OctreeNode::GetGameObjectsInRay(std::vector<GameObject*> &gameObjects, XMFL
 	}
 }
 
-void OctreeNode::GetGameObjectsInFrustum(std::vector<GameObject*>& gameObjects, std::vector<XMFLOAT4>& frustums)
+void OctreeNode::GetGameObjectsInFrustum(std::vector<GameObject*>& gameObjects, BoundingFrustum frustum)
 {
-	for (auto go : mObjects)
+	/*for (auto go : mObjects)
 	{
-		if (IntersectsBounds(go.Bounds, frustums))
+		if (IntersectsBounds(go.Bounds, frustum))
 		{
 			gameObjects.push_back(go.GameObject);
 		}
@@ -482,10 +482,10 @@ void OctreeNode::GetGameObjectsInFrustum(std::vector<GameObject*>& gameObjects, 
 	{
 		for (auto node : mChildNodes)
 		{
-			if (IntersectsBounds(node->mNodeBounds, frustums))
+			if (IntersectsBounds(node->mNodeBounds, frustum))
 			{
-				node->GetGameObjectsInFrustum(gameObjects, frustums);
+				node->GetGameObjectsInFrustum(gameObjects, frustum);
 			}
 		}
-	}
+	}*/
 }

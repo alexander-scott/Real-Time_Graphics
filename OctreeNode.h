@@ -24,7 +24,7 @@ public:
 
 	void GetGameObjectsInBounds(std::vector<GameObject*> &gameObjects, BoundingBox b);
 	void GetGameObjectsInRay(std::vector<GameObject*> &gameObjects, XMFLOAT3 rayOrigin, XMFLOAT3 rayDir);
-	void GetGameObjectsInFrustum(std::vector<GameObject*> &gameObjects, std::vector<XMFLOAT4> &frustums);
+	void GetGameObjectsInFrustum(std::vector<GameObject*> &gameObjects, BoundingFrustum frustum);
 
 	XMFLOAT3					mOrigin;
 	float						mNodeSideLength;

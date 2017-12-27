@@ -23,6 +23,21 @@ SceneCamera::~SceneCamera()
 {
 }
 
+BoundingFrustum SceneCamera::GetBoundingFrustum()
+{
+	XMVECTOR detView = XMMatrixDeterminant(GetViewMatrix());
+	XMMATRIX invView = XMMatrixInverse(&detView, GetViewMatrix());
+
+	// Get the walking cameras frustum
+	BoundingFrustum worldSpaceFrustum = BoundingFrustum(mProjectionMatrix);
+
+	// Move the frustum to the view matrix position
+	BoundingFrustum localSpaceFrustum;
+	worldSpaceFrustum.Transform(localSpaceFrustum, invView);
+
+	return localSpaceFrustum;
+}
+
 void SceneCamera::SetPosition(float x, float y, float z)
 {
 	mCameraPos = XMFLOAT3(x, y, z);

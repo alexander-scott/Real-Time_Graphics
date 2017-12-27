@@ -165,37 +165,20 @@ SceneCamera * Scene::GetRenderCamera()
 
 std::vector<GameObject*> Scene::GetGameObjectsInFrustumOctree()
 {
-	//return mOctree->GetGameObjectsInFrustums(mSceneCameraFly->GetFrustumPlanes());
-	return std::vector<GameObject*>();
+	return mOctree->GetGameObjectsInBoundingFrustum(mSceneCameraFly->GetBoundingFrustum());
 }
 
 std::vector<GameObject*> Scene::GetGameObjectsInFrustum()
 {
 	std::vector<GameObject*> renderedObjs;
 
-	XMVECTOR detView = XMMatrixDeterminant(mSceneCameraWalk->GetViewMatrix());
-	XMMATRIX invView = XMMatrixInverse(&detView, mSceneCameraWalk->GetViewMatrix());
+	// Get the walking cameras frustum
+	BoundingFrustum cameraFrustum = mSceneCameraWalk->GetBoundingFrustum();
 
 	for (int i = 0; i < mGameObjects2.size(); i++)
 	{
-		XMMATRIX W = mGameObjects2[i].GameObject->GetWorldMatrix();
-		XMMATRIX invWorld = XMMatrixInverse(&XMMatrixDeterminant(W), W);
-
-		// View space to the object's local space.
-		XMMATRIX toLocal = XMMatrixMultiply(invView, invWorld);
-
-		// Get the walking cameras frustum
-		BoundingFrustum worldSpaceFrustum = mSceneCameraWalk->GetBoundingFrustum();
-
-		// Transform it to gameObject2[i]'s local space
-		BoundingFrustum localSpaceFrustum;
-		worldSpaceFrustum.Transform(localSpaceFrustum, toLocal);
-
-		// Move the frustum to the view matrix position
-		worldSpaceFrustum.Transform(localSpaceFrustum, invView);
-
 		// If the gameobject intersects the gameobjects bounds the it can be seen
-		if (localSpaceFrustum.Intersects(mGameObjects2[i].Bounds))
+		if (cameraFrustum.Intersects(mGameObjects2[i].Bounds))
 		{
 			// Add it to the renderedObjects vector
 			renderedObjs.push_back(mGameObjects2[i].GameObject);
