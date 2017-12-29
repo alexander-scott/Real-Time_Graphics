@@ -20,7 +20,7 @@ Octree::~Octree()
 {
 }
 
-void Octree::Add(OctreeItem obj)
+void Octree::Add(OctreeItem &obj)
 {
 	int count = 0;
 
@@ -38,7 +38,7 @@ void Octree::Add(OctreeItem obj)
 	mObjectCount++;
 }
 
-bool Octree::Remove(OctreeItem obj)
+bool Octree::Remove(OctreeItem &obj)
 {
 	bool removed = mRootNode->RemoveObject(obj);
 
@@ -103,7 +103,7 @@ int Octree::GetRootPosIndex(int xDir, int yDir, int zDir)
 	return result;
 }
 
-std::vector<GameObject*> Octree::GetGameObjectsInBounds(BoundingBox b)
+std::vector<GameObject*> Octree::GetGameObjectsInBounds(BoundingBox &b)
 {
 	std::vector<GameObject*> returnVector;
 	mRootNode->GetGameObjectsInBounds(returnVector, b);
@@ -117,9 +117,9 @@ std::vector<GameObject*> Octree::GetGameObjectsInRay(XMFLOAT3 rayOrigin, XMFLOAT
 	return returnVector;
 }
 
-std::vector<GameObject*> Octree::GetGameObjectsInFrustums(std::vector<XMFLOAT4>& frustums)
+std::vector<GameObject*> Octree::GetGameObjectsInBoundingFrustum(BoundingFrustum &frustum)
 {
 	std::vector<GameObject*> returnVector;
-	mRootNode->GetGameObjectsInFrustum(returnVector, frustums);
+	mRootNode->GetGameObjectsInFrustum(returnVector, frustum);
 	return returnVector;
 }

@@ -219,7 +219,7 @@ void ShaderManager::HandleToggleShaderControls(int selectedShaderOption)
 
 		_pDOFWasOn = true;
 	}
-	else if(!GUIHandler::_pDOFActive && _pDOFWasOn)
+	else if (!GUIHandler::_pDOFActive && _pDOFWasOn)
 	{
 		TurnOffDOF();
 	}

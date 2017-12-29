@@ -207,7 +207,6 @@ HRESULT Application::InitRenderProcesses()
 
 	ShaderManager::_pShaderList["Basic Scene"].get()->AddSamplerState(_pSamplerLinear);
 
-
 	if (FAILED(ShaderManager::AddCommonShader("Pixel Scene", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Pixel SS.fx", InputLayoutManager::_pInputLayoutList["Layout 2"], DX11AppHelper::_pd3dDevice)))
 	{
 		return E_FAIL;
@@ -342,6 +341,7 @@ void Application::Update(float deltaTime)
 		POINT p;
 		GetCursorPos(&p);
 
+		// Send mouse move events to our camera so the camera's rotation gets updated
 		mScene->OnMouseMove(p.x, p.y);
 	}
 
@@ -391,15 +391,11 @@ void Application::Draw()
 	cb.screenHeight = DX11AppHelper::_pRenderHeight;
 
 	if (GUIHandler::_pSelfShadingOn)
-	{
 		cb.selfShadowOn = 1.0f;
-	}
 	else
-	{
 		cb.selfShadowOn = 0.0f;
-	}
 
-	ShaderManager::ExecuteShadersInOrder(&cb, mScene->GetSceneLights(), mScene->GetGameObjectsInFrustum());
+	ShaderManager::ExecuteShadersInOrder(&cb, mScene->GetSceneLights(), mScene->GetGameObjectsInFrustumOctree());
 
 	ImGui::Render();
 

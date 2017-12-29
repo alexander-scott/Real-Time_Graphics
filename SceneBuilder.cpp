@@ -153,6 +153,7 @@ SceneLight * SceneBuilder::BuildSceneLight(xml_node<>* node, Geometry cubeGeomet
 
 	sceneLight->SetPosition(sceneLight->GetLightVecW());
 
+
 	return sceneLight;
 }
 

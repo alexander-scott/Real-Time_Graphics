@@ -8,9 +8,6 @@ SceneLight::SceneLight(string type, ID3D11ShaderResourceView* texture, Geometry 
 	SetRotation(0.0f, 0.0f, 0.0f);
 	SetTextureRV(texture);
 
-	_pSceneBounds.Center = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	_pSceneBounds.Radius = sqrtf(10.0f*10.0f + 15.0f*15.0f);
-
 	_pLightVecW = XMFLOAT3(-0.57735f, -0.57735f, 0.57735f);
 }
 

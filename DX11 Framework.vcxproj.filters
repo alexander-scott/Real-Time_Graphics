@@ -54,6 +54,9 @@
     <Filter Include="Scene\Objects">
       <UniqueIdentifier>{23e5207f-bffa-4824-b798-4e453cf9c7a9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene\Octree">
+      <UniqueIdentifier>{5441b3c9-ea93-4497-8b2e-3dcc9d74bc08}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -122,10 +125,10 @@
       <Filter>Scene\Objects</Filter>
     </ClInclude>
     <ClInclude Include="OctreeNode.h">
-      <Filter>Scene</Filter>
+      <Filter>Scene\Octree</Filter>
     </ClInclude>
     <ClInclude Include="Octree.h">
-      <Filter>Scene</Filter>
+      <Filter>Scene\Octree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -179,11 +182,11 @@
     <ClCompile Include="SceneLight.cpp">
       <Filter>Scene\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="OctreeNode.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Octree.cpp">
-      <Filter>Scene</Filter>
+      <Filter>Scene\Octree</Filter>
+    </ClCompile>
+    <ClCompile Include="OctreeNode.cpp">
+      <Filter>Scene\Octree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

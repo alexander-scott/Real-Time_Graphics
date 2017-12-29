@@ -14,14 +14,6 @@
 
 class SceneLight : public GameObject
 {
-
-	struct BoundingSphere
-	{
-		BoundingSphere() : Center(0.0f, 0.0f, 0.0f), Radius(0.0f) {}
-		XMFLOAT3 Center;
-		float Radius;
-	};
-
 public:
 	SceneLight(string type, ID3D11ShaderResourceView* texture, Geometry geometry, Material material);
 	~SceneLight();
@@ -84,7 +76,5 @@ private:
 
 	XMFLOAT3 _pPaddingLightAmount;
 	float _pLightOn;
-
-	BoundingSphere _pSceneBounds;
 };
 
