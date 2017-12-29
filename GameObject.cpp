@@ -11,25 +11,19 @@ GameObject::GameObject(string type, Geometry geometry, Material material) : mGeo
 	mNormalMap = nullptr;
 	mHeightMap = nullptr;
 
-	_pRotationSpeed = 0.0005f;
-	_pRotateCubesXAxis = false;
-	_pRotateCubesYAxis = false; // Note: demo rotation
-	_pRotateCubesZAxis = false;
-	_pToggleXAxisPressed = false;
-	_pToggleYAxisPressed = false;
-	_pToggleZAxisPressed = false;
+	mHasChanged = true;
 }
 
 GameObject::~GameObject()
 {
 }
 
-void GameObject::Update(float t, float deltaTime)
+bool GameObject::Update(float t, float deltaTime)
 {
-	if (mType != "WhiteLightPosCube" && mType != "RedLightPosCube" && mType != "GreenLightPosCube" && mType != "BlueLightPosCube")
-	{
-		UpdateRotation(deltaTime);
-	}
+	if (!mHasChanged)
+		return false;
+
+	mHasChanged = false;
 
 	// Calculate world matrix
 	XMMATRIX scale = XMMatrixScaling(mScale.x, mScale.y, mScale.z);
@@ -42,42 +36,8 @@ void GameObject::Update(float t, float deltaTime)
 	{
 		XMStoreFloat4x4(&mWorld, this->GetWorldMatrix() * mParent->GetWorldMatrix());
 	}
-}
 
-void GameObject::UpdateRotation(float deltaTime)
-{
-	XMFLOAT3 origRot = mRotation;
-	XMFLOAT3 newRotation;
-
-	// Update Rotation Axis
-	if (_pRotateCubesXAxis)
-	{
-		newRotation.x = origRot.x + (_pRotationSpeed * deltaTime);
-	}
-	else
-	{
-		newRotation.x = origRot.x;
-	}
-
-	if (_pRotateCubesYAxis)
-	{
-		newRotation.y = origRot.y + (_pRotationSpeed * deltaTime);
-	}
-	else
-	{
-		newRotation.y = origRot.y;
-	}
-
-	if (_pRotateCubesZAxis)
-	{
-		newRotation.z = origRot.z + (_pRotationSpeed * deltaTime);
-	}
-	else
-	{
-		newRotation.z = origRot.z;
-	}
-
-	mRotation = newRotation;
+	return true;
 }
 
 void GameObject::Draw(ID3D11DeviceContext* pImmediateContext)
@@ -89,62 +49,6 @@ void GameObject::Draw(ID3D11DeviceContext* pImmediateContext)
 	pImmediateContext->IASetIndexBuffer(mGeometry.indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
 	pImmediateContext->DrawIndexed(mGeometry.numberOfIndices, 0, 0);
-}
-
-void GameObject::HandleControls()
-{
-
-#pragma region Cube Rotation Control
-
-	// Toggle Cube Rotation Axis
-	if (GetAsyncKeyState(VK_CONTROL))
-	{
-		if (GetAsyncKeyState('X') && !_pToggleXAxisPressed)
-		{
-			_pRotateCubesXAxis = !_pRotateCubesXAxis;
-			_pToggleXAxisPressed = !_pToggleXAxisPressed;
-		}
-		else if (GetAsyncKeyState('Y') && !_pToggleYAxisPressed)
-		{
-			_pRotateCubesYAxis = !_pRotateCubesYAxis;
-			_pToggleYAxisPressed = !_pToggleYAxisPressed;
-		}
-		else if (GetAsyncKeyState('Z') && !_pToggleZAxisPressed)
-		{
-			_pRotateCubesZAxis = !_pRotateCubesZAxis;
-			_pToggleZAxisPressed = !_pToggleZAxisPressed;
-		}
-	}
-
-	if (!GetAsyncKeyState('X') && _pToggleXAxisPressed)
-	{
-		_pToggleXAxisPressed = !_pToggleXAxisPressed;
-	}
-	if (!GetAsyncKeyState('Y') && _pToggleYAxisPressed)
-	{
-		_pToggleYAxisPressed = !_pToggleYAxisPressed;
-	}
-	if (!GetAsyncKeyState('Z') && _pToggleZAxisPressed)
-	{
-		_pToggleZAxisPressed = !_pToggleZAxisPressed;
-	}
-
-	// Rotate the Cubes toggle
-	if (GetAsyncKeyState(VK_LSHIFT) && GetAsyncKeyState('R'))
-	{
-		_pRotationSpeed -= 0.0001f;
-	}
-	else if (GetAsyncKeyState(VK_CONTROL) && GetAsyncKeyState('R'))
-	{
-		_pRotationSpeed = 0.0f;
-	}
-	else if (GetAsyncKeyState('R'))
-	{
-		_pRotationSpeed += 0.0001f;
-	}
-
-#pragma endregion
-
 }
 
 void GameObject::SetTextures(TextureSet* textureSet)

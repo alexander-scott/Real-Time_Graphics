@@ -64,6 +64,10 @@ void SceneLight::HandleLightControls(float deltaTime)
 	{
 		_pLightVecW.x += 0.01f * deltaTime;
 	}
+	else
+	{
+		return;
+	}
 
 	SetPosition(_pLightVecW);
 }

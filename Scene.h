@@ -21,10 +21,10 @@ public:
 	void AddGameObject(GameObject* go);
 
 	// Get a gameobject at a specific index
-	GameObject* GetGameObject(int index) { return mGameObjects.at(index); }
+	GameObject* GetGameObject(int index) { return mOctreeGameObjects.at(index).GameObject; }
 
 	// Add a scene light to the sceen from the scene builder
-	void AddSceneLight(SceneLight* sl) { mSceneLights.push_back(sl); mGameObjects.push_back(sl); }
+	void AddSceneLight(SceneLight* sl);
 
 	// Get scene lights
 	vector<SceneLight*> GetSceneLights() { return mSceneLights; }
@@ -48,9 +48,9 @@ private:
 	SceneCamera*				mSceneCameraFly;
 	Octree*						mOctree;
 
-	vector<GameObject*>			mGameObjects;
 	vector<SceneLight*>			mSceneLights;
-	vector<OctreeItem>			mGameObjects2;
+
+	vector<OctreeItem>			mOctreeGameObjects;
 
 	bool						mFlyCameraActive;
 	bool						mSwitchCameraPressed;

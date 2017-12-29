@@ -392,7 +392,7 @@ HRESULT DX11AppHelper::InitRasterizerState()
 
 	ZeroMemory(&cmdesc, sizeof(D3D11_RASTERIZER_DESC));
 	cmdesc.FillMode = D3D11_FILL_SOLID;
-	cmdesc.CullMode = D3D11_CULL_NONE;
+	cmdesc.CullMode = D3D11_CULL_BACK;
 	hr = _pd3dDevice->CreateRasterizerState(&cmdesc, &_pRSCullNone);
 
 	if (FAILED(hr))

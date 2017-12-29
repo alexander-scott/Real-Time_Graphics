@@ -21,12 +21,12 @@ Scene::Scene(string name) : mSceneName(name)
 
 Scene::~Scene()
 {
-	for (auto go : mGameObjects)
+	for (auto& go : mOctreeGameObjects)
 	{
-		if (go)
+		if (go.GameObject)
 		{
-			delete go;
-			go = nullptr;
+			delete go.GameObject;
+			go.GameObject = nullptr;
 		}
 	}
 
@@ -53,14 +53,19 @@ void Scene::Update(float timeSinceStart, float deltaTime)
 	else
 		mSceneCameraWalk->UpdateCameraViewMatrix();
 
-	for (auto go : mGameObjects)
+	for (auto& go : mOctreeGameObjects)
 	{
-		go->Update(timeSinceStart, deltaTime);
+		// If this returns true it means the object's position/rotation/scale has changed so we need to update it in the octree
+		if (go.GameObject->Update(timeSinceStart, deltaTime))
+		{
+			mOctree->Remove(go);
+			go.Bounds = BoundingBox(go.GameObject->GetPosition(), XMFLOAT3(2 * go.GameObject->GetScale().x, 2 * go.GameObject->GetScale().y, 2 * go.GameObject->GetScale().z));
+			mOctree->Add(go);
+		}
 	}
 
-	for (auto sl : mSceneLights)
+	for (auto& sl : mSceneLights)
 	{
-		sl->UpdateLightCube(timeSinceStart, deltaTime);
 		sl->UpdateLight((float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight);
 	}
 
@@ -86,7 +91,7 @@ void Scene::Update(float timeSinceStart, float deltaTime)
 
 void Scene::AddGameObjects(vector<GameObject*> gos)
 {
-	for (auto go : gos)
+	for (auto& go : gos)
 	{
 		OctreeItem obj;
 		obj.GameObject = go;
@@ -94,8 +99,7 @@ void Scene::AddGameObjects(vector<GameObject*> gos)
 
 		mOctree->Add(obj);
 
-		mGameObjects.push_back(go);
-		mGameObjects2.push_back(obj);
+		mOctreeGameObjects.push_back(obj);
 	}
 }
 
@@ -107,7 +111,20 @@ void Scene::AddGameObject(GameObject * go)
 
 	mOctree->Add(obj);
 
-	mGameObjects.push_back(go);
+	mOctreeGameObjects.push_back(obj);
+}
+
+void Scene::AddSceneLight(SceneLight* sl)
+{
+	OctreeItem obj;
+	obj.GameObject = sl;
+	obj.Bounds = BoundingBox(sl->GetPosition(), XMFLOAT3(2 * sl->GetScale().x, 2 * sl->GetScale().y, 2 * sl->GetScale().z));
+
+	mOctree->Add(obj);
+
+	mSceneLights.push_back(sl); 
+
+	mOctreeGameObjects.push_back(obj);
 }
 
 void Scene::UpdateLightControls(float deltaTime) 
@@ -175,13 +192,13 @@ std::vector<GameObject*> Scene::GetGameObjectsInFrustum()
 	// Get the walking cameras frustum
 	BoundingFrustum cameraFrustum = mSceneCameraWalk->GetBoundingFrustum();
 
-	for (int i = 0; i < mGameObjects2.size(); i++)
+	for (int i = 0; i < mOctreeGameObjects.size(); i++)
 	{
 		// If the gameobject intersects the gameobjects bounds the it can be seen
-		if (cameraFrustum.Intersects(mGameObjects2[i].Bounds))
+		if (cameraFrustum.Intersects(mOctreeGameObjects[i].Bounds))
 		{
 			// Add it to the renderedObjects vector
-			renderedObjs.push_back(mGameObjects2[i].GameObject);
+			renderedObjs.push_back(mOctreeGameObjects[i].GameObject);
 		}
 	}
 

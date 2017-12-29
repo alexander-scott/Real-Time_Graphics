@@ -13,10 +13,10 @@ public:
 	~GameObject();
 
 	// Setters for position/rotation/scale
-	void SetPosition(XMFLOAT3 position) { mPosition = position; }
-	void SetPosition(float x, float y, float z) { mPosition.x = x; mPosition.y = y; mPosition.z = z; }
-	void SetScale(float x, float y, float z) { mScale.x = x; mScale.y = y; mScale.z = z; }
-	void SetRotation(float x, float y, float z) { mRotation.x = x; mRotation.y = y; mRotation.z = z; }
+	void SetPosition(XMFLOAT3 position) { mPosition = position; mHasChanged = true; }
+	void SetPosition(float x, float y, float z) { mPosition.x = x; mPosition.y = y; mPosition.z = z; mHasChanged = true; }
+	void SetScale(float x, float y, float z) { mScale.x = x; mScale.y = y; mScale.z = z; mHasChanged = true;}
+	void SetRotation(float x, float y, float z) { mRotation.x = x; mRotation.y = y; mRotation.z = z; mHasChanged = true;}
 
 	XMFLOAT3 GetPosition() { return mPosition; }
 	XMFLOAT3 GetScale() { return mScale; }
@@ -44,11 +44,8 @@ public:
 	void SetParent(GameObject* parent) { mParent = parent; }
 	void AddChild(GameObject* child) { mChildren.push_back(child); }
 
-	void Update(float t, float deltaTime);
+	bool Update(float t, float deltaTime);
 	void Draw(ID3D11DeviceContext* pImmediateContext);
-
-	void HandleControls();
-	void UpdateRotation(float deltaTime);
 	
 protected:
 	string						mType;
@@ -72,12 +69,6 @@ private:
 
 	GameObject *				mParent;
 
-	float _pRotationSpeed;
-	bool _pRotateCubesXAxis;
-	bool _pRotateCubesYAxis;
-	bool _pRotateCubesZAxis;
-	bool _pToggleXAxisPressed;
-	bool _pToggleYAxisPressed;
-	bool _pToggleZAxisPressed;
+	bool						mHasChanged;
 };
 
