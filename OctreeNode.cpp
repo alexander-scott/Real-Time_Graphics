@@ -9,9 +9,9 @@ OctreeNode::~OctreeNode()
 {
 }
 
-bool OctreeNode::AddObject(OctreeItem obj)
+bool OctreeNode::AddObject(OctreeItem &obj)
 {
-	if (!IntersectsBounds(mNodeBounds, obj.Bounds))
+	if (!mNodeBounds.Intersects(obj.Bounds))
 	{
 		return false;
 	}
@@ -20,7 +20,7 @@ bool OctreeNode::AddObject(OctreeItem obj)
 	return true;
 }
 
-bool OctreeNode::RemoveObject(OctreeItem obj)
+bool OctreeNode::RemoveObject(OctreeItem &obj)
 {
 	bool objRemoved = false;
 
@@ -187,7 +187,7 @@ void OctreeNode::SetChildNodes(std::vector<OctreeNode*> childNodes)
 	mChildNodes.insert(mChildNodes.end(), childNodes.begin(), childNodes.end());
 }
 
-void OctreeNode::SubAdd(OctreeItem obj)
+void OctreeNode::SubAdd(OctreeItem &obj)
 {
 	if (mObjects.size() < kOctreeNodeMaxObjects || mNodeSideLength / 2 < mMinimumNodeSize)
 	{
@@ -321,19 +321,7 @@ void OctreeNode::MergeNodes()
 	mChildNodes.clear();
 }
 
-bool OctreeNode::IntersectsBounds(BoundingBox bounds1, BoundingBox bounds2)
-{
-	if ((bounds1.Center.x - bounds1.Extents.x <= bounds1.Center.x + bounds1.Extents.x && bounds1.Center.x + bounds1.Extents.x >= bounds1.Center.x - bounds1.Extents.x) &&
-		(bounds1.Center.y - bounds1.Extents.y <= bounds1.Center.y + bounds1.Extents.y && bounds1.Center.y + bounds1.Extents.y >= bounds1.Center.y - bounds1.Extents.y) &&
-		(bounds1.Center.z - bounds1.Extents.z <= bounds1.Center.z + bounds1.Extents.z && bounds1.Center.z + bounds1.Extents.z >= bounds1.Center.z - bounds1.Extents.z))
-	{
-		return true;
-	}
-
-	return false;
-}
-
-bool OctreeNode::IntersectsBounds(BoundingBox bounds1, XMFLOAT3 rayOrigin, XMFLOAT3 rayDir)
+bool OctreeNode::IntersectsBounds(BoundingBox &bounds1, XMFLOAT3 rayOrigin, XMFLOAT3 rayDir)
 {
 	float tmin = (bounds1.Center.x - bounds1.Extents.x - rayOrigin.x) / rayDir.x;
 	float tmax = (bounds1.Center.x + bounds1.Extents.x - rayOrigin.x) / rayDir.x;
@@ -371,52 +359,7 @@ bool OctreeNode::IntersectsBounds(BoundingBox bounds1, XMFLOAT3 rayOrigin, XMFLO
 	return true;
 }
 
-bool OctreeNode::IntersectsBounds(BoundingBox bounds1, std::vector<XMFLOAT4>& frustums)
-{
-	bool intersects = true;
-
-	// Loop through each frustum plane
-	for (int planeID = 0; planeID < 6; ++planeID)
-	{
-		XMVECTOR planeNormal = XMVectorSet(frustums[planeID].x, frustums[planeID].y, frustums[planeID].z, 0.0f);
-		float planeConstant = frustums[planeID].w;
-
-		// Check each axis (x,y,z) to get the AABB vertex furthest away from the direction the plane is facing (plane normal)
-		XMFLOAT3 axisVert;
-
-		// x-axis
-		if (frustums[planeID].x < 0.0f)    // Which AABB vertex is furthest down (plane normals direction) the x axis
-			axisVert.x = mNodeBounds.Center.x - mNodeBounds.Extents.x; // min x plus tree positions x
-		else
-			axisVert.x = mNodeBounds.Center.x + mNodeBounds.Extents.x; // max x plus tree positions x
-
-											// y-axis
-		if (frustums[planeID].y < 0.0f)    // Which AABB vertex is furthest down (plane normals direction) the y axis
-			axisVert.y = mNodeBounds.Center.y - mNodeBounds.Extents.y; // min y plus tree positions y
-		else
-			axisVert.y = mNodeBounds.Center.y + mNodeBounds.Extents.y; // max y plus tree positions y
-
-											// z-axis
-		if (frustums[planeID].z < 0.0f)    // Which AABB vertex is furthest down (plane normals direction) the z axis
-			axisVert.z = mNodeBounds.Center.z - mNodeBounds.Extents.z; // min z plus tree positions z
-		else
-			axisVert.z = mNodeBounds.Center.z + mNodeBounds.Extents.z; // max z plus tree positions z
-
-											// Now we get the signed distance from the AABB vertex that's furthest down the frustum planes normal,
-											// and if the signed distance is negative, then the entire bounding box is behind the frustum plane, which means
-											// that it should be culled
-		if (XMVectorGetX(XMVector3Dot(planeNormal, XMLoadFloat3(&axisVert))) + planeConstant < 0.0f)
-		{
-			intersects = false;
-			// Skip remaining planes to check and move on to next tree
-			break;
-		}
-	}
-
-	return intersects;
-}
-
-int OctreeNode::BestFitChild(OctreeItem obj)
+int OctreeNode::BestFitChild(OctreeItem &obj)
 {
 	int xVal = (obj.GameObject->GetPosition().x <= mOrigin.x ? 0 : 1);
 	int yVal = (obj.GameObject->GetPosition().y >= mOrigin.y ? 0 : 4);
@@ -424,11 +367,11 @@ int OctreeNode::BestFitChild(OctreeItem obj)
 	return xVal + yVal + zVal;
 }
 
-void OctreeNode::GetGameObjectsInBounds(std::vector<GameObject*> &gameObjects, BoundingBox b)
+void OctreeNode::GetGameObjectsInBounds(std::vector<GameObject*> &gameObjects, BoundingBox &b)
 {
-	for (auto go : mObjects)
+	for (auto& go : mObjects)
 	{
-		if (IntersectsBounds(go.Bounds, b))
+		if (go.Bounds.Intersects(b))
 		{
 			gameObjects.push_back(go.GameObject);
 		}
@@ -436,9 +379,9 @@ void OctreeNode::GetGameObjectsInBounds(std::vector<GameObject*> &gameObjects, B
 
 	if (mChildNodes.size() != 0)
 	{
-		for (auto node : mChildNodes)
+		for (auto& node : mChildNodes)
 		{
-			if (IntersectsBounds(node->mNodeBounds, b))
+			if (node->mNodeBounds.Intersects(b))
 			{
 				node->GetGameObjectsInBounds(gameObjects, b);
 			}
@@ -448,7 +391,7 @@ void OctreeNode::GetGameObjectsInBounds(std::vector<GameObject*> &gameObjects, B
 
 void OctreeNode::GetGameObjectsInRay(std::vector<GameObject*> &gameObjects, XMFLOAT3 rayOrigin, XMFLOAT3 rayDir)
 {
-	for (auto go : mObjects)
+	for (auto& go : mObjects)
 	{
 		if (IntersectsBounds(go.Bounds, rayOrigin, rayDir))
 		{
@@ -458,7 +401,7 @@ void OctreeNode::GetGameObjectsInRay(std::vector<GameObject*> &gameObjects, XMFL
 
 	if (mChildNodes.size() != 0)
 	{
-		for (auto node : mChildNodes)
+		for (auto& node : mChildNodes)
 		{
 			if (IntersectsBounds(node->mNodeBounds, rayOrigin, rayDir))
 			{
@@ -470,7 +413,7 @@ void OctreeNode::GetGameObjectsInRay(std::vector<GameObject*> &gameObjects, XMFL
 
 void OctreeNode::GetGameObjectsInFrustum(std::vector<GameObject*>& gameObjects, BoundingFrustum& frustum)
 {
-	for (auto go : mObjects)
+	for (auto& go : mObjects)
 	{
 		if (frustum.Intersects(go.Bounds))
 		{
@@ -480,7 +423,7 @@ void OctreeNode::GetGameObjectsInFrustum(std::vector<GameObject*>& gameObjects, 
 
 	if (mChildNodes.size() != 0)
 	{
-		for (auto node : mChildNodes)
+		for (auto& node : mChildNodes)
 		{
 			if (frustum.Intersects(node->mNodeBounds))
 			{

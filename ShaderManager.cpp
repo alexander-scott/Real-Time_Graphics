@@ -117,12 +117,11 @@ void ShaderManager::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLight*
 	{
 		for (int i = 0; i < lights.size(); i++)
 		{
-			SceneLightData data = lights.at(i)->GetSceneLightData();
-			if (data.LightOn)
+			if (lights.at(i)->GetLightOn())
 			{
-				viewAsFloats = data.ViewMatrix;
-				projectionAsFloats = data.ProjectionMatrix;
-				shadowTransformAsFloats = data.ShadowTransform;
+				viewAsFloats = lights.at(i)->GetView();
+				projectionAsFloats = lights.at(i)->GetProjection();
+				shadowTransformAsFloats = lights.at(i)->GetShadowTransform();
 
 				view = XMLoadFloat4x4(&viewAsFloats);
 				projection = XMLoadFloat4x4(&projectionAsFloats);
@@ -131,7 +130,7 @@ void ShaderManager::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLight*
 				smCB.View = XMMatrixTranspose(view);
 				smCB.Projection = XMMatrixTranspose(projection);
 
-				string shaderName = data.LightName + " Depth Map";
+				string shaderName = lights.at(i)->GetLightName() + " Depth Map";
 
 				_pShaderList[shaderName].get()->RenderSceneDepthMap(DX11AppHelper::_pImmediateContext, gameObjects, DX11AppHelper::_pSMConstantBuffer, &smCB);
 			}
@@ -220,7 +219,7 @@ void ShaderManager::HandleToggleShaderControls(int selectedShaderOption)
 
 		_pDOFWasOn = true;
 	}
-	else if(!GUIHandler::_pDOFActive && _pDOFWasOn)
+	else if (!GUIHandler::_pDOFActive && _pDOFWasOn)
 	{
 		TurnOffDOF();
 	}

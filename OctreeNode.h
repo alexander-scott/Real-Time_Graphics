@@ -16,13 +16,13 @@ public:
 	OctreeNode(float baseLengthVal, float minSizeVal, XMFLOAT3 centerVal);
 	~OctreeNode();
 
-	bool AddObject(OctreeItem obj);
-	bool RemoveObject(OctreeItem obj);
+	bool AddObject(OctreeItem &obj);
+	bool RemoveObject(OctreeItem &obj);
 
 	void SetChildNodes(std::vector<OctreeNode*> childNodes);
 	OctreeNode* ShrinkOctree(float minSideLength);
 
-	void GetGameObjectsInBounds(std::vector<GameObject*> &gameObjects, BoundingBox b);
+	void GetGameObjectsInBounds(std::vector<GameObject*> &gameObjects, BoundingBox &b);
 	void GetGameObjectsInRay(std::vector<GameObject*> &gameObjects, XMFLOAT3 rayOrigin, XMFLOAT3 rayDir);
 	void GetGameObjectsInFrustum(std::vector<GameObject*> &gameObjects, BoundingFrustum &frustum);
 
@@ -31,7 +31,7 @@ public:
 
 private:
 	void SetValues(float baseLengthVal, float minSizeVal, XMFLOAT3 centerVal);
-	void SubAdd(OctreeItem obj);
+	void SubAdd(OctreeItem &obj);
 
 	void Split();
 
@@ -40,10 +40,8 @@ private:
 	bool CheckMergeNodes();
 	void MergeNodes();
 
-	bool IntersectsBounds(BoundingBox bounds1, BoundingBox bounds2);
-	bool IntersectsBounds(BoundingBox bounds1, XMFLOAT3 rayOrigin, XMFLOAT3 rayDir);
-	bool IntersectsBounds(BoundingBox bounds1, std::vector<XMFLOAT4> &frustums);
-	int BestFitChild(OctreeItem obj);
+	bool IntersectsBounds(BoundingBox &bounds1, XMFLOAT3 rayOrigin, XMFLOAT3 rayDir);
+	int BestFitChild(OctreeItem &obj);
 
 	float						mMinimumNodeSize;
 	BoundingBox					mNodeBounds;

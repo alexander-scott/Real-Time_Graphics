@@ -378,10 +378,10 @@ void Application::Draw()
 	cb.surface.DiffuseMtrl = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	cb.surface.SpecularMtrl = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	cb.lights[0] = mScene->GetSceneLight(0)->BuildCBLight();
-	cb.lights[1] = mScene->GetSceneLight(1)->BuildCBLight();
-	cb.lights[2] = mScene->GetSceneLight(2)->BuildCBLight();
-	cb.lights[3] = mScene->GetSceneLight(3)->BuildCBLight();
+	cb.lights[0] = mScene->GetSceneLight(0)->GetLight();
+	cb.lights[1] = mScene->GetSceneLight(1)->GetLight();
+	cb.lights[2] = mScene->GetSceneLight(2)->GetLight();
+	cb.lights[3] = mScene->GetSceneLight(3)->GetLight();
 
 	cb.EyePosW = mScene->GetRenderCamera()->GetPosition3f();
 	cb.HasTexture = 0.0f;

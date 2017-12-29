@@ -12,7 +12,7 @@ Scene::Scene(string name) : mSceneName(name)
 	mSceneCameraFly = new SceneCamera(0.01f, 2000.0f, DX11AppHelper::_pRenderWidth, DX11AppHelper::_pRenderHeight, true);
 	mSceneCameraFly->SetPosition(eyeFly);
 
-	mOctree = new Octree(100, XMFLOAT3(0, 0, 0), 25);
+	mOctree = new Octree(200, XMFLOAT3(0, 0, 0), 25);
 
 	mFlyCameraActive = false;
 	mSwitchCameraPressed = false;
