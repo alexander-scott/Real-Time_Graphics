@@ -76,9 +76,9 @@ void Scene::Update(float timeSinceStart, float deltaTime)
 	}
 
 	// This if statement can be used to test functionality through a GUI click event
-	if (GUIHandler::_pTestButton)
+	if (GUIController::_pTestButton)
 	{
-		GUIHandler::_pTestButton = false;
+		GUIController::_pTestButton = false;
 	}
 }
 
@@ -122,25 +122,25 @@ void Scene::AddSceneLight(SceneLight* sl)
 
 void Scene::UpdateLightControls(float deltaTime) 
 {
-	mSceneLights.at(GUIHandler::_pControlledLight)->HandleLightControls(deltaTime);
+	mSceneLights.at(GUIController::_pControlledLight)->HandleLightControls(deltaTime);
 
 	// Toggle Lights ON/OFF
-	if (GUIHandler::_pWhiteLightOn)
+	if (GUIController::_pWhiteLightOn)
 		mSceneLights.at(0)->SetLightOn(true);
 	else
 		mSceneLights.at(0)->SetLightOn(false);
 
-	if (GUIHandler::_pRedLightOn)
+	if (GUIController::_pRedLightOn)
 		mSceneLights.at(1)->SetLightOn(true);
 	else
 		mSceneLights.at(1)->SetLightOn(false);
 
-	if (GUIHandler::_pGreenLightOn)
+	if (GUIController::_pGreenLightOn)
 		mSceneLights.at(2)->SetLightOn(true);
 	else
 		mSceneLights.at(2)->SetLightOn(false);
 
-	if (GUIHandler::_pBlueLightOn)
+	if (GUIController::_pBlueLightOn)
 		mSceneLights.at(3)->SetLightOn(true);
 	else
 		mSceneLights.at(3)->SetLightOn(false);

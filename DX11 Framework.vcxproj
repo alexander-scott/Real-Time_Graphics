@@ -379,7 +379,7 @@
     <ClCompile Include="SceneBuilder.cpp" />
     <ClCompile Include="SceneCamera.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
-    <ClCompile Include="GUIHandler.cpp" />
+    <ClCompile Include="GUIController.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
     <ClCompile Include="imgui_draw.cpp" />
@@ -449,7 +449,7 @@
     <ClInclude Include="SceneCamera.h" />
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="GUIHandler.h" />
+    <ClInclude Include="GUIController.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_internal.h" />

@@ -6,7 +6,7 @@
 
 #include "DX11AppHelper.h"
 #include "RenderToTextureProcess.h"
-#include "GUIHandler.h"
+#include "GUIController.h"
 
 using namespace std;
 using namespace DirectX;

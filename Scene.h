@@ -3,7 +3,7 @@
 #include "GameObject.h"
 #include "SceneLight.h"
 #include "SceneCamera.h"
-#include "GUIHandler.h"
+#include "GUIController.h"
 #include "Octree.h"
 
 using namespace std;

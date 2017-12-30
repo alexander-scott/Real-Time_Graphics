@@ -102,7 +102,7 @@ void ShaderManager::AddCustomShader(string shaderName, float renderWidth, float 
 void ShaderManager::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLight*> lights, vector<GameObject*> gameObjects)
 {
 	cb->shadowsOn = true;
-	cb->blurIntensity = GUIHandler::_pBlurIntensity;
+	cb->blurIntensity = GUIController::_pBlurIntensity;
 
 	SMConstantBuffer smCB;
 
@@ -144,9 +144,9 @@ void ShaderManager::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLight*
 		_pShaderList["Deferred Parrallax Scene"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
 	}
 
-	if (GUIHandler::_pBlurEffectPasses != 0)
+	if (GUIController::_pBlurEffectPasses != 0)
 	{
-		for (int i = 0; i < GUIHandler::_pBlurEffectPasses; i++)
+		for (int i = 0; i < GUIController::_pBlurEffectPasses; i++)
 		{
 			_pShaderList["Effect HBlur"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, false);
 			_pShaderList["Effect HBlur"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
@@ -176,7 +176,7 @@ void ShaderManager::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLight*
 	_pShaderList["DOF Depth Map"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, true);
 	_pShaderList["DOF Depth Map"].get()->RenderGameObjects(DX11AppHelper::_pImmediateContext, gameObjects, DX11AppHelper::_pConstantBuffer, cb);
 
-	if (GUIHandler::_pDOFActive)
+	if (GUIController::_pDOFActive)
 	{
 		_pShaderList["Effect DOFHBlur"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, false);
 		_pShaderList["Effect DOFHBlur"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
@@ -196,7 +196,7 @@ void ShaderManager::HandleShaderControls(float deltaTime, int selectedShaderOpti
 
 void ShaderManager::HandleToggleShaderControls(int selectedShaderOption)
 {
-	if (GUIHandler::_pDOFActive && !_pDOFWasOn)
+	if (GUIController::_pDOFActive && !_pDOFWasOn)
 	{
 		if (_pDeferred)
 		{
@@ -217,7 +217,7 @@ void ShaderManager::HandleToggleShaderControls(int selectedShaderOption)
 
 		_pDOFWasOn = true;
 	}
-	else if (!GUIHandler::_pDOFActive && _pDOFWasOn)
+	else if (!GUIController::_pDOFActive && _pDOFWasOn)
 	{
 		TurnOffDOF();
 	}
@@ -233,7 +233,7 @@ void ShaderManager::HandleToggleShaderControls(int selectedShaderOption)
 			_pCurrentSceneRenderProcess = _pShaderList["Basic Scene"].get();
 			_pShaderList["Effect HBlur"].get()->RemoveShaderResources();
 			_pShaderList["Effect HBlur"].get()->AddShaderResource(_pShaderList["Basic Scene"].get()->GetShaderTargetTexture("OutputText"));
-			GUIHandler::ResetBlurOptions();
+			GUIController::ResetBlurOptions();
 			break;
 
 		case 1:
@@ -241,7 +241,7 @@ void ShaderManager::HandleToggleShaderControls(int selectedShaderOption)
 			_pCurrentSceneRenderProcess = _pShaderList["Pixel Scene"].get();
 			_pShaderList["Effect HBlur"].get()->RemoveShaderResources();
 			_pShaderList["Effect HBlur"].get()->AddShaderResource(_pShaderList["Pixel Scene"].get()->GetShaderTargetTexture("OutputText"));
-			GUIHandler::ResetBlurOptions();
+			GUIController::ResetBlurOptions();
 			break;
 
 		case 2:
@@ -257,7 +257,7 @@ void ShaderManager::HandleToggleShaderControls(int selectedShaderOption)
 			_pShaderList["Effect HBlur"].get()->AddShaderResource(_pCurrentSceneRenderProcess->GetShaderTargetTexture("ColourMap"));
 			_pShaderList["Final Pass"].get()->RemoveShaderResources();
 			_pShaderList["Final Pass"].get()->AddShaderResource(_pShaderList["Effect VBlur"].get()->GetShaderTargetTexture("OutputText"));
-			GUIHandler::ResetBlurOptions();
+			GUIController::ResetBlurOptions();
 			_pDeferred = false;
 			break;
 
@@ -270,7 +270,7 @@ void ShaderManager::HandleToggleShaderControls(int selectedShaderOption)
 			_pCurrentSceneRenderProcess = _pShaderList["Parrallax Scene"].get();
 			_pShaderList["Effect HBlur"].get()->RemoveShaderResources();
 			_pShaderList["Effect HBlur"].get()->AddShaderResource(_pCurrentSceneRenderProcess->GetShaderTargetTexture("ColourMap"));
-			GUIHandler::ResetBlurOptions();
+			GUIController::ResetBlurOptions();
 			_pDeferred = true;
 			break;
 
@@ -281,7 +281,7 @@ void ShaderManager::HandleToggleShaderControls(int selectedShaderOption)
 			_pCurrentSceneRenderProcess = _pShaderList["Parrallax Scene"].get();
 			_pShaderList["Effect HBlur"].get()->RemoveShaderResources();
 			_pShaderList["Effect HBlur"].get()->AddShaderResource(_pCurrentSceneRenderProcess->GetShaderTargetTexture("NormalMap"));
-			GUIHandler::ResetBlurOptions();
+			GUIController::ResetBlurOptions();
 			_pDeferred = true;
 			break;
 
@@ -291,7 +291,7 @@ void ShaderManager::HandleToggleShaderControls(int selectedShaderOption)
 			_pCurrentSceneRenderProcess = _pShaderList["Parrallax Scene"].get();
 			_pShaderList["Effect HBlur"].get()->RemoveShaderResources();
 			_pShaderList["Effect HBlur"].get()->AddShaderResource(_pCurrentSceneRenderProcess->GetShaderTargetTexture("PositionMap"));
-			GUIHandler::ResetBlurOptions();
+			GUIController::ResetBlurOptions();
 			_pDeferred = true;
 			break;
 
@@ -304,7 +304,7 @@ void ShaderManager::HandleToggleShaderControls(int selectedShaderOption)
 			_pShaderList["Effect HBlur"].get()->AddShaderResource(_pShaderList["Deferred Parrallax Scene"].get()->GetShaderTargetTexture("OutputText"));
 			_pShaderList["Final Pass"].get()->RemoveShaderResources();
 			_pShaderList["Final Pass"].get()->AddShaderResource(_pShaderList["Effect VBlur"].get()->GetShaderTargetTexture("OutputText"));
-			GUIHandler::ResetBlurOptions();
+			GUIController::ResetBlurOptions();
 			_pDeferred = true;
 			break;
 		}

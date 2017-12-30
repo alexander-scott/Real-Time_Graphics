@@ -4,7 +4,7 @@
 
 #include "DX11AppHelper.h"
 
-static class GUIHandler
+static class GUIController
 {
 	struct VERTEX_CONSTANT_BUFFER
 	{
@@ -12,8 +12,8 @@ static class GUIHandler
 	};
 
 public:
-	GUIHandler();
-	~GUIHandler();
+	GUIController();
+	~GUIController();
 
 	static void SetupGUI();
 	static void UpdateGUI();

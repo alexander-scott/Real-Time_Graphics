@@ -20,7 +20,7 @@
 #include "DX11AppHelper.h"
 #include "ShaderManager.h"
 #include "InputLayoutManager.h"
-#include "GUIHandler.h"
+#include "GUIController.h"
 
 using namespace DirectX;
 

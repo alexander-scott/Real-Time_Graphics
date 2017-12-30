@@ -25,7 +25,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 	InitInputLayouts();
 	InitRenderProcesses();
-	GUIHandler::SetupGUI();
+	GUIController::SetupGUI();
 
 	// Setup Render Target Views
 	// Create a render target view for the back buffer
@@ -312,7 +312,7 @@ HRESULT Application::InitRenderProcesses()
 
 void Application::Cleanup()
 {
-	GUIHandler::ExitGUI();
+	GUIController::ExitGUI();
 
 	if (mScene)
 	{
@@ -333,10 +333,10 @@ bool Application::HandleKeyboard(MSG msg, float deltaTime)
 
 void Application::Update(float deltaTime)
 {
-	GUIHandler::UpdateGUI();
-	ShaderManager::HandleShaderControls(deltaTime, GUIHandler::_pShaderControlOption);
+	GUIController::UpdateGUI();
+	ShaderManager::HandleShaderControls(deltaTime, GUIController::_pShaderControlOption);
 
-	if (!GUIHandler::io.WantCaptureMouse)
+	if (!GUIController::io.WantCaptureMouse)
 	{
 		POINT p;
 		GetCursorPos(&p);
@@ -390,7 +390,7 @@ void Application::Draw()
 	cb.screenWidth = DX11AppHelper::_pRenderWidth;
 	cb.screenHeight = DX11AppHelper::_pRenderHeight;
 
-	if (GUIHandler::_pSelfShadingOn)
+	if (GUIController::_pSelfShadingOn)
 		cb.selfShadowOn = 1.0f;
 	else
 		cb.selfShadowOn = 0.0f;

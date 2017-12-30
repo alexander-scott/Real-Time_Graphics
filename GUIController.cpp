@@ -1,65 +1,65 @@
-#include "GUIHandler.h"
+#include "GUIController.h"
 
 #pragma region Static Member Initialisation
 
-ID3D11SamplerState* GUIHandler::_pFontSampler = NULL;
+ID3D11SamplerState* GUIController::_pFontSampler = NULL;
 
-ID3DBlob* GUIHandler::_pVSBlob = NULL;
-ID3DBlob* GUIHandler::_pPSBlob = NULL;
-ID3D11VertexShader* GUIHandler::_pVertexShader = NULL;
-ID3D11PixelShader* GUIHandler::_pPixelShader = NULL;
-ID3D11InputLayout* GUIHandler::_pInputLayout = NULL;
-ID3D11Buffer* GUIHandler::_pVertexConstantBuffer = NULL;
-ID3D11BlendState* GUIHandler::_pBlendState = NULL;
-ID3D11RasterizerState* GUIHandler::_pRasterizerState = NULL;
-ID3D11DepthStencilState* GUIHandler::_pDepthStencilState = NULL;
-ID3D11ShaderResourceView* GUIHandler::_pFontTextureView = NULL;
-ID3D11Buffer* GUIHandler::_pVB = NULL;
-ID3D11Buffer* GUIHandler::_pIB = NULL;
+ID3DBlob* GUIController::_pVSBlob = NULL;
+ID3DBlob* GUIController::_pPSBlob = NULL;
+ID3D11VertexShader* GUIController::_pVertexShader = NULL;
+ID3D11PixelShader* GUIController::_pPixelShader = NULL;
+ID3D11InputLayout* GUIController::_pInputLayout = NULL;
+ID3D11Buffer* GUIController::_pVertexConstantBuffer = NULL;
+ID3D11BlendState* GUIController::_pBlendState = NULL;
+ID3D11RasterizerState* GUIController::_pRasterizerState = NULL;
+ID3D11DepthStencilState* GUIController::_pDepthStencilState = NULL;
+ID3D11ShaderResourceView* GUIController::_pFontTextureView = NULL;
+ID3D11Buffer* GUIController::_pVB = NULL;
+ID3D11Buffer* GUIController::_pIB = NULL;
 
-int GUIHandler::_pVertexBufferSize = 5000;
-int GUIHandler::_pIndexBufferSize = 10000;
+int GUIController::_pVertexBufferSize = 5000;
+int GUIController::_pIndexBufferSize = 10000;
 
-INT64 GUIHandler::_pTime = 0;
-INT64 GUIHandler::_pTicksPerSecond = 0;
+INT64 GUIController::_pTime = 0;
+INT64 GUIController::_pTicksPerSecond = 0;
 
-int GUIHandler::_pShaderControlOption = 2;
-bool GUIHandler::_pBlurOn = false;
-bool GUIHandler::_pBlurWasOn = false;
-int GUIHandler::_pBlurEffectPasses = 0;
-float GUIHandler::_pBlurIntensity = 0;
+int GUIController::_pShaderControlOption = 2;
+bool GUIController::_pBlurOn = false;
+bool GUIController::_pBlurWasOn = false;
+int GUIController::_pBlurEffectPasses = 0;
+float GUIController::_pBlurIntensity = 0;
 
-bool GUIHandler::_pWhiteLightOn = true;
-bool GUIHandler::_pRedLightOn = false;
-bool GUIHandler::_pGreenLightOn = false;
-bool GUIHandler::_pBlueLightOn = false;
+bool GUIController::_pWhiteLightOn = true;
+bool GUIController::_pRedLightOn = false;
+bool GUIController::_pGreenLightOn = false;
+bool GUIController::_pBlueLightOn = false;
 
-int GUIHandler::_pControlledLight = 1;
+int GUIController::_pControlledLight = 1;
 
-bool GUIHandler::_pDOFActive = false;
+bool GUIController::_pDOFActive = false;
 
-bool GUIHandler::_pSelfShadingOn = true;
+bool GUIController::_pSelfShadingOn = true;
 
-bool GUIHandler::_pTestButton = false;
+bool GUIController::_pTestButton = false;
 
-ImGuiIO& GUIHandler::io = ImGui::GetIO();
+ImGuiIO& GUIController::io = ImGui::GetIO();
 
 #pragma endregion
 
-GUIHandler::GUIHandler()
+GUIController::GUIController()
 {
 }
 
-GUIHandler::~GUIHandler()
+GUIController::~GUIController()
 {
 }
 
-void GUIHandler::SetupGUI()
+void GUIController::SetupGUI()
 {
 	InitGUI(DX11AppHelper::_hWnd, DX11AppHelper::_pd3dDevice, DX11AppHelper::_pImmediateContext);
 }
 
-void GUIHandler::UpdateGUI()
+void GUIController::UpdateGUI()
 {
 	GUINewFrame();
 
@@ -179,21 +179,21 @@ void GUIHandler::UpdateGUI()
 	ImGui::Checkbox("Test Button", &_pTestButton);
 }
 
-void GUIHandler::ResetBlurOptions()
+void GUIController::ResetBlurOptions()
 {
-	GUIHandler::_pDOFActive = false;
-	GUIHandler::_pBlurOn = false;
-	GUIHandler::_pBlurIntensity = 0.0f;
-	GUIHandler::_pBlurEffectPasses = 0;
+	GUIController::_pDOFActive = false;
+	GUIController::_pBlurOn = false;
+	GUIController::_pBlurIntensity = 0.0f;
+	GUIController::_pBlurEffectPasses = 0;
 }
 
-void GUIHandler::ExitGUI()
+void GUIController::ExitGUI()
 {
 	InvalidateDeviceObjects();
 	ImGui::Shutdown();
 }
 
-void GUIHandler::GUINewFrame()
+void GUIController::GUINewFrame()
 {
 	if (!_pFontSampler)
 	{
@@ -252,7 +252,7 @@ void GUIHandler::GUINewFrame()
 	ImGui::NewFrame();
 }
 
-bool GUIHandler::InitGUI(void* hwnd, ID3D11Device* device, ID3D11DeviceContext* device_context)
+bool GUIController::InitGUI(void* hwnd, ID3D11Device* device, ID3D11DeviceContext* device_context)
 {
 	if (!QueryPerformanceFrequency((LARGE_INTEGER *)&_pTicksPerSecond))
 		return false;
@@ -286,7 +286,7 @@ bool GUIHandler::InitGUI(void* hwnd, ID3D11Device* device, ID3D11DeviceContext* 
 	return true;
 }
 
-void GUIHandler::RenderDrawLists(ImDrawData* draw_data)
+void GUIController::RenderDrawLists(ImDrawData* draw_data)
 {
 	ID3D11DeviceContext* ctx = DX11AppHelper::_pImmediateContext;
 
@@ -482,7 +482,7 @@ void GUIHandler::RenderDrawLists(ImDrawData* draw_data)
 	ctx->IASetInputLayout(old.InputLayout); if (old.InputLayout) old.InputLayout->Release();
 }
 
-bool GUIHandler::CreateDeviceObjects()
+bool GUIController::CreateDeviceObjects()
 {
 	if (!DX11AppHelper::_pd3dDevice)
 	{
@@ -640,7 +640,7 @@ bool GUIHandler::CreateDeviceObjects()
 	return true;
 }
 
-void GUIHandler::InvalidateDeviceObjects()
+void GUIController::InvalidateDeviceObjects()
 {
 	if (!DX11AppHelper::_pd3dDevice)
 		return;
@@ -661,7 +661,7 @@ void GUIHandler::InvalidateDeviceObjects()
 	if (_pVSBlob) { _pVSBlob->Release(); _pVSBlob = NULL; }
 }
 
-void GUIHandler::CreateFontsTexture()
+void GUIController::CreateFontsTexture()
 {
 	// Build texture atlas
 	ImGuiIO& io = ImGui::GetIO();
