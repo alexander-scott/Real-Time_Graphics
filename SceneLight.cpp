@@ -4,11 +4,9 @@ SceneLight::SceneLight(string type, ID3D11ShaderResourceView* texture, Geometry 
 {
 	_pLightName = type;
 
-	SetScale(0.1f, 0.1f, 0.1f);
+	SetScale(0.5f, 0.5f, 0.5f);
 	SetRotation(0.0f, 0.0f, 0.0f);
 	SetTextureRV(texture);
-
-	_pLightVecW = XMFLOAT3(-0.57735f, -0.57735f, 0.57735f);
 }
 
 SceneLight::~SceneLight()
@@ -28,7 +26,7 @@ void SceneLight::UpdateLight(float renderWidth, float renderHeight)
 
 	// Initialise Light Matrices
 	XMStoreFloat4x4(&_pView, XMMatrixLookAtLH(lightEyeVector, lightAtVector, lightUpVector));
-	XMStoreFloat4x4(&_pProjection, XMMatrixPerspectiveFovLH(0.9f * XM_PI, (renderWidth / renderHeight), 0.01f, 100.0f));
+	XMStoreFloat4x4(&_pProjection, XMMatrixPerspectiveFovLH(2* XM_PI, (renderWidth / renderHeight), 0.01f, 100.0f));
 }
 
 

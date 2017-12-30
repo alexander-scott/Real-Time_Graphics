@@ -5,9 +5,15 @@ X postive is right. Y postive is up.
 <!- -->
 
 <Scene name="1">
-  <Plane type="Floor" texture="Floor Texture" width="10" depth="10" step="10">
+  <Plane type="Floor" texture="Floor Texture" width="10" depth="10" height="1" step="10">
     <Position x="0.0" y="0.0" z="0.0"></Position>
     <BaseScale x="5.0" y="0.1" z="5.0"></BaseScale>
+    <BaseRotation x="0" y="0" z="0"></BaseRotation>
+  </Plane>
+
+  <Plane type="LeftSide" texture="Floor Texture" width="1" depth="10" height="5" step="10">
+    <Position x="-55.0" y="25" z="0.0"></Position>
+    <BaseScale x="0.1" y="5.0" z="5.0"></BaseScale>
     <BaseRotation x="0" y="0" z="0"></BaseRotation>
   </Plane>
 

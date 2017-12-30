@@ -163,10 +163,12 @@ vector<GameObject*> SceneBuilder::BuildPlane(xml_node<>* node, Geometry cubeGeom
 	string textureName = string(node->first_attribute("texture")->value());
 	int width = atoi(node->first_attribute("width")->value());
 	int depth = atoi(node->first_attribute("depth")->value());
+	int height = atoi(node->first_attribute("height")->value());
 	int step = atoi(node->first_attribute("step")->value());
 
 	int midWidthIndex = width / 2;
 	int midDepthIndex = depth / 2;
+	int midHeightIndex = height / 2;
 
 	xml_node<>* positionNode = node->first_node("Position");
 	XMFLOAT3 position = XMFLOAT3(
@@ -192,13 +194,16 @@ vector<GameObject*> SceneBuilder::BuildPlane(xml_node<>* node, Geometry cubeGeom
 	{
 		for (int j = 0; j < depth; j++)
 		{
-			GameObject* go = new GameObject(type, cubeGeometry, noSpecMaterial);
-			go->SetTextures(textureManager->GetTextureSet(textureName));
-			go->SetRotation(baseRotation.x, baseRotation.y, baseRotation.z);
-			go->SetScale(baseScale.x, baseScale.y, baseScale.z);
-			go->SetPosition(position.x + ((i - midWidthIndex) * step), 0, position.z + ((j - midDepthIndex) * step));
+			for (int k = 0; k < height; k++)
+			{
+				GameObject* go = new GameObject(type, cubeGeometry, noSpecMaterial);
+				go->SetTextures(textureManager->GetTextureSet(textureName));
+				go->SetRotation(baseRotation.x, baseRotation.y, baseRotation.z);
+				go->SetScale(baseScale.x, baseScale.y, baseScale.z);
+				go->SetPosition(position.x + ((i - midWidthIndex) * step), position.y + ((k - midHeightIndex) * step), position.z + ((j - midDepthIndex) * step));
 
-			gameObjects.push_back(go);
+				gameObjects.push_back(go);
+			}
 		}
 	}
 
