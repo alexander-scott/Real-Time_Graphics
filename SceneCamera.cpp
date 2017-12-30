@@ -6,7 +6,8 @@
 
 using namespace DirectX;
 
-SceneCamera::SceneCamera(float nearDepth, float farDepth, float windowWidth, float windowHeight, bool canFly)
+SceneCamera::SceneCamera(float nearDepth, float farDepth, float windowWidth, float windowHeight, bool canFly,
+	std::string type, Geometry geometry, Material material) : GameObject(type, geometry, material)
 {
 	mFovY = 0.25f * kPI;
 	mAspect = windowWidth / windowHeight;
@@ -14,6 +15,8 @@ SceneCamera::SceneCamera(float nearDepth, float farDepth, float windowWidth, flo
 	mFarZ = farDepth;
 
 	mCanFly = canFly;
+
+	SetScale(1.0f, 5, 0.1f);
 
 	UpdateCameraViewMatrix();
 	CreateProjectionMatrix();
@@ -36,16 +39,6 @@ BoundingFrustum SceneCamera::GetBoundingFrustum()
 	worldSpaceFrustum.Transform(localSpaceFrustum, invView);
 
 	return localSpaceFrustum;
-}
-
-void SceneCamera::SetPosition(float x, float y, float z)
-{
-	mCameraPos = XMFLOAT3(x, y, z);
-}
-
-void SceneCamera::SetPosition(const XMFLOAT3& v)
-{
-	mCameraPos = v;
 }
 
 // This function needs to be called if the window size changes
@@ -106,6 +99,7 @@ void SceneCamera::UpdateCameraViewMatrix()
 	// Generate a rotation matrix just based on yaw
 	XMMATRIX rotateYTempMatrix;
 	rotateYTempMatrix = XMMatrixRotationY(mCameraYaw);
+	SetRotation(0, mCameraYaw, 0);
 
 	// Calculate the right, forward and up vectors by multiplying their defaults vectors by the rotation matrix
 	XMVECTOR camRight = XMVector3TransformCoord(XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f), rotateYTempMatrix);
@@ -113,7 +107,7 @@ void SceneCamera::UpdateCameraViewMatrix()
 	XMVECTOR camUp = XMVector3TransformCoord(XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f), rotateYTempMatrix);
 	
 	// Load the stored camera pos in as a vector
-	XMVECTOR camPos = XMLoadFloat3(&mCameraPos);
+	XMVECTOR camPos = XMLoadFloat3(&GetPosition());
 
 	// Move the position forward/back or left/right depending on user input
 	camPos += mStrafeVelocity * camRight;
@@ -129,7 +123,9 @@ void SceneCamera::UpdateCameraViewMatrix()
 	camTarget = camPos + camTarget;
 
 	// Store the new camera position
-	XMStoreFloat3(&mCameraPos, camPos);
+	XMFLOAT3 camTempPos;
+	XMStoreFloat3(&camTempPos, camPos);
+	SetPosition(camTempPos);
 
 	// Generate and store the new view matrix based on the camera position and target and up vectors
 	mViewMatrix = XMMatrixLookAtLH(camPos, camTarget, camUp);

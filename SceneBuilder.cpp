@@ -30,7 +30,7 @@ Scene* SceneBuilder::BuildScene(string fileName, Geometry cubeGeometry, Material
 	xml_node<>* root = doc.first_node();
 
 	// Initalise the scene with the scene name
-	Scene* scene = new Scene(string(root->first_attribute("name")->value()));
+	Scene* scene = new Scene(string(root->first_attribute("name")->value()), cubeGeometry, noSpecMaterial);
 
 	////////////////////////////////////////////////////
 	// Extract all the GameObjects

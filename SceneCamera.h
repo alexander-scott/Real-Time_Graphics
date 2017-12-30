@@ -22,27 +22,24 @@
 #include <vector>
 #include <memory>
 
+#include "GameObject.h"
 #include "DX11AppHelper.h"
 
 using namespace DirectX;
 
-class SceneCamera
+class SceneCamera : public GameObject
 {
 public:
-	SceneCamera(float nearDepth, float farDepth, float windowWidth, float windowHeight, bool canFly);
+	SceneCamera(float nearDepth, float farDepth, float windowWidth, float windowHeight, bool canFly,
+		std::string type, Geometry geometry, Material material);
 	~SceneCamera();
 
-	// Get position and view/proj matricies
-	XMFLOAT3 GetPosition3f()const { return mCameraPos; }
+	// Get view/proj matricies
 	XMMATRIX GetViewMatrix()const { return mViewMatrix; }
 	XMMATRIX GetProjectionMatrix()const { return mProjectionMatrix; }
 
 	// Get the bounding frustum of this camera
 	BoundingFrustum GetBoundingFrustum();
-
-	// Set camera position
-	void SetPosition(float x, float y, float z);
-	void SetPosition(const XMFLOAT3& v);
 
 	void OnMouseMove(int x, int y);
 
@@ -59,9 +56,6 @@ private:
 	float mForwardVelocity = 0.0f;
 
 	POINT mLastMousePos;
-
-	// Camera coordinate system with coordinates relative to world space.
-	XMFLOAT3 mCameraPos = { 0.0f, 0.0f, 0.0f };
 
 	// Cache frustum properties.
 	float mNearZ = 0.0f;

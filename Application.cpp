@@ -383,7 +383,7 @@ void Application::Draw()
 	cb.lights[2] = mScene->GetSceneLight(2)->GetLight();
 	cb.lights[3] = mScene->GetSceneLight(3)->GetLight();
 
-	cb.EyePosW = mScene->GetRenderCamera()->GetPosition3f();
+	cb.EyePosW = mScene->GetRenderCamera()->GetPosition();
 	cb.HasTexture = 0.0f;
 	cb.HasNormalMap = 0.0f;
 	cb.HasHeightMap = 0.0f;

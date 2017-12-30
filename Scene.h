@@ -11,7 +11,7 @@ using namespace std;
 class Scene
 {
 public:
-	Scene(string name);
+	Scene(string name, Geometry cubeGeometry, Material cubeMat);
 	~Scene();
 
 	void Update(float timeSinceStart, float deltaTime);
@@ -47,6 +47,9 @@ private:
 	SceneCamera*				mSceneCameraWalk;
 	SceneCamera*				mSceneCameraFly;
 	Octree*						mOctree;
+
+	Geometry					mCubeGeometry;
+	Material					mNoSpecMaterial;
 
 	vector<SceneLight*>			mSceneLights;
 
