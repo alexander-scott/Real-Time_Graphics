@@ -101,7 +101,7 @@ void ShaderManager::AddCustomShader(string shaderName, float renderWidth, float 
 
 void ShaderManager::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLight*> lights, vector<GameObject*> gameObjects)
 {
-	cb->shadowsOn = GUIHandler::_pShadowMappingOn;
+	cb->shadowsOn = true;
 	cb->blurIntensity = GUIHandler::_pBlurIntensity;
 
 	SMConstantBuffer smCB;
@@ -113,27 +113,25 @@ void ShaderManager::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLight*
 	XMMATRIX projection;
 	XMMATRIX shadowTransform;
 
-	if (GUIHandler::_pShadowMappingOn)
+	// Create shadow maps
+	for (int i = 0; i < lights.size(); i++)
 	{
-		for (int i = 0; i < lights.size(); i++)
+		if (lights.at(i)->GetLightOn())
 		{
-			if (lights.at(i)->GetLightOn())
-			{
-				viewAsFloats = lights.at(i)->GetView();
-				projectionAsFloats = lights.at(i)->GetProjection();
-				shadowTransformAsFloats = lights.at(i)->GetShadowTransform();
+			viewAsFloats = lights.at(i)->GetView();
+			projectionAsFloats = lights.at(i)->GetProjection();
+			shadowTransformAsFloats = lights.at(i)->GetShadowTransform();
 
-				view = XMLoadFloat4x4(&viewAsFloats);
-				projection = XMLoadFloat4x4(&projectionAsFloats);
-				shadowTransform = XMLoadFloat4x4(&projectionAsFloats);
+			view = XMLoadFloat4x4(&viewAsFloats);
+			projection = XMLoadFloat4x4(&projectionAsFloats);
+			shadowTransform = XMLoadFloat4x4(&projectionAsFloats);
 
-				smCB.View = XMMatrixTranspose(view);
-				smCB.Projection = XMMatrixTranspose(projection);
+			smCB.View = XMMatrixTranspose(view);
+			smCB.Projection = XMMatrixTranspose(projection);
 
-				string shaderName = lights.at(i)->GetLightName() + " Depth Map";
+			string shaderName = lights.at(i)->GetLightName() + " Depth Map";
 
-				_pShaderList[shaderName].get()->RenderSceneDepthMap(DX11AppHelper::_pImmediateContext, gameObjects, DX11AppHelper::_pSMConstantBuffer, &smCB);
-			}
+			_pShaderList[shaderName].get()->RenderSceneDepthMap(DX11AppHelper::_pImmediateContext, gameObjects, DX11AppHelper::_pSMConstantBuffer, &smCB);
 		}
 	}
 

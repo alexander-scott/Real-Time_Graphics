@@ -37,8 +37,6 @@ public:
 	static int _pBlurEffectPasses;
 	static float _pBlurIntensity;
 
-	static bool _pShadowMappingOn;
-
 	static bool _pWhiteLightOn;
 	static bool _pRedLightOn;
 	static bool _pGreenLightOn;

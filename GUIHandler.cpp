@@ -29,10 +29,8 @@ bool GUIHandler::_pBlurWasOn = false;
 int GUIHandler::_pBlurEffectPasses = 0;
 float GUIHandler::_pBlurIntensity = 0;
 
-bool GUIHandler::_pShadowMappingOn = false;
-
 bool GUIHandler::_pWhiteLightOn = true;
-bool GUIHandler::_pRedLightOn = true;
+bool GUIHandler::_pRedLightOn = false;
 bool GUIHandler::_pGreenLightOn = false;
 bool GUIHandler::_pBlueLightOn = false;
 
@@ -65,9 +63,7 @@ void GUIHandler::UpdateGUI()
 {
 	GUINewFrame();
 
-	ImVec4 textColour = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
-
-	ImGui::TextColored(textColour, "Press ESC to exit this application.");
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Press ESC to exit this application."); // Yellow colour
 
 	ImGui::Spacing();
 	ImGui::Spacing();
@@ -168,40 +164,12 @@ void GUIHandler::UpdateGUI()
 		}
 	}
 
-	if (_pShaderControlOption == 2 || _pShaderControlOption == 1)
-	{
-		ImGui::Separator();
-
-		ImGui::Spacing();
-		ImGui::Text("Shadow Options");
-		ImGui::Spacing();
-
-		// Shadow Mapping Controls
-		ImGui::Text("Shadow Mapping Controls");
-		ImGui::Spacing();
-		ImGui::Checkbox("Shadaw Mapping", &_pShadowMappingOn);
-
-		if (_pShadowMappingOn)
-		{
-			_pSelfShadingOn = false;
-		}
-
-		ImGui::Spacing();
-		ImGui::Spacing();
-		ImGui::Spacing();
-	}
-
 	if (_pShaderControlOption == 2)
 	{
 		// Self Shading Options
 		ImGui::Text("Self Shading Controls");
 		ImGui::Spacing();
 		ImGui::Checkbox("Self Shading", &_pSelfShadingOn);
-
-		if (_pSelfShadingOn)
-		{
-			_pShadowMappingOn = false;
-		}
 	}
 
 	ImGui::Spacing();

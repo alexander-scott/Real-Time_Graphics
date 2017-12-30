@@ -19,11 +19,11 @@ void SceneLight::UpdateLight(float renderWidth, float renderHeight)
 {
 	// Update the Main Light
 	XMFLOAT4 lightEyePos = XMFLOAT4(_pLightVecW.x, _pLightVecW.y, _pLightVecW.z, 1.0f);
-	XMFLOAT4 lightAtPos = XMFLOAT4(lightEyePos.x, lightEyePos.y - 1.0f, lightEyePos.z - 0.0001f, 1.0f);
+	XMFLOAT4 lightEyeDir = XMFLOAT4(lightEyePos.x, lightEyePos.y - 1.0f, lightEyePos.z - 0.0001f, 1.0f);
 	XMFLOAT4 lightUpPos = XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f);
 
 	XMVECTOR lightEyeVector = XMLoadFloat4(&lightEyePos);
-	XMVECTOR lightAtVector = XMLoadFloat4(&lightAtPos);
+	XMVECTOR lightAtVector = XMLoadFloat4(&lightEyeDir);
 	XMVECTOR lightUpVector = XMLoadFloat4(&lightUpPos);
 
 	// Initialise Light Matrices
