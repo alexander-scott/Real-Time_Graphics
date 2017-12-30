@@ -88,7 +88,7 @@ void Application::InitScene()
 	noSpecMaterial.specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	noSpecMaterial.specularPower = 0.0f;
 
-	mScene = SceneBuilder::BuildScene("Scene.xml", cubeGeometry, noSpecMaterial, mTextureController);
+	mScene = SceneBuilder::BuildScene("Scene.xml", cubeGeometry, shinyMaterial, mTextureController);
 }
 
 void Application::InitInputLayouts()

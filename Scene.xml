@@ -5,29 +5,89 @@ X postive is right. Y postive is up.
 <!- -->
 
 <Scene name="1">
-  <Plane type="Floor" texture="Floor Texture" width="10" depth="10" height="1" step="10">
+  <!-- -
+  Area 1: White light + all textures in enclosed room
+  <!- -->
+  <Plane type="BottomSide" texture="Floor Texture" width="5" depth="5" height="1" step="10">
     <Position x="0.0" y="0.0" z="0.0"></Position>
     <BaseScale x="5.0" y="0.1" z="5.0"></BaseScale>
     <BaseRotation x="0" y="0" z="0"></BaseRotation>
   </Plane>
 
-  <Plane type="LeftSide" texture="Floor Texture" width="1" depth="10" height="5" step="10">
-    <Position x="-55.0" y="25" z="0.0"></Position>
+  <Plane type="TopSide" texture="Floor Texture" width="5" depth="5" height="1" step="10">
+    <Position x="0.0" y="50.0" z="0.0"></Position>
+    <BaseScale x="5.0" y="0.1" z="5.0"></BaseScale>
+    <BaseRotation x="0" y="0" z="0"></BaseRotation>
+  </Plane>
+
+  <Plane type="LeftSide" texture="Floor Texture" width="1" depth="5" height="5" step="10">
+    <Position x="-25.0" y="25" z="0.0"></Position>
     <BaseScale x="0.1" y="5.0" z="5.0"></BaseScale>
     <BaseRotation x="0" y="0" z="0"></BaseRotation>
   </Plane>
 
-  <GameObject type="Pillar" texture="Crate Texture">
+  <Plane type="RightSide" texture="Floor Texture" width="1" depth="5" height="5" step="10">
+    <Position x="25.0" y="25" z="0.0"></Position>
+    <BaseScale x="0.1" y="5.0" z="5.0"></BaseScale>
+    <BaseRotation x="0" y="0" z="0"></BaseRotation>
+  </Plane>
+
+  <Plane type="FrontSide" texture="Floor Texture" width="5" depth="1" height="5" step="10">
+    <Position x="0.0" y="25" z="25.0"></Position>
+    <BaseScale x="5.0" y="5.0" z="0.1"></BaseScale>
+    <BaseRotation x="0" y="0" z="0"></BaseRotation>
+  </Plane>
+
+  <Plane type="BackSideLeft" texture="Floor Texture" width="2" depth="1" height="5" step="10">
+    <Position x="-10" y="25" z="-25.0"></Position>
+    <BaseScale x="5.0" y="5.0" z="0.1"></BaseScale>
+    <BaseRotation x="0" y="0" z="0"></BaseRotation>
+  </Plane>
+
+  <Plane type="BackSideRight" texture="Floor Texture" width="2" depth="1" height="5" step="10">
+    <Position x="20" y="25" z="-25.0"></Position>
+    <BaseScale x="5.0" y="5.0" z="0.1"></BaseScale>
+    <BaseRotation x="0" y="0" z="0"></BaseRotation>
+  </Plane>
+
+  <Plane type="BackSideTop" texture="Floor Texture" width="1" depth="1" height="4" step="10">
+    <Position x="0" y="35" z="-25.0"></Position>
+    <BaseScale x="5.0" y="5.0" z="0.1"></BaseScale>
+    <BaseRotation x="0" y="0" z="0"></BaseRotation>
+  </Plane>
+
+  <GameObject type="Cracked Rock" texture="Cracked Rock Texture">
     <Position x="0.0" y="5.0" z="0.0"></Position>
     <Scale x="1.0" y="1.0" z="1.0"></Scale>
     <Rotation x="0.0" y="0.0" z="0.0"></Rotation>
   </GameObject>
 
+  <GameObject type="Crate" texture="Crate Texture">
+    <Position x="5.0" y="5.0" z="0.0"></Position>
+    <Scale x="1.0" y="1.0" z="1.0"></Scale>
+    <Rotation x="0.0" y="0.0" z="0.0"></Rotation>
+  </GameObject>
+
+  <GameObject type="Create" texture="Brick Texture">
+    <Position x="-5.0" y="5.0" z="0.0"></Position>
+    <Scale x="1.0" y="1.0" z="1.0"></Scale>
+    <Rotation x="0.0" y="0.0" z="0.0"></Rotation>
+  </GameObject>
+  
+  <!-- -
+  Junction: Area 1 to Area 2
+  <!- -->
+  <Plane type="BottomSide" texture="Floor Texture" width="1" depth="10" height="1" step="10">
+    <Position x="0" y="0" z="-70.0"></Position>
+    <BaseScale x="5.0" y="0.1" z="5.0"></BaseScale>
+    <BaseRotation x="0" y="0" z="0"></BaseRotation>
+  </Plane>
+  
   <SceneLight type="White Light" texture="White Texture">
     <AmbientLight x="0.5" y="0.5" z="0.5" w="1.0"></AmbientLight>
     <DiffuseLight x="1.0" y="1.0" z="1.0" w="1.0"></DiffuseLight>
     <SpecularLight x="0.8" y="0.8" z="0.8" w="1.0"></SpecularLight>
-    <SpecularPower value="20"></SpecularPower>
+    <SpecularPower value="10"></SpecularPower>
     <LightVecW x="-5.05" y="10.0" z="14.5"></LightVecW>
     <PaddingLightAmount x="0.0" y="0.0" z="0.0"></PaddingLightAmount>
     <LightOn value="1"></LightOn>

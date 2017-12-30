@@ -389,7 +389,6 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_Target
 				if (shadowsOn == 1.0f)
 				{
 					float4 currentLightViewPosition = float4(0.0f, 0.0f, 0.0f, 1.0f);
-					float newShadowsOn = 1.0f;
 
 					currentLightViewPosition = lightViewPositions[i];
 
@@ -400,45 +399,42 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_Target
 					newTexCoordOffset = mul(float4(textureCoordOffset, 1.0f, 1.0f), lights[i].View);
 					newTexCoordOffset = mul(newTexCoordOffset, lights[i].Projection);
 
-					if (newShadowsOn == 1.0f)
+					float2 projectedTexCoord;
+					projectedTexCoord.x = (((currentLightViewPosition.x) / currentLightViewPosition.w) / 2.0f + 0.5f) + textureCoordOffset.x;
+					projectedTexCoord.y = (((-currentLightViewPosition.y) / currentLightViewPosition.w) / 2.0f + 0.5f) + textureCoordOffset.y;
+
+					lightDepthValue = ((currentLightViewPosition.z) / currentLightViewPosition.w);
+					lightDepthValue = lightDepthValue - 0.000001f;
+
+					if (i == 0)
 					{
-						float2 projectedTexCoord;
-						projectedTexCoord.x = (((currentLightViewPosition.x) / currentLightViewPosition.w) / 2.0f + 0.5f) + textureCoordOffset.x;
-						projectedTexCoord.y = (((-currentLightViewPosition.y) / currentLightViewPosition.w) / 2.0f + 0.5f) + textureCoordOffset.y;
+						depthValue = txWhiteLightDepthMap.Sample(samClamp, projectedTexCoord).r;
+					}
+					else if (i == 1)
+					{
+						depthValue = txRedLightDepthMap.Sample(samClamp, projectedTexCoord).r;
+					}
+					else if (i == 2)
+					{
+						depthValue = txGreenLightDepthMap.Sample(samClamp, projectedTexCoord).r;
+					}
+					else if (i == 3)
+					{
+						depthValue = txBlueLightDepthMap.Sample(samClamp, projectedTexCoord).r;
+					}
 
-						lightDepthValue = ((currentLightViewPosition.z) / currentLightViewPosition.w);
-						lightDepthValue = lightDepthValue - 0.000001f;
-
-						if (i == 0)
+					if ((saturate(projectedTexCoord.x) == projectedTexCoord.x) && (saturate(projectedTexCoord.y) == projectedTexCoord.y))
+					{
+						if ((depthValue < lightDepthValue))
 						{
-							depthValue = txWhiteLightDepthMap.Sample(samClamp, projectedTexCoord).r;
-						}
-						else if (i == 1)
-						{
-							depthValue = txRedLightDepthMap.Sample(samClamp, projectedTexCoord).r;
-						}
-						else if (i == 2)
-						{
-							depthValue = txGreenLightDepthMap.Sample(samClamp, projectedTexCoord).r;
-						}
-						else if (i == 3)
-						{
-							depthValue = txBlueLightDepthMap.Sample(samClamp, projectedTexCoord).r;
-						}
-
-						if ((saturate(projectedTexCoord.x) == projectedTexCoord.x) && (saturate(projectedTexCoord.y) == projectedTexCoord.y))
-						{
-							if ((depthValue < lightDepthValue))
-							{
-								inShadow = 1.0f;
-							}
+							inShadow = 1.0f;
 						}
 					}
 				}
 
 				if (inShadow == 0.0f && selfShadowOn == 1.0f)
 				{
-					inShadow = CalculateIfInShadow(input,eyeVec, lightVecWorld[i], vFinalCoords);
+					inShadow = CalculateIfInShadow(input, eyeVec, lightVecWorld[i], vFinalCoords);
 				}
 
 				if (inShadow == 1.0f)

@@ -34,7 +34,7 @@ bool GUIController::_pRedLightOn = false;
 bool GUIController::_pGreenLightOn = false;
 bool GUIController::_pBlueLightOn = false;
 
-int GUIController::_pControlledLight = 1;
+int GUIController::_pControlledLight = 0;
 
 bool GUIController::_pSelfShadingOn = true;
 

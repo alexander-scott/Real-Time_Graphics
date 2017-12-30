@@ -140,7 +140,7 @@ void RenderToTextureProcess::RenderSceneDepthMap(ID3D11DeviceContext* immediateC
 	SetSamplerStates(immediateContext);
 
 	// Render all scene objects
-	for (auto gameObject : gameObjects)
+	for (auto& gameObject : gameObjects)
 	{
 		// Set world matrix
 		sMCB->World = XMMatrixTranspose(gameObject->GetWorldMatrix());
