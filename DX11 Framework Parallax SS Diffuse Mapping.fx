@@ -218,9 +218,9 @@ float3 CalculateTextureCoordOffset(VS_OUTPUT input, float3 eyeVec, float3 lightV
 		}
 	}
 
-	float3 parrallaxDetails = float3(vCurrOffset.x, vCurrOffset.y, fCurrRayHeight);
+	float3 ParallaxDetails = float3(vCurrOffset.x, vCurrOffset.y, fCurrRayHeight);
 
-	return parrallaxDetails;
+	return ParallaxDetails;
 }
 
 float CalculateIfInShadow(VS_OUTPUT input, float3 eyeVec, float3 lightVec, float2 vFinalCoords)

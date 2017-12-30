@@ -73,6 +73,7 @@ HRESULT RenderToTextureProcess::SetupRenderQuad(ID3D11Device* d3dDevice)
 	return hr;
 }
 
+// Setup render target view and shader resource view
 HRESULT RenderToTextureProcess::SetupRTVAndSRV(ID3D11Device* d3dDevice, string resourceName)
 {
 	HRESULT hr;

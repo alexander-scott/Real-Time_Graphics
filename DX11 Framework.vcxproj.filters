@@ -12,32 +12,8 @@
     <Filter Include="Resource Files\Textures">
       <UniqueIdentifier>{84a4d56f-682d-4b12-a7c9-064cc08bce09}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\Post Process Shaders">
-      <UniqueIdentifier>{693ebeae-84d8-487d-a5c0-49c0bf3304ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\Post Process Shaders\Blur">
-      <UniqueIdentifier>{3e395ffb-0c49-4883-80f7-cb9c0f41cf4d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\Post Process Shaders\Shadow Mapping">
-      <UniqueIdentifier>{d15c9521-f871-4ce8-9b57-39c70652386c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\Post Process Shaders\Basic">
-      <UniqueIdentifier>{21e7c2ec-f962-4dff-b941-b9a9696f37a2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\Deferred">
-      <UniqueIdentifier>{15c0c825-80da-4891-a5ea-f1e5b0b62630}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\Deferred\G-Buffer Shaders">
-      <UniqueIdentifier>{56396a1d-beb6-4051-ab0a-941a5b8fd789}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\SSAO">
-      <UniqueIdentifier>{54e757d1-d735-49b8-83b9-ee5e0d7bb3f8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Render Process">
       <UniqueIdentifier>{f9a465ec-cfd7-469a-9a6d-d310ee5bde77}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\Lighting Shaders">
-      <UniqueIdentifier>{ee87904c-9df5-4fbd-90e3-889743fc1ed5}</UniqueIdentifier>
     </Filter>
     <Filter Include="GUI Libraries">
       <UniqueIdentifier>{585cf594-4adb-4bcd-814a-cb4477cab82d}</UniqueIdentifier>
@@ -65,6 +41,12 @@
     </Filter>
     <Filter Include="DirectX\Textures">
       <UniqueIdentifier>{e4e847cb-165d-44b7-8f05-f08bc046d751}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Parallax">
+      <UniqueIdentifier>{0c967173-af60-4b38-90e2-11e6ec88a038}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Blur Effect">
+      <UniqueIdentifier>{3e395ffb-0c49-4883-80f7-cb9c0f41cf4d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -210,37 +192,31 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="DX11 Framework Vertical Blur.fx">
-      <Filter>Shaders\Post Process Shaders\Blur</Filter>
+      <Filter>Shaders\Blur Effect</Filter>
     </FxCompile>
     <FxCompile Include="DX11 Framework Horizontal Blur.fx">
-      <Filter>Shaders\Post Process Shaders\Blur</Filter>
-    </FxCompile>
-    <FxCompile Include="DX11 Framework Basic.fx">
-      <Filter>Shaders\Lighting Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="DX11 Framework Pixel.fx">
-      <Filter>Shaders\Lighting Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="DX11 Framework Render To Texture.fx">
-      <Filter>Shaders\Post Process Shaders\Basic</Filter>
-    </FxCompile>
-    <FxCompile Include="DX11 Framework SSAO Ambient Map.fx">
-      <Filter>Shaders\SSAO</Filter>
-    </FxCompile>
-    <FxCompile Include="DX11 Framework SSAO Normal Map.fx">
-      <Filter>Shaders\SSAO</Filter>
+      <Filter>Shaders\Blur Effect</Filter>
     </FxCompile>
     <FxCompile Include="DX11 Framework Depth Mapping.fx">
-      <Filter>Shaders\Post Process Shaders\Shadow Mapping</Filter>
-    </FxCompile>
-    <FxCompile Include="DX11 Framework Deferred Lighting.fx">
-      <Filter>Shaders\Deferred</Filter>
+      <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="DX11 Framework Parallax SS Diffuse Mapping.fx">
-      <Filter>Shaders\Lighting Shaders</Filter>
+      <Filter>Shaders\Parallax</Filter>
     </FxCompile>
     <FxCompile Include="DX11 Framework Parallax SS Deferred.fx">
-      <Filter>Shaders\Deferred\G-Buffer Shaders</Filter>
+      <Filter>Shaders\Parallax</Filter>
+    </FxCompile>
+    <FxCompile Include="DX11 Framework Basic.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="DX11 Framework Pixel.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="DX11 Framework Render To Texture.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="DX11 Framework Deferred Lighting.fx">
+      <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
