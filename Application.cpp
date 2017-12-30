@@ -270,33 +270,6 @@ HRESULT Application::InitRenderProcesses()
 	mShaderController->GetRenderToTextureProcess("Effect VBlur")->AddSamplerState(_pSamplerLinear);
 	mShaderController->GetRenderToTextureProcess("Effect VBlur")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Effect HBlur")->GetShaderTargetTexture("OutputText"));
 
-	if (FAILED(mShaderController->AddDepthBufferShader("DOF Depth Map", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Basic Depth Mapping.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 1"), DX11AppHelper::_pd3dDevice)))
-	{
-		return E_FAIL;
-	}
-
-	mShaderController->GetRenderToTextureProcess("DOF Depth Map")->SetClearColour(1.0f, 1.0f, 1.0f, 1.0f);
-
-	if (FAILED(mShaderController->AddRenderFromQuadShader("Effect DOFHBlur", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework DOF Hor Blur.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 3"), DX11AppHelper::_pd3dDevice)))
-	{
-		return E_FAIL;
-	}
-
-	mShaderController->GetRenderToTextureProcess("Effect DOFHBlur")->AddSamplerState(_pSamplerLinear);
-	mShaderController->GetRenderToTextureProcess("Effect DOFHBlur")->AddSamplerState(_pSamplerClamp);
-	mShaderController->GetRenderToTextureProcess("Effect DOFHBlur")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Effect VBlur")->GetShaderTargetTexture("OutputText"));
-	mShaderController->GetRenderToTextureProcess("Effect DOFHBlur")->AddShaderResource(mShaderController->GetRenderToTextureProcess("DOF Depth Map")->GetShaderTargetTexture("DepthMap"));
-
-	if (FAILED(mShaderController->AddRenderFromQuadShader("Effect DOFVBlur", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework DOF Vert Blur.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 3"), DX11AppHelper::_pd3dDevice)))
-	{
-		return E_FAIL;
-	}
-
-	mShaderController->GetRenderToTextureProcess("Effect DOFVBlur")->AddSamplerState(_pSamplerLinear);
-	mShaderController->GetRenderToTextureProcess("Effect DOFVBlur")->AddSamplerState(_pSamplerClamp);
-	mShaderController->GetRenderToTextureProcess("Effect DOFVBlur")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Effect DOFHBlur")->GetShaderTargetTexture("OutputText"));
-	mShaderController->GetRenderToTextureProcess("Effect DOFVBlur")->AddShaderResource(mShaderController->GetRenderToTextureProcess("DOF Depth Map")->GetShaderTargetTexture("DepthMap"));
-
 	if (FAILED(mShaderController->AddRenderToBackBufferShader("Final Pass", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Render To Texture.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 3"), DX11AppHelper::_pd3dDevice)))
 	{
 		return E_FAIL;

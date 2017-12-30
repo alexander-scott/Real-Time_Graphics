@@ -36,8 +36,6 @@ bool GUIController::_pBlueLightOn = false;
 
 int GUIController::_pControlledLight = 1;
 
-bool GUIController::_pDOFActive = false;
-
 bool GUIController::_pSelfShadingOn = true;
 
 bool GUIController::_pTestButton = false;
@@ -116,11 +114,6 @@ void GUIController::UpdateGUI()
 		ImGui::Text("Blur Effect Controls");
 		ImGui::Checkbox("Blur On/Off", &_pBlurOn);
 
-		if (_pBlurOn)
-		{
-			_pDOFActive = false;
-		}
-
 		if (_pBlurOn && !_pBlurWasOn)
 		{
 			_pBlurIntensity += 0.1f;
@@ -152,16 +145,6 @@ void GUIController::UpdateGUI()
 		}
 
 		ImGui::Spacing();
-
-		// DOF Controls
-		ImGui::Text("Depth of Field Controls");
-		ImGui::Spacing();
-		ImGui::Checkbox("Depth of Field", &_pDOFActive);
-
-		if (_pDOFActive)
-		{
-			_pBlurOn = false;
-		}
 	}
 
 	if (_pShaderControlOption == 2)
@@ -181,7 +164,6 @@ void GUIController::UpdateGUI()
 
 void GUIController::ResetBlurOptions()
 {
-	GUIController::_pDOFActive = false;
 	GUIController::_pBlurOn = false;
 	GUIController::_pBlurIntensity = 0.0f;
 	GUIController::_pBlurEffectPasses = 0;

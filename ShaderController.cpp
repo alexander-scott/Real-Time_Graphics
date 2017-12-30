@@ -5,7 +5,6 @@ ShaderController::ShaderController()
 	mCurrentSceneRenderProcess = nullptr;
 	mCurrentShaderOptionSelected = 1;
 	mDeferred = false;
-	mDOFWasOn = false;
 }
 
 ShaderController::~ShaderController()
@@ -172,74 +171,33 @@ void ShaderController::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLig
 		mShaderList["Effect VBlur"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
 	}
 
-	mShaderList["DOF Depth Map"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, true);
-	mShaderList["DOF Depth Map"].get()->RenderGameObjects(DX11AppHelper::_pImmediateContext, gameObjects, DX11AppHelper::_pConstantBuffer, cb);
-
-	if (GUIController::_pDOFActive)
-	{
-		mShaderList["Effect DOFHBlur"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, false);
-		mShaderList["Effect DOFHBlur"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
-
-		mShaderList["Effect DOFVBlur"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, false);
-		mShaderList["Effect DOFVBlur"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
-	}
-
 	mShaderList["Final Pass"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, false);
 	mShaderList["Final Pass"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
 }
 
 void ShaderController::UpdateShaderSelection(int selectedShaderOption)
 {
-	if (GUIController::_pDOFActive && !mDOFWasOn)
-	{
-		if (mDeferred)
-		{
-			mCurrentSceneRenderProcess = mShaderList["Parrallax Scene"].get();
-			mShaderList["Effect HBlur"].get()->RemoveShaderResources();
-			mShaderList["Effect HBlur"].get()->AddShaderResource(mShaderList["Deferred Parrallax Scene"].get()->GetShaderTargetTexture("OutputText"));
-			mShaderList["Final Pass"].get()->RemoveShaderResources();
-			mShaderList["Final Pass"].get()->AddShaderResource(mShaderList["Effect DOFVBlur"].get()->GetShaderTargetTexture("OutputText"));
-		}
-		else
-		{
-			mCurrentSceneRenderProcess = mShaderList["Parrallax Scene"].get();
-			mShaderList["Effect HBlur"].get()->RemoveShaderResources();
-			mShaderList["Effect HBlur"].get()->AddShaderResource(mCurrentSceneRenderProcess->GetShaderTargetTexture("ColourMap"));
-			mShaderList["Final Pass"].get()->RemoveShaderResources();
-			mShaderList["Final Pass"].get()->AddShaderResource(mShaderList["Effect DOFVBlur"].get()->GetShaderTargetTexture("OutputText"));
-		}
-
-		mDOFWasOn = true;
-	}
-	else if (!GUIController::_pDOFActive && mDOFWasOn)
-	{
-		DisableDOF();
-	}
-
 	if (mCurrentShaderOptionSelected != selectedShaderOption)
 	{
 		mCurrentShaderOptionSelected = selectedShaderOption;
 
 		switch (selectedShaderOption)
 		{
-		case 0:
-			DisableDOF();
+		case 0: // Vertex lighting
 			mCurrentSceneRenderProcess = mShaderList["Basic Scene"].get();
 			mShaderList["Effect HBlur"].get()->RemoveShaderResources();
 			mShaderList["Effect HBlur"].get()->AddShaderResource(mShaderList["Basic Scene"].get()->GetShaderTargetTexture("OutputText"));
 			GUIController::ResetBlurOptions();
 			break;
 
-		case 1:
-			DisableDOF();
+		case 1: // Pixel lighting
 			mCurrentSceneRenderProcess = mShaderList["Pixel Scene"].get();
 			mShaderList["Effect HBlur"].get()->RemoveShaderResources();
 			mShaderList["Effect HBlur"].get()->AddShaderResource(mShaderList["Pixel Scene"].get()->GetShaderTargetTexture("OutputText"));
 			GUIController::ResetBlurOptions();
 			break;
 
-		case 2:
-			DisableDOF();
+		case 2: // Parallax Occlusion Mapping
 			mShaderList["Parrallax Scene"].get()->RemoveShaderResources();
 			mShaderList["Parrallax Scene"].get()->AddShaderResource(mShaderList["White Light Depth Map"].get()->GetDepthMapResourceView());
 			mShaderList["Parrallax Scene"].get()->AddShaderResource(mShaderList["Red Light Depth Map"].get()->GetDepthMapResourceView());
@@ -255,8 +213,7 @@ void ShaderController::UpdateShaderSelection(int selectedShaderOption)
 			mDeferred = false;
 			break;
 
-		case 3:
-			DisableDOF();
+		case 3: // G-Buffer Diffuse
 			mShaderList["Parrallax Scene"].get()->RemoveShaderResources();
 			mShaderList["Parrallax Scene"].get()->SetCurrentShaderIndex(1);
 			mCurrentSceneRenderProcess = mShaderList["Parrallax Scene"].get();
@@ -268,8 +225,7 @@ void ShaderController::UpdateShaderSelection(int selectedShaderOption)
 			mDeferred = true;
 			break;
 
-		case 4:
-			DisableDOF();
+		case 4: // G-Buffer Normals
 			mShaderList["Parrallax Scene"].get()->RemoveShaderResources();
 			mShaderList["Parrallax Scene"].get()->SetCurrentShaderIndex(1);
 			mCurrentSceneRenderProcess = mShaderList["Parrallax Scene"].get();
@@ -279,8 +235,7 @@ void ShaderController::UpdateShaderSelection(int selectedShaderOption)
 			mDeferred = true;
 			break;
 
-		case 5:
-			DisableDOF();
+		case 5: // G-Buffer Position
 			mShaderList["Parrallax Scene"].get()->SetCurrentShaderIndex(1);
 			mCurrentSceneRenderProcess = mShaderList["Parrallax Scene"].get();
 			mShaderList["Effect HBlur"].get()->RemoveShaderResources();
@@ -290,7 +245,6 @@ void ShaderController::UpdateShaderSelection(int selectedShaderOption)
 			break;
 
 		case 6:
-			DisableDOF();
 			mShaderList["Parrallax Scene"].get()->RemoveShaderResources();
 			mShaderList["Parrallax Scene"].get()->SetCurrentShaderIndex(1);
 			mCurrentSceneRenderProcess = mShaderList["Parrallax Scene"].get();
@@ -303,21 +257,4 @@ void ShaderController::UpdateShaderSelection(int selectedShaderOption)
 			break;
 		}
 	}
-}
-
-void ShaderController::DisableDOF()
-{
-	mShaderList["Parrallax Scene"].get()->RemoveShaderResources();
-	mShaderList["Parrallax Scene"].get()->AddShaderResource(mShaderList["White Light Depth Map"].get()->GetDepthMapResourceView());
-	mShaderList["Parrallax Scene"].get()->AddShaderResource(mShaderList["Red Light Depth Map"].get()->GetDepthMapResourceView());
-	mShaderList["Parrallax Scene"].get()->AddShaderResource(mShaderList["Green Light Depth Map"].get()->GetDepthMapResourceView());
-	mShaderList["Parrallax Scene"].get()->AddShaderResource(mShaderList["Blue Light Depth Map"].get()->GetDepthMapResourceView());
-	mShaderList["Parrallax Scene"].get()->SetCurrentShaderIndex(0);
-	mShaderList["Effect HBlur"].get()->RemoveShaderResources();
-	mShaderList["Effect HBlur"].get()->AddShaderResource(mCurrentSceneRenderProcess->GetShaderTargetTexture("ColourMap"));
-	mShaderList["Final Pass"].get()->RemoveShaderResources();
-	mShaderList["Final Pass"].get()->AddShaderResource(mShaderList["Effect VBlur"].get()->GetShaderTargetTexture("OutputText"));
-
-	mDeferred = false;
-	mDOFWasOn = false;
 }

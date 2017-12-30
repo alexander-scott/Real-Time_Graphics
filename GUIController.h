@@ -44,8 +44,6 @@ public:
 
 	static int _pControlledLight;
 
-	static bool _pDOFActive;
-
 	static bool _pSelfShadingOn;
 
 	static bool _pTestButton;

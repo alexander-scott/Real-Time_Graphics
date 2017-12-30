@@ -236,15 +236,6 @@
     <FxCompile Include="DX11 Framework Deferred Lighting.fx">
       <Filter>Shaders\Deferred</Filter>
     </FxCompile>
-    <FxCompile Include="DX11 Framework DOF Hor Blur.fx">
-      <Filter>Shaders\Post Process Shaders\Blur</Filter>
-    </FxCompile>
-    <FxCompile Include="DX11 Framework DOF Vert Blur.fx">
-      <Filter>Shaders\Post Process Shaders\Blur</Filter>
-    </FxCompile>
-    <FxCompile Include="DX11 Framework Basic Depth Mapping.fx">
-      <Filter>Shaders\Lighting Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="DX11 Framework Parallax SS Diffuse Mapping.fx">
       <Filter>Shaders\Lighting Shaders</Filter>
     </FxCompile>
