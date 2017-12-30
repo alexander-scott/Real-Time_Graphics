@@ -4,7 +4,6 @@ ShaderController::ShaderController()
 {
 	mCurrentSceneRenderProcess = nullptr;
 	mCurrentShaderOptionSelected = 1;
-	mDeferred = false;
 }
 
 ShaderController::~ShaderController()
@@ -136,12 +135,6 @@ void ShaderController::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLig
 	mCurrentSceneRenderProcess->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, true);
 	mCurrentSceneRenderProcess->RenderGameObjects(DX11AppHelper::_pImmediateContext, gameObjects, DX11AppHelper::_pConstantBuffer, cb);
 
-	if (mDeferred)
-	{
-		mShaderList["Deferred Parallax Scene"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, false);
-		mShaderList["Deferred Parallax Scene"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
-	}
-
 	if (GUIController::_pBlurEffectPasses != 0)
 	{
 		for (int i = 0; i < GUIController::_pBlurEffectPasses; i++)
@@ -210,7 +203,6 @@ void ShaderController::UpdateShaderSelection(int selectedShaderOption)
 			mShaderList["Final Pass"].get()->RemoveShaderResources();
 			mShaderList["Final Pass"].get()->AddShaderResource(mShaderList["Effect VBlur"].get()->GetShaderTargetTexture("OutputText"));
 			GUIController::ResetBlurOptions();
-			mDeferred = false;
 			break;
 
 		case 3: // G-Buffer Diffuse
@@ -222,7 +214,6 @@ void ShaderController::UpdateShaderSelection(int selectedShaderOption)
 			mShaderList["Effect HBlur"].get()->RemoveShaderResources();
 			mShaderList["Effect HBlur"].get()->AddShaderResource(mCurrentSceneRenderProcess->GetShaderTargetTexture("ColourMap"));
 			GUIController::ResetBlurOptions();
-			mDeferred = true;
 			break;
 
 		case 4: // G-Buffer Normals
@@ -232,7 +223,6 @@ void ShaderController::UpdateShaderSelection(int selectedShaderOption)
 			mShaderList["Effect HBlur"].get()->RemoveShaderResources();
 			mShaderList["Effect HBlur"].get()->AddShaderResource(mCurrentSceneRenderProcess->GetShaderTargetTexture("NormalMap"));
 			GUIController::ResetBlurOptions();
-			mDeferred = true;
 			break;
 
 		case 5: // G-Buffer Position
@@ -241,19 +231,6 @@ void ShaderController::UpdateShaderSelection(int selectedShaderOption)
 			mShaderList["Effect HBlur"].get()->RemoveShaderResources();
 			mShaderList["Effect HBlur"].get()->AddShaderResource(mCurrentSceneRenderProcess->GetShaderTargetTexture("PositionMap"));
 			GUIController::ResetBlurOptions();
-			mDeferred = true;
-			break;
-
-		case 6:
-			mShaderList["Parallax Scene"].get()->RemoveShaderResources();
-			mShaderList["Parallax Scene"].get()->SetCurrentShaderIndex(1);
-			mCurrentSceneRenderProcess = mShaderList["Parallax Scene"].get();
-			mShaderList["Effect HBlur"].get()->RemoveShaderResources();
-			mShaderList["Effect HBlur"].get()->AddShaderResource(mShaderList["Deferred Parallax Scene"].get()->GetShaderTargetTexture("OutputText"));
-			mShaderList["Final Pass"].get()->RemoveShaderResources();
-			mShaderList["Final Pass"].get()->AddShaderResource(mShaderList["Effect VBlur"].get()->GetShaderTargetTexture("OutputText"));
-			GUIController::ResetBlurOptions();
-			mDeferred = true;
 			break;
 		}
 	}

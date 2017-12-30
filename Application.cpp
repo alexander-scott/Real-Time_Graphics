@@ -154,7 +154,6 @@ HRESULT Application::InitRenderProcesses()
 	///////////////////////////////////////////////////////////////////
 	// Light Depth Maps
 	///////////////////////////////////////////////////////////////////
-
 	if (FAILED(mShaderController->AddDepthBufferShader("White Light Depth Map", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Depth Mapping.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 1"), DX11AppHelper::_pd3dDevice)))
 	{
 		return E_FAIL;
@@ -175,6 +174,9 @@ HRESULT Application::InitRenderProcesses()
 		return E_FAIL;
 	}
 
+	///////////////////////////////////////////////////////////////////
+	// Build parallax scene
+	///////////////////////////////////////////////////////////////////
 	mShaderController->AddCustomShader("Parallax Scene", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight);
 
 	mShaderController->GetRenderToTextureProcess("Parallax Scene")->LoadShaderFilesAndInputLayouts(  DX11AppHelper::_pd3dDevice, L"DX11 Framework Parallax SS Diffuse Mapping.fx", L"DX11 Framework Parallax SS Diffuse Mapping.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 2"));
@@ -204,6 +206,9 @@ HRESULT Application::InitRenderProcesses()
 
 	mShaderController->SetCurrentRenderToTexutreProcess(mShaderController->GetRenderToTextureProcess("Parallax Scene"));
 
+	///////////////////////////////////////////////////////////////////
+	// Build basic scene
+	///////////////////////////////////////////////////////////////////
 	if (FAILED(mShaderController->AddCommonShader("Basic Scene", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Basic.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 3"), DX11AppHelper::_pd3dDevice)))
 	{
 		return E_FAIL;
@@ -211,6 +216,9 @@ HRESULT Application::InitRenderProcesses()
 
 	mShaderController->GetRenderToTextureProcess("Basic Scene")->AddSamplerState(_pSamplerLinear);
 
+	///////////////////////////////////////////////////////////////////
+	// Build Pixel Scene
+	///////////////////////////////////////////////////////////////////
 	if (FAILED(mShaderController->AddCommonShader("Pixel Scene", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Pixel SS.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 2"), DX11AppHelper::_pd3dDevice)))
 	{
 		return E_FAIL;
@@ -224,39 +232,6 @@ HRESULT Application::InitRenderProcesses()
 	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Red Light Depth Map")->GetDepthMapResourceView());
 	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Green Light Depth Map")->GetDepthMapResourceView());
 	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Blue Light Depth Map")->GetDepthMapResourceView());
-
-	mShaderController->AddCustomShader("Deferred Parallax Scene", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight);
-
-	hr = mShaderController->GetRenderToTextureProcess("Deferred Parallax Scene")->LoadShaderFilesAndInputLayouts(  DX11AppHelper::_pd3dDevice, L"DX11 Framework Deferred Lighting.fx", L"DX11 Framework Deferred Lighting.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 2"));
-
-	if (FAILED(hr))
-		return hr;
-
-	hr = mShaderController->GetRenderToTextureProcess("Deferred Parallax Scene")->SetupRTVAndSRV(  DX11AppHelper::_pd3dDevice, "OutputText");
-
-	if (FAILED(hr))
-		return hr;
-
-	hr = mShaderController->GetRenderToTextureProcess("Deferred Parallax Scene")->SetupRenderQuad(  DX11AppHelper::_pd3dDevice);
-
-	if (FAILED(hr))
-		return hr;
-
-	mShaderController->GetRenderToTextureProcess("Deferred Parallax Scene")->AddSamplerState(_pSamplerLinear);
-	mShaderController->GetRenderToTextureProcess("Deferred Parallax Scene")->AddSamplerState(_pSamplerClamp);
-
-	mShaderController->GetRenderToTextureProcess("Deferred Parallax Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("White Light Depth Map")->GetDepthMapResourceView());
-	mShaderController->GetRenderToTextureProcess("Deferred Parallax Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Red Light Depth Map")->GetDepthMapResourceView());
-	mShaderController->GetRenderToTextureProcess("Deferred Parallax Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Green Light Depth Map")->GetDepthMapResourceView());
-	mShaderController->GetRenderToTextureProcess("Deferred Parallax Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Blue Light Depth Map")->GetDepthMapResourceView());
-
-	mShaderController->GetRenderToTextureProcess("Deferred Parallax Scene")->AddShaderResource(mShaderController->GetCurrentRenderToTextureProcess()->GetShaderTargetTexture("ColourMap"));
-	mShaderController->GetRenderToTextureProcess("Deferred Parallax Scene")->AddShaderResource(mShaderController->GetCurrentRenderToTextureProcess()->GetShaderTargetTexture("NormalMap"));
-	mShaderController->GetRenderToTextureProcess("Deferred Parallax Scene")->AddShaderResource(mShaderController->GetCurrentRenderToTextureProcess()->GetShaderTargetTexture("TexCoordOffsetMap"));
-	mShaderController->GetRenderToTextureProcess("Deferred Parallax Scene")->AddShaderResource(mShaderController->GetCurrentRenderToTextureProcess()->GetShaderTargetTexture("PositionMap"));
-	mShaderController->GetRenderToTextureProcess("Deferred Parallax Scene")->AddShaderResource(mShaderController->GetCurrentRenderToTextureProcess()->GetShaderTargetTexture("TangentMap"));
-	mShaderController->GetRenderToTextureProcess("Deferred Parallax Scene")->AddShaderResource(mShaderController->GetCurrentRenderToTextureProcess()->GetShaderTargetTexture("WorldNormalMap"));
-	mShaderController->GetRenderToTextureProcess("Deferred Parallax Scene")->AddShaderResource(mShaderController->GetCurrentRenderToTextureProcess()->GetShaderTargetTexture("BiNormalMap"));
 
 	if (FAILED(mShaderController->AddRenderFromQuadShader("Effect HBlur", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Horizontal Blur.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 3"), DX11AppHelper::_pd3dDevice)))
 	{

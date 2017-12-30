@@ -40,5 +40,4 @@ private:
 	RenderToTextureProcess*										mCurrentSceneRenderProcess;
 
 	int															mCurrentShaderOptionSelected;
-	bool														mDeferred;
 };
