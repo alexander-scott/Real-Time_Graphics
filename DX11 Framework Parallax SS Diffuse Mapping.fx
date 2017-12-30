@@ -161,7 +161,7 @@ float3 CalculateTextureCoordOffset(VS_OUTPUT input, float3 eyeVec, float3 lightV
 {
 	// Determine the depth of the parallax mapping
 	float fParallaxLimit = -length(eyeVec.xy) / eyeVec.z;
-	float fHeightMapScale = 0.1f;
+	float fHeightMapScale = 0.05f;
 	fParallaxLimit *= fHeightMapScale;
 
 	float2 vOffsetDir = normalize(eyeVec.xy);

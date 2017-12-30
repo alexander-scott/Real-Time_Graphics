@@ -28,7 +28,7 @@ void SceneLight::UpdateLight(float renderWidth, float renderHeight)
 
 	// Initialise Light Matrices
 	XMStoreFloat4x4(&_pView, XMMatrixLookAtLH(lightEyeVector, lightAtVector, lightUpVector));
-	XMStoreFloat4x4(&_pProjection, XMMatrixPerspectiveFovLH(0.6f * XM_PI, (renderWidth / renderHeight), 0.01f, 100.0f));
+	XMStoreFloat4x4(&_pProjection, XMMatrixPerspectiveFovLH(0.9f * XM_PI, (renderWidth / renderHeight), 0.01f, 100.0f));
 }
 
 

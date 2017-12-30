@@ -48,6 +48,6 @@ private:
 	Scene*						mScene;
 	ShaderController*			mShaderController;
 	InputLayoutBuilder*			mInputLayoutBuilder;
-	TextureController*				mTextureManager;
+	TextureController*			mTextureController;
 };
 

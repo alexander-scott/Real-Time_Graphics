@@ -4,7 +4,7 @@ Application::Application()
 {
 	mShaderController = new ShaderController;
 	mInputLayoutBuilder = new InputLayoutBuilder;
-	mTextureManager = new TextureController;
+	mTextureController = new TextureController;
 }
 
 Application::~Application()
@@ -51,15 +51,15 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 void Application::InitScene()
 {
 	// Add all textures to a texture manager
-	mTextureManager->AddTexture(DX11AppHelper::_pd3dDevice, "Brick Texture", L"Resources\\brickTexture.dds", L"Resources\\brick_NRM.dds", L"Resources\\brick_DISP.dds");
-	mTextureManager->AddTexture(DX11AppHelper::_pd3dDevice, "Stone Texture", L"Resources\\stoneTexture.dds", L"Resources\\stone_NRM.dds", L"Resources\\stone_DISP.dds");
-	mTextureManager->AddTexture(DX11AppHelper::_pd3dDevice, "Crate Texture", L"Resources\\Crate_COLOR.dds", L"Resources\\Crate_NRM.dds", L"Resources\\Crate_DISP.dds");
-	mTextureManager->AddTexture(DX11AppHelper::_pd3dDevice, "Floor Texture", L"Resources\\floorTexture.dds", L"Resources\\floor_NRM.dds", L"Resources\\floor_DISP.dds");
-	mTextureManager->AddTexture(DX11AppHelper::_pd3dDevice, "Cracked Rock Texture", L"Resources\\crackedRockTexture.dds", L"Resources\\crackedRock_NRM.dds", L"Resources\\crackedRock_DISP.dds");
-	mTextureManager->AddTexture(DX11AppHelper::_pd3dDevice, "White Texture", L"Resources\\whiteColourTexture.dds", nullptr, nullptr);
-	mTextureManager->AddTexture(DX11AppHelper::_pd3dDevice, "Red Texture", L"Resources\\redColourTexture.dds", nullptr, nullptr);
-	mTextureManager->AddTexture(DX11AppHelper::_pd3dDevice, "Green Texture", L"Resources\\greenColourTexture.dds", nullptr, nullptr);
-	mTextureManager->AddTexture(DX11AppHelper::_pd3dDevice, "Blue Texture", L"Resources\\blueColourTexture.dds", nullptr, nullptr);
+	mTextureController->AddTexture(DX11AppHelper::_pd3dDevice, "Brick Texture", L"Resources\\brickTexture.dds", L"Resources\\brick_NRM.dds", L"Resources\\brick_DISP.dds");
+	mTextureController->AddTexture(DX11AppHelper::_pd3dDevice, "Stone Texture", L"Resources\\stoneTexture.dds", L"Resources\\stone_NRM.dds", L"Resources\\stone_DISP.dds");
+	mTextureController->AddTexture(DX11AppHelper::_pd3dDevice, "Crate Texture", L"Resources\\Crate_COLOR.dds", L"Resources\\Crate_NRM.dds", L"Resources\\Crate_DISP.dds");
+	mTextureController->AddTexture(DX11AppHelper::_pd3dDevice, "Floor Texture", L"Resources\\floorTexture.dds", L"Resources\\floor_NRM.dds", L"Resources\\floor_DISP.dds");
+	mTextureController->AddTexture(DX11AppHelper::_pd3dDevice, "Cracked Rock Texture", L"Resources\\crackedRockTexture.dds", L"Resources\\crackedRock_NRM.dds", L"Resources\\crackedRock_DISP.dds");
+	mTextureController->AddTexture(DX11AppHelper::_pd3dDevice, "White Texture", L"Resources\\whiteColourTexture.dds", nullptr, nullptr);
+	mTextureController->AddTexture(DX11AppHelper::_pd3dDevice, "Red Texture", L"Resources\\redColourTexture.dds", nullptr, nullptr);
+	mTextureController->AddTexture(DX11AppHelper::_pd3dDevice, "Green Texture", L"Resources\\greenColourTexture.dds", nullptr, nullptr);
+	mTextureController->AddTexture(DX11AppHelper::_pd3dDevice, "Blue Texture", L"Resources\\blueColourTexture.dds", nullptr, nullptr);
 
 	// Prebuild the geometrys and materials to pass to the scene builder
 	Geometry cubeGeometry;
@@ -88,7 +88,7 @@ void Application::InitScene()
 	noSpecMaterial.specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	noSpecMaterial.specularPower = 0.0f;
 
-	mScene = SceneBuilder::BuildScene("Scene.xml", cubeGeometry, noSpecMaterial, mTextureManager);
+	mScene = SceneBuilder::BuildScene("Scene.xml", cubeGeometry, noSpecMaterial, mTextureController);
 }
 
 void Application::InitInputLayouts()
@@ -175,6 +175,33 @@ HRESULT Application::InitRenderProcesses()
 	}
 
 	///////////////////////////////////////////////////////////////////
+	// Build basic scene
+	///////////////////////////////////////////////////////////////////
+	if (FAILED(mShaderController->AddCommonShader("Basic Scene", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Basic.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 3"), DX11AppHelper::_pd3dDevice)))
+	{
+		return E_FAIL;
+	}
+
+	mShaderController->GetRenderToTextureProcess("Basic Scene")->AddSamplerState(_pSamplerLinear);
+
+	///////////////////////////////////////////////////////////////////
+	// Build Pixel Scene
+	///////////////////////////////////////////////////////////////////
+	if (FAILED(mShaderController->AddCommonShader("Pixel Scene", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Pixel SS.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 2"), DX11AppHelper::_pd3dDevice)))
+	{
+		return E_FAIL;
+	}
+
+	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddSamplerState(_pSamplerLinear);
+
+	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddSamplerState(_pSamplerLinear);
+
+	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("White Light Depth Map")->GetDepthMapResourceView());
+	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Red Light Depth Map")->GetDepthMapResourceView());
+	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Green Light Depth Map")->GetDepthMapResourceView());
+	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Blue Light Depth Map")->GetDepthMapResourceView());
+
+	///////////////////////////////////////////////////////////////////
 	// Build parallax scene
 	///////////////////////////////////////////////////////////////////
 	mShaderController->AddCustomShader("Parallax Scene", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight);
@@ -207,32 +234,8 @@ HRESULT Application::InitRenderProcesses()
 	mShaderController->SetCurrentRenderToTexutreProcess(mShaderController->GetRenderToTextureProcess("Parallax Scene"));
 
 	///////////////////////////////////////////////////////////////////
-	// Build basic scene
+	// Build Blur Special Effect
 	///////////////////////////////////////////////////////////////////
-	if (FAILED(mShaderController->AddCommonShader("Basic Scene", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Basic.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 3"), DX11AppHelper::_pd3dDevice)))
-	{
-		return E_FAIL;
-	}
-
-	mShaderController->GetRenderToTextureProcess("Basic Scene")->AddSamplerState(_pSamplerLinear);
-
-	///////////////////////////////////////////////////////////////////
-	// Build Pixel Scene
-	///////////////////////////////////////////////////////////////////
-	if (FAILED(mShaderController->AddCommonShader("Pixel Scene", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Pixel SS.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 2"), DX11AppHelper::_pd3dDevice)))
-	{
-		return E_FAIL;
-	}
-
-	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddSamplerState(_pSamplerLinear);
-
-	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddSamplerState(_pSamplerLinear);
-
-	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("White Light Depth Map")->GetDepthMapResourceView());
-	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Red Light Depth Map")->GetDepthMapResourceView());
-	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Green Light Depth Map")->GetDepthMapResourceView());
-	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Blue Light Depth Map")->GetDepthMapResourceView());
-
 	if (FAILED(mShaderController->AddRenderFromQuadShader("Effect HBlur", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Horizontal Blur.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 3"), DX11AppHelper::_pd3dDevice)))
 	{
 		return E_FAIL;
@@ -249,6 +252,9 @@ HRESULT Application::InitRenderProcesses()
 	mShaderController->GetRenderToTextureProcess("Effect VBlur")->AddSamplerState(_pSamplerLinear);
 	mShaderController->GetRenderToTextureProcess("Effect VBlur")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Effect HBlur")->GetShaderTargetTexture("OutputText"));
 
+	///////////////////////////////////////////////////////////////////
+	// Setup Final Pass
+	///////////////////////////////////////////////////////////////////
 	if (FAILED(mShaderController->AddRenderToBackBufferShader("Final Pass", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, L"DX11 Framework Render To Texture.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 3"), DX11AppHelper::_pd3dDevice)))
 	{
 		return E_FAIL;
