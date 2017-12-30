@@ -55,8 +55,8 @@ private:
 	float mCameraPitch = 0;
 	float mCameraYaw = 0;
 
-	float moveLeftRight = 0.0f;
-	float moveBackForward = 0.0f;
+	float mStrafeVelocity = 0.0f;
+	float mForwardVelocity = 0.0f;
 
 	POINT mLastMousePos;
 

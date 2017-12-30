@@ -4,12 +4,12 @@ Scene::Scene(string name) : mSceneName(name)
 {
 	// Setup the walking camera
 	XMFLOAT3 eyeWalking = XMFLOAT3(0.0f, 10.0f, 0.0f);
-	mSceneCameraWalk = new SceneCamera(0.01f, 2000.0f, DX11AppHelper::_pRenderWidth, DX11AppHelper::_pRenderHeight, false);
+	mSceneCameraWalk = new SceneCamera(0.01f, 2000.0f, (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, false);
 	mSceneCameraWalk->SetPosition(eyeWalking);
 
 	// Setup the flying camera
 	XMFLOAT3 eyeFly = XMFLOAT3(35.0f, 15.0f, -35.0f);
-	mSceneCameraFly = new SceneCamera(0.01f, 2000.0f, DX11AppHelper::_pRenderWidth, DX11AppHelper::_pRenderHeight, true);
+	mSceneCameraFly = new SceneCamera(0.01f, 2000.0f, (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, true);
 	mSceneCameraFly->SetPosition(eyeFly);
 
 	mOctree = new Octree(200, XMFLOAT3(0, 0, 0), 25);
@@ -73,19 +73,6 @@ void Scene::Update(float timeSinceStart, float deltaTime)
 	if (GUIHandler::_pTestButton)
 	{
 		GUIHandler::_pTestButton = false;
-
-		/*Bounds b(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1));
-		std::vector<GameObject*> gameobjs = mOctree->GetGameObjectsInBounds(b);
-		int count = gameobjs.size();*/
-
-		/*XMFLOAT3 dir, pos;
-		XMStoreFloat3(&pos, mSceneCamera->GetPosition());
-		XMStoreFloat3(&dir, mSceneCamera->GetForwardDirection());
-		std::vector<GameObject*> gameobjs = mOctree->GetGameObjectsInRay(pos, dir);
-		int count = gameobjs.size();*/
-
-		/*std::vector<GameObject*> gameobjs = mOctree->GetGameObjectsInFrustums(mSceneCamera->GetFrustumPlanes());
-		int count = gameobjs.size();*/
 	}
 }
 

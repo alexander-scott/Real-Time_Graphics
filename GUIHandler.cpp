@@ -65,9 +65,7 @@ void GUIHandler::UpdateGUI()
 {
 	GUINewFrame();
 
-	ImVec4 textColour = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
-
-	ImGui::TextColored(textColour, "Press ESC to exit this application.");
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Press ESC to exit this application."); // Yellow colour
 
 	ImGui::Spacing();
 	ImGui::Spacing();

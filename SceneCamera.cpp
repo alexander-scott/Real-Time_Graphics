@@ -73,20 +73,20 @@ void SceneCamera::OnMouseMove(int x, int y)
 
 		if (GetAsyncKeyState(VK_UP))
 		{
-			moveBackForward += kCameraMoveSpeed;
+			mForwardVelocity += kCameraMoveSpeed;
 		}
 		else if (GetAsyncKeyState(VK_DOWN))
 		{
-			moveBackForward -= kCameraMoveSpeed;
+			mForwardVelocity -= kCameraMoveSpeed;
 		}
 
 		if (GetAsyncKeyState(VK_LEFT))
 		{
-			moveLeftRight -= kCameraMoveSpeed;
+			mStrafeVelocity -= kCameraMoveSpeed;
 		}
 		else if (GetAsyncKeyState(VK_RIGHT))
 		{
-			moveLeftRight += kCameraMoveSpeed;
+			mStrafeVelocity += kCameraMoveSpeed;
 		}
 	}
 
@@ -116,14 +116,14 @@ void SceneCamera::UpdateCameraViewMatrix()
 	XMVECTOR camPos = XMLoadFloat3(&mCameraPos);
 
 	// Move the position forward/back or left/right depending on user input
-	camPos += moveLeftRight * camRight;
+	camPos += mStrafeVelocity * camRight;
 	if (mCanFly)
-		camPos += moveBackForward * camTarget;
+		camPos += mForwardVelocity * camTarget;
 	else
-		camPos += moveBackForward * camForward;
+		camPos += mForwardVelocity * camForward;
 
-	moveLeftRight = 0.0f;
-	moveBackForward = 0.0f;
+	mStrafeVelocity = 0.0f;
+	mForwardVelocity = 0.0f;
 
 	// Move the target by the change in position
 	camTarget = camPos + camTarget;

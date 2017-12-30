@@ -5,7 +5,7 @@ X postive is right. Y postive is up.
 <!- -->
 
 <Scene name="1">
-  <Plane type="Floor" texture="Floor Texture" width="20" depth="20" step="10">
+  <Plane type="Floor" texture="Floor Texture" width="10" depth="10" step="10">
     <Position x="0.0" y="0.0" z="0.0"></Position>
     <BaseScale x="5.0" y="0.5" z="5.0"></BaseScale>
     <BaseRotation x="0" y="0" z="0"></BaseRotation>

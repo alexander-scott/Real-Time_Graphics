@@ -372,13 +372,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="DX11AppHelper.cpp" />
     <ClCompile Include="Octree.cpp" />
     <ClCompile Include="OctreeNode.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneBuilder.cpp" />
     <ClCompile Include="SceneCamera.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
-    <ClCompile Include="DX11AppHelper.cpp" />
     <ClCompile Include="GUIHandler.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
@@ -439,6 +439,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="DX11AppHelper.h" />
     <ClInclude Include="Octree.h" />
     <ClInclude Include="OctreeNode.h" />
     <ClInclude Include="rapidxml.hpp" />
@@ -447,7 +448,6 @@
     <ClInclude Include="SceneBuilder.h" />
     <ClInclude Include="SceneCamera.h" />
     <ClInclude Include="DDSTextureLoader.h" />
-    <ClInclude Include="DX11AppHelper.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GUIHandler.h" />
     <ClInclude Include="imconfig.h" />

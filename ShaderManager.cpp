@@ -101,7 +101,7 @@ void ShaderManager::AddCustomShader(string shaderName, float renderWidth, float 
 
 void ShaderManager::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLight*> lights, vector<GameObject*> gameObjects)
 {
-	cb->shadowsOn = GUIHandler::_pShadowMappingOn;
+	cb->shadowsOn = true;
 	cb->blurIntensity = GUIHandler::_pBlurIntensity;
 
 	SMConstantBuffer smCB;
@@ -113,8 +113,8 @@ void ShaderManager::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLight*
 	XMMATRIX projection;
 	XMMATRIX shadowTransform;
 
-	if (GUIHandler::_pShadowMappingOn)
-	{
+	//if (GUIHandler::_pShadowMappingOn)
+	//{
 		for (int i = 0; i < lights.size(); i++)
 		{
 			if (lights.at(i)->GetLightOn())
@@ -135,7 +135,7 @@ void ShaderManager::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLight*
 				_pShaderList[shaderName].get()->RenderSceneDepthMap(DX11AppHelper::_pImmediateContext, gameObjects, DX11AppHelper::_pSMConstantBuffer, &smCB);
 			}
 		}
-	}
+	//}
 
 	_pCurrentSceneRenderProcess->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, true);
 	_pCurrentSceneRenderProcess->RenderGameObjects(DX11AppHelper::_pImmediateContext, gameObjects, DX11AppHelper::_pConstantBuffer, cb);
