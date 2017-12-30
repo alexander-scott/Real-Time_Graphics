@@ -1,17 +1,15 @@
-#include "TextureManager.h"
+#include "TextureController.h"
 
-unordered_map<string, unique_ptr<TextureSet>> TextureManager::_pTextureList;
-
-TextureManager::TextureManager()
+TextureController::TextureController()
 {
 }
 
 
-TextureManager::~TextureManager()
+TextureController::~TextureController()
 {
 }
 
-void TextureManager::AddTexture(ID3D11Device* d3dDevice, string textureSetName, LPCWSTR texturePath, LPCWSTR normalMapPath, LPCWSTR heightMapPath)
+void TextureController::AddTexture(ID3D11Device* d3dDevice, string textureSetName, LPCWSTR texturePath, LPCWSTR normalMapPath, LPCWSTR heightMapPath)
 {
 	ID3D11ShaderResourceView* texture = nullptr;
 	ID3D11ShaderResourceView* normalMap = nullptr;
@@ -34,5 +32,5 @@ void TextureManager::AddTexture(ID3D11Device* d3dDevice, string textureSetName, 
 
 	auto textureSet = std::make_unique<TextureSet>(textureSetName, texture, normalMap, heightMap);
 
-	_pTextureList[textureSetName] = std::move(textureSet);
+	mTextureList[textureSetName] = std::move(textureSet);
 }

@@ -94,9 +94,6 @@
     <ClInclude Include="stb_truetype.h">
       <Filter>GUI Libraries</Filter>
     </ClInclude>
-    <ClInclude Include="SceneCamera.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="rapidxml.hpp">
       <Filter>Scene\SceneBuilding</Filter>
     </ClInclude>
@@ -121,23 +118,26 @@
     <ClInclude Include="Octree.h">
       <Filter>Scene\Octree</Filter>
     </ClInclude>
-    <ClInclude Include="TextureManager.h">
-      <Filter>DirectX\Textures</Filter>
-    </ClInclude>
     <ClInclude Include="DDSTextureLoader.h">
       <Filter>DirectX\Textures</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderManager.h">
-      <Filter>DirectX\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="InputLayoutManager.h">
-      <Filter>DirectX\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="DX11AppHelper.h">
       <Filter>DirectX</Filter>
     </ClInclude>
     <ClInclude Include="GUIController.h">
       <Filter>DirectX\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderController.h">
+      <Filter>DirectX\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="InputLayoutBuilder.h">
+      <Filter>DirectX\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureController.h">
+      <Filter>DirectX\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneCamera.h">
+      <Filter>Scene\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -158,9 +158,6 @@
     <ClCompile Include="imgui_draw.cpp">
       <Filter>GUI Libraries</Filter>
     </ClCompile>
-    <ClCompile Include="SceneCamera.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="SceneBuilder.cpp">
       <Filter>Scene\SceneBuilding</Filter>
     </ClCompile>
@@ -179,23 +176,26 @@
     <ClCompile Include="OctreeNode.cpp">
       <Filter>Scene\Octree</Filter>
     </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
-      <Filter>DirectX\Textures</Filter>
-    </ClCompile>
     <ClCompile Include="DDSTextureLoader.cpp">
       <Filter>DirectX\Textures</Filter>
-    </ClCompile>
-    <ClCompile Include="ShaderManager.cpp">
-      <Filter>DirectX\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="InputLayoutManager.cpp">
-      <Filter>DirectX\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="DX11AppHelper.cpp">
       <Filter>DirectX</Filter>
     </ClCompile>
     <ClCompile Include="GUIController.cpp">
       <Filter>DirectX\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderController.cpp">
+      <Filter>DirectX\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="InputLayoutBuilder.cpp">
+      <Filter>DirectX\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureController.cpp">
+      <Filter>DirectX\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneCamera.cpp">
+      <Filter>Scene\Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

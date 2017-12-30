@@ -239,7 +239,7 @@ float CalculateIfInShadow(VS_OUTPUT input, float3 eyeVec, float3 lightVec, float
 	int nMinSamples = 4;
 	int nMaxSamples = 200;
 
-	// Determine amount of smapling needed from the angle of the light vector to the eyeVec
+	// Determine amount of sampling needed from the angle of the light vector to the eyeVec
 	//int nNumSamples = (int)lerp(nMaxSamples, nMinSamples, dot(eyeVec, lightVec));
 	int nNumSamples = 200;
 

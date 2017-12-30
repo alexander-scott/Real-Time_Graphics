@@ -1,16 +1,14 @@
-#include "InputLayoutManager.h"
+#include "InputLayoutBuilder.h"
 
-unordered_map<string, vector<D3D11_INPUT_ELEMENT_DESC>> InputLayoutManager::_pInputLayoutList;
-
-InputLayoutManager::InputLayoutManager()
+InputLayoutBuilder::InputLayoutBuilder()
 {
 }
 
-InputLayoutManager::~InputLayoutManager()
+InputLayoutBuilder::~InputLayoutBuilder()
 {
 }
 
-HRESULT InputLayoutManager::GenerateInputLayout(string layoutName, vector<string> layoutSetup, ID3D11Device* d3dDevice)
+HRESULT InputLayoutBuilder::BuildInputLayout(string layoutName, vector<string> layoutSetup, ID3D11Device* d3dDevice)
 {
 	vector<D3D11_INPUT_ELEMENT_DESC> layoutVector;
 
@@ -40,7 +38,7 @@ HRESULT InputLayoutManager::GenerateInputLayout(string layoutName, vector<string
 		}
 	}
 
-	_pInputLayoutList[layoutName] = layoutVector;
+	mInputLayoutList[layoutName] = layoutVector;
 
 	return S_OK;
 }

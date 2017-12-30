@@ -16,10 +16,10 @@
 #include "DDSTextureLoader.h"
 #include "SceneBuilder.h"
 #include "RenderToTextureProcess.h"
-#include "TextureManager.h"
+#include "TextureController.h"
 #include "DX11AppHelper.h"
-#include "ShaderManager.h"
-#include "InputLayoutManager.h"
+#include "ShaderController.h"
+#include "InputLayoutBuilder.h"
 #include "GUIController.h"
 
 using namespace DirectX;
@@ -43,9 +43,11 @@ private:
 	void InitInputLayouts();
 	HRESULT InitRenderProcesses();
 
-	void InitTextures();
-	void InitScene(Geometry cubeGeometry, Material noSpecMaterial, Material shinyMaterial);
+	void InitScene();
 	
 	Scene*						mScene;
+	ShaderController*			mShaderController;
+	InputLayoutBuilder*			mInputLayoutBuilder;
+	TextureController*				mTextureManager;
 };
 

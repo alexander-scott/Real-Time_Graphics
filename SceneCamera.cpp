@@ -16,7 +16,7 @@ SceneCamera::SceneCamera(float nearDepth, float farDepth, float windowWidth, flo
 
 	mCanFly = canFly;
 
-	SetScale(1.0f, 5, 0.1f);
+	SetScale(1.0f, 5.0f, 0.1f);
 
 	UpdateCameraViewMatrix();
 	CreateProjectionMatrix();

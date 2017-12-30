@@ -1,6 +1,6 @@
 #include "SceneBuilder.h"
 
-Scene* SceneBuilder::BuildScene(string fileName, Geometry cubeGeometry, Material noSpecMaterial)
+Scene* SceneBuilder::BuildScene(string fileName, Geometry cubeGeometry, Material noSpecMaterial, TextureController* textureManager)
 {
 	//Load the file
 	std::ifstream inFile(fileName);
@@ -39,7 +39,7 @@ Scene* SceneBuilder::BuildScene(string fileName, Geometry cubeGeometry, Material
 	while (gameObjectNode)
 	{
 		// Build and add the gameobject to the scene
-		scene->AddGameObject(BuildGameObject(gameObjectNode, cubeGeometry, noSpecMaterial));
+		scene->AddGameObject(BuildGameObject(gameObjectNode, cubeGeometry, noSpecMaterial, textureManager));
 
 		// Move to the next gameobject in the XML file
 		gameObjectNode = gameObjectNode->next_sibling("GameObject");
@@ -51,7 +51,7 @@ Scene* SceneBuilder::BuildScene(string fileName, Geometry cubeGeometry, Material
 	xml_node<>* sceneLightNode = root->first_node("SceneLight");
 	while (sceneLightNode)
 	{
-		scene->AddSceneLight(BuildSceneLight(sceneLightNode, cubeGeometry, noSpecMaterial));
+		scene->AddSceneLight(BuildSceneLight(sceneLightNode, cubeGeometry, noSpecMaterial, textureManager));
 
 		sceneLightNode = sceneLightNode->next_sibling("SceneLight");
 	}
@@ -62,7 +62,7 @@ Scene* SceneBuilder::BuildScene(string fileName, Geometry cubeGeometry, Material
 	xml_node<>* planeNode = root->first_node("Plane");
 	while (planeNode)
 	{
-		scene->AddGameObjects(BuildPlane(planeNode, cubeGeometry, noSpecMaterial));
+		scene->AddGameObjects(BuildPlane(planeNode, cubeGeometry, noSpecMaterial, textureManager));
 
 		planeNode = planeNode->next_sibling("Plane");
 	}
@@ -70,7 +70,7 @@ Scene* SceneBuilder::BuildScene(string fileName, Geometry cubeGeometry, Material
 	return scene;
 }
 
-GameObject * SceneBuilder::BuildGameObject(xml_node<>* node, Geometry cubeGeometry, Material noSpecMaterial)
+GameObject * SceneBuilder::BuildGameObject(xml_node<>* node, Geometry cubeGeometry, Material noSpecMaterial, TextureController* textureManager)
 {
 	// Initalise the new gameobject
 	GameObject* gameObject = new GameObject(string(node->first_attribute("type")->value()), cubeGeometry, noSpecMaterial);
@@ -94,15 +94,15 @@ GameObject * SceneBuilder::BuildGameObject(xml_node<>* node, Geometry cubeGeomet
 		(float)atof(rotationNode->first_attribute("z")->value()));
 
 	// Set the gameobjects textures
-	gameObject->SetTextures(TextureManager::_pTextureList[string(node->first_attribute("texture")->value())].get());
+	gameObject->SetTextures(textureManager->GetTextureSet(string(node->first_attribute("texture")->value())));
 
 	return gameObject;
 }
 
-SceneLight * SceneBuilder::BuildSceneLight(xml_node<>* node, Geometry cubeGeometry, Material noSpecMaterial)
+SceneLight * SceneBuilder::BuildSceneLight(xml_node<>* node, Geometry cubeGeometry, Material noSpecMaterial, TextureController* textureManager)
 {
 	SceneLight* sceneLight = new SceneLight(string(node->first_attribute("type")->value()),
-		TextureManager::_pTextureList[string(node->first_attribute("texture")->value())].get()->texture,
+		textureManager->GetTextureSet(string(node->first_attribute("texture")->value()))->texture,
 		cubeGeometry, noSpecMaterial);
 
 	// Set ambient light
@@ -157,7 +157,7 @@ SceneLight * SceneBuilder::BuildSceneLight(xml_node<>* node, Geometry cubeGeomet
 	return sceneLight;
 }
 
-vector<GameObject*> SceneBuilder::BuildPlane(xml_node<>* node, Geometry cubeGeometry, Material noSpecMaterial)
+vector<GameObject*> SceneBuilder::BuildPlane(xml_node<>* node, Geometry cubeGeometry, Material noSpecMaterial, TextureController* textureManager)
 {
 	string type = string(node->first_attribute("type")->value());
 	string textureName = string(node->first_attribute("texture")->value());
@@ -193,7 +193,7 @@ vector<GameObject*> SceneBuilder::BuildPlane(xml_node<>* node, Geometry cubeGeom
 		for (int j = 0; j < depth; j++)
 		{
 			GameObject* go = new GameObject(type, cubeGeometry, noSpecMaterial);
-			go->SetTextures(TextureManager::_pTextureList[textureName].get());
+			go->SetTextures(textureManager->GetTextureSet(textureName));
 			go->SetRotation(baseRotation.x, baseRotation.y, baseRotation.z);
 			go->SetScale(baseScale.x, baseScale.y, baseScale.z);
 			go->SetPosition(position.x + ((i - midWidthIndex) * step), 0, position.z + ((j - midDepthIndex) * step));

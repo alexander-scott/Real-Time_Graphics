@@ -383,14 +383,14 @@
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
     <ClCompile Include="imgui_draw.cpp" />
-    <ClCompile Include="InputLayoutManager.cpp" />
+    <ClCompile Include="InputLayoutBuilder.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="RenderProcess.cpp" />
     <ClCompile Include="RenderToTextureProcess.cpp" />
     <ClCompile Include="SceneLight.cpp" />
-    <ClCompile Include="ShaderManager.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="ShaderController.cpp" />
+    <ClCompile Include="TextureController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="DX11 Framework Basic Depth Mapping.fx">
@@ -453,17 +453,17 @@
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_internal.h" />
-    <ClInclude Include="InputLayoutManager.h" />
+    <ClInclude Include="InputLayoutBuilder.h" />
     <ClInclude Include="RenderProcess.h" />
     <ClInclude Include="RenderToTextureProcess.h" />
     <CLInclude Include="resource.h" />
     <ClInclude Include="SceneLight.h" />
-    <ClInclude Include="ShaderManager.h" />
+    <ClInclude Include="ShaderController.h" />
     <ClInclude Include="stb_rect_pack.h" />
     <ClInclude Include="stb_textedit.h" />
     <ClInclude Include="stb_truetype.h" />
     <ClInclude Include="Structures.h" />
-    <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="TextureController.h" />
     <ResourceCompile Include="DX11 Framework.rc" />
   </ItemGroup>
   <ItemGroup>

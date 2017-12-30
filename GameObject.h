@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TextureManager.h"
+#include "TextureController.h"
 #include "Structures.h"
 
 using namespace DirectX;

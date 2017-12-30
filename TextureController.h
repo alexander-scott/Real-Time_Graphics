@@ -28,13 +28,15 @@ struct TextureSet
 	ID3D11ShaderResourceView* heightMap;
 };
 
-static class TextureManager
+class TextureController
 {
 public:
-	TextureManager();
-	~TextureManager();
+	TextureController();
+	~TextureController();
 
-	static void AddTexture(ID3D11Device* d3dDevice, string textureSetName, LPCWSTR texturePath, LPCWSTR normalMapPath, LPCWSTR heightMapPath);
+	void AddTexture(ID3D11Device* d3dDevice, string textureSetName, LPCWSTR texturePath, LPCWSTR normalMapPath, LPCWSTR heightMapPath);
+	TextureSet* GetTextureSet(string s) { return mTextureList[s].get(); }
 
-	static unordered_map<string, unique_ptr<TextureSet>> _pTextureList;
+private:
+	unordered_map<string, unique_ptr<TextureSet>> mTextureList;
 };
