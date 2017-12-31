@@ -39,6 +39,7 @@ int GUIController::_pControlledLight = 0;
 bool GUIController::_pSelfShadingOn = true;
 
 bool GUIController::_pTestButton = false;
+bool GUIController::_pFlyingCameraEnabled = false;
 
 ImGuiIO& GUIController::io = ImGui::GetIO();
 
@@ -70,23 +71,31 @@ void GUIController::UpdateGUI()
 	ImGui::Spacing();
 	ImGui::Spacing();
 
-	ImGui::Text("Light Control Description:");
+	//////////////////////////////////////////////////////////////
+	// Camera Controls
+	//////////////////////////////////////////////////////////////
+	ImGui::Text("Camera Controls");
 	ImGui::Spacing();
-	ImGui::Text("Use WASD to move the currently controlled light forward.");
-	ImGui::Text("Hold Shift and use W and S to alter the lights height.");
+	ImGui::Text("Arrow keys to move around the scene.");
+	ImGui::Text("Right click and move the mouse to change camera rotation.");
+	ImGui::Text("Press"); ImGui::SameLine(50); 
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "C"); ImGui::SameLine(65);
+	ImGui::Text("to switch between flying and walking camera.");
+	ImGui::Text("Current Camera: "); 
+	ImGui::SameLine(120);
+	if (_pFlyingCameraEnabled == true)
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Flying"); 
+	else
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Walking"); 
+
+	ImGui::Spacing();
+	ImGui::Spacing();
 	ImGui::Spacing();
 	ImGui::Spacing();
 
-	ImGui::Text("Camera Control Description:");
-	ImGui::Spacing();
-	ImGui::Text("Use the Left Mouse Button to rotate the camera around the scene.");
-	ImGui::Text("Use the Right Mouse Button to adjust the zoom.");
-	ImGui::Spacing();
-	ImGui::Spacing();
-	ImGui::Spacing();
-	ImGui::Spacing();
-
+	//////////////////////////////////////////////////////////////
 	// Light Controls
+	//////////////////////////////////////////////////////////////
 	ImGui::Text("Light Controls");
 	ImGui::Checkbox("White", &_pWhiteLightOn); ImGui::SameLine(100);
 	ImGui::Checkbox("Red", &_pRedLightOn); ImGui::SameLine(200);

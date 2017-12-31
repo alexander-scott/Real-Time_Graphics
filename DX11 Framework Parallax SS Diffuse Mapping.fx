@@ -396,8 +396,8 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_Target
 			//If pixel is too far, return pixel color with ambient light
 			if (d > lights[i].Range)
 			{
-				textureColour = float4(finalAmbient, textureColour.a);
-				continue;
+				textureColour = float4(diffuse, textureColour.a);
+				//continue;
 			}
 			else
 			{
@@ -420,8 +420,18 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_Target
 
 					if (lights[i].Cone != 0)
 					{
-						//Calculate falloff from center to edge of pointlight cone
-						textureColour *= pow(max(dot(-lightToPixelVec, lights[i].Direction), 0.0f), lights[i].Cone);
+						float dotProd = dot(-lightToPixelVec, lights[i].Direction);
+						if (dotProd > 0)
+						{
+							//Calculate falloff from center to edge of pointlight cone
+							textureColour *= pow(dotProd, lights[i].Cone);
+						}
+						else
+						{
+							//Calculate falloff from center to edge of pointlight cone
+							textureColour *= pow(0.0f, lights[i].Cone);
+						}
+						
 					}
 				}
 			}

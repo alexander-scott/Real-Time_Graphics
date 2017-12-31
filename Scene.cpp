@@ -19,22 +19,8 @@ void Scene::SetWalkingCamera(SceneCamera* cam, SceneLight* camLight)
 {
 	mSceneCameraWalk = cam;
 
-	//mOctree->Add(obj);
-
 	mSceneLights.push_back(camLight);
-
 	mGameObjects.push_back(camLight);
-	
-	//// Setup the walking camera
-	//XMFLOAT3 eyeWalking = XMFLOAT3(0.0f, 5.0f, 0.0f);
-	//mSceneCameraWalk = new SceneCamera(0.01f, 2000.0f, (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, false, "Walking Camera", mCubeGeometry, mNoSpecMaterial);
-	//mSceneCameraWalk->SetPosition(eyeWalking);
-
-	//OctreeItem obj;
-	//obj.GameObject = mSceneCameraWalk;
-	//obj.Bounds = BoundingBox(mSceneCameraWalk->GetPosition(), XMFLOAT3(2 * mSceneCameraWalk->GetScale().x, 2 * mSceneCameraWalk->GetScale().y, 2 * mSceneCameraWalk->GetScale().z));
-	//mOctree->Add(obj);
-	//mOctreeGameObjects.push_back(obj);
 }
 
 Scene::~Scene()
@@ -56,12 +42,6 @@ Scene::~Scene()
 			go = nullptr;
 		}
 	}
-
-	/*if (mSceneCameraWalk)
-	{
-		delete mSceneCameraWalk;
-		mSceneCameraWalk = nullptr;
-	}*/
 
 	if (mSceneCameraFly)
 	{
@@ -176,6 +156,7 @@ void Scene::UpdateLightControls(float deltaTime)
 	{
 		mSwitchCameraPressed = true;
 		mFlyCameraActive = !mFlyCameraActive;
+		GUIController::_pFlyingCameraEnabled = mFlyCameraActive;
 	}
 	else if (!GetAsyncKeyState('C'))
 	{

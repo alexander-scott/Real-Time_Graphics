@@ -63,24 +63,24 @@ void SceneCamera::OnMouseMove(int x, int y)
 		// Don't let the user look too far up or down
 		mCameraPitch = min(kCameraMaxPitch, mCameraPitch);
 		mCameraPitch = max(-kCameraMaxPitch, mCameraPitch);
+	}
 
-		if (GetAsyncKeyState(VK_UP))
-		{
-			mForwardVelocity += kCameraMoveSpeed;
-		}
-		else if (GetAsyncKeyState(VK_DOWN))
-		{
-			mForwardVelocity -= kCameraMoveSpeed;
-		}
+	if (GetAsyncKeyState(VK_UP))
+	{
+		mForwardVelocity += kCameraMoveSpeed;
+	}
+	else if (GetAsyncKeyState(VK_DOWN))
+	{
+		mForwardVelocity -= kCameraMoveSpeed;
+	}
 
-		if (GetAsyncKeyState(VK_LEFT))
-		{
-			mStrafeVelocity -= kCameraMoveSpeed;
-		}
-		else if (GetAsyncKeyState(VK_RIGHT))
-		{
-			mStrafeVelocity += kCameraMoveSpeed;
-		}
+	if (GetAsyncKeyState(VK_LEFT))
+	{
+		mStrafeVelocity -= kCameraMoveSpeed;
+	}
+	else if (GetAsyncKeyState(VK_RIGHT))
+	{
+		mStrafeVelocity += kCameraMoveSpeed;
 	}
 
 	mLastMousePos.x = x;
