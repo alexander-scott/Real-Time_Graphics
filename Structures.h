@@ -88,6 +88,9 @@ struct Light
 	float SpecularPower;
 	XMFLOAT3 LightVecW;
 
+	float Range;
+	XMFLOAT3 Attenuation;
+
 	XMFLOAT3 paddingLightAmount;
 	float lightOn;
 };

@@ -30,6 +30,9 @@ struct Light
 	float SpecularPower;
 	float3 LightVecW;
 
+	float Range;
+	float3 Attenuation;
+
 	float3 paddingLightAmount;
 	float lightOn;
 };

@@ -36,6 +36,9 @@ struct Light
 	float SpecularPower;
 	float3 LightVecW;
 
+	float Range;
+	float3 Attenuation;
+
 	float3 paddingLightAmount;
 	float lightOn;
 };
@@ -377,6 +380,42 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_Target
 
 			// Determine the diffuse light intensity that strikes the vertex.
 			float diffuseAmount = max(0.0f, dot(lightVecWorld[i], normalMap.xyz));
+
+			//Create the vector between light position and pixels position
+			float3 lightToPixelVec = lights[i].LightVecW - input.PosW;
+
+			//Find the distance between the light pos and pixel pos
+			float d = length(lightToPixelVec);
+
+			//Create the ambient light
+			float3 finalAmbient = textureColour * lights[i].AmbientLight;
+
+			//If pixel is too far, return pixel color with ambient light
+			if (d > lights[i].Range)
+			{
+				textureColour = float4(finalAmbient, textureColour.a);
+				continue;
+			}
+			else
+			{
+				//Turn lightToPixelVec into a unit length vector describing
+				//the pixels direction from the lights position
+				lightToPixelVec /= d;
+
+				//Calculate how much light the pixel gets by the angle
+				//in which the light strikes the pixels surface
+				float howMuchLight = dot(lightToPixelVec, input.NormW);
+
+				//If light is striking the front side of the pixel
+				if (howMuchLight > 0.0f)
+				{
+					//Add light to the finalColor of the pixel
+					textureColour += howMuchLight * textureColour * lights[i].DiffuseLight;
+
+					//Calculate Light's Falloff factor
+					textureColour /= lights[i].Attenuation[0] + (lights[i].Attenuation[1] * d) + (lights[i].Attenuation[2] * (d*d));
+				}
+			}
 
 			if (lightVecWorld[i].z <= 0.0000001f || dot(normalMap, lightVecWorld[i]) <= 0.0000001f)
 			{

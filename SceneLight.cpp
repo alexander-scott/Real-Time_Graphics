@@ -96,6 +96,8 @@ Light SceneLight::GetLight()
 	newLight.SpecularLight = GetSpecularLight();
 	newLight.SpecularPower = GetSpecularPower();
 	newLight.LightVecW = GetLightVecW();
+	newLight.Range = 100.0f;
+	newLight.Attenuation = XMFLOAT3(0.0f, 0.1f, 0.0f);
 	newLight.paddingLightAmount = GetPaddingLightAmount();
 	newLight.lightOn = GetLightOn();
 

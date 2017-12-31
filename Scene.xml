@@ -14,11 +14,7 @@ X postive is right. Y postive is up.
     <BaseRotation x="0" y="0" z="0"></BaseRotation>
   </Plane>
 
-  <Plane type="TopSide" texture="Floor Texture" width="5" depth="5" height="1" step="10">
-    <Position x="0.0" y="50.0" z="0.0"></Position>
-    <BaseScale x="5.0" y="0.1" z="5.0"></BaseScale>
-    <BaseRotation x="0" y="0" z="0"></BaseRotation>
-  </Plane>
+  
 
   <Plane type="LeftSide" texture="Floor Texture" width="1" depth="5" height="5" step="10">
     <Position x="-25.0" y="25" z="0.0"></Position>
@@ -87,7 +83,7 @@ X postive is right. Y postive is up.
     <AmbientLight x="0.5" y="0.5" z="0.5" w="1.0"></AmbientLight>
     <DiffuseLight x="1.0" y="1.0" z="1.0" w="1.0"></DiffuseLight>
     <SpecularLight x="0.8" y="0.8" z="0.8" w="1.0"></SpecularLight>
-    <SpecularPower value="10"></SpecularPower>
+    <SpecularPower value="20"></SpecularPower>
     <LightVecW x="-5.05" y="10.0" z="14.5"></LightVecW>
     <PaddingLightAmount x="0.0" y="0.0" z="0.0"></PaddingLightAmount>
     <LightOn value="1"></LightOn>
