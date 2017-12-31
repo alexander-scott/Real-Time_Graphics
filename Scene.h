@@ -36,12 +36,15 @@ public:
 	// Get the current active render camera
 	SceneCamera* GetRenderCamera();
 
+	void SetWalkingCamera(SceneCamera* cam, SceneLight* camLight);
+
 	// Get all the game objects in a camera frustum
 	std::vector<GameObject*> GetGameObjectsInFrustumOctree();
 	std::vector<GameObject*> GetGameObjectsInFrustum();
 
 private:
 	void UpdateLightControls(float deltaTime);
+	void SetupWalkingCamera();
 
 	string						mSceneName;
 	SceneCamera*				mSceneCameraWalk;

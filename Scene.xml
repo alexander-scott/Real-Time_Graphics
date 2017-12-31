@@ -79,21 +79,30 @@ X postive is right. Y postive is up.
     <BaseRotation x="0" y="0" z="0"></BaseRotation>
   </Plane>
   
-  <SceneLight type="White Light" texture="White Texture">
+  <CameraLight type="White Light" texture="White Texture">
     <AmbientLight x="0.5" y="0.5" z="0.5" w="1.0"></AmbientLight>
     <DiffuseLight x="1.0" y="1.0" z="1.0" w="1.0"></DiffuseLight>
     <SpecularLight x="0.8" y="0.8" z="0.8" w="1.0"></SpecularLight>
     <SpecularPower value="20"></SpecularPower>
     <LightVecW x="-5.05" y="10.0" z="14.5"></LightVecW>
+    <Range value="100"></Range>
+    <Attenuation x="0" y="0.1" z="0"></Attenuation>
+    <Cone value="50"></Cone>
+    <Direction x="0" y="0" z="1"></Direction>
     <PaddingLightAmount x="0.0" y="0.0" z="0.0"></PaddingLightAmount>
     <LightOn value="1"></LightOn>
-  </SceneLight>
+  </CameraLight>
+  
   <SceneLight type="Red Light" texture="Red Texture">
     <AmbientLight x="0.5" y="0.5" z="0.5" w="1.0"></AmbientLight>
     <DiffuseLight x="1.0" y="0.0" z="0.0" w="1.0"></DiffuseLight>
     <SpecularLight x="0.8" y="0.8" z="0.8" w="1.0"></SpecularLight>
     <SpecularPower value="20"></SpecularPower>
     <LightVecW x="-0.45" y="10.0" z="12.7"></LightVecW>
+    <Range value="100"></Range>
+    <Attenuation x="0" y="0.1" z="0"></Attenuation>
+    <Cone value="0"></Cone>
+    <Direction x="0" y="0" z="1"></Direction>
     <PaddingLightAmount x="0.0" y="0.0" z="0.0"></PaddingLightAmount>
     <LightOn value="0"></LightOn>
   </SceneLight>
@@ -103,6 +112,10 @@ X postive is right. Y postive is up.
     <SpecularLight x="0.8" y="0.8" z="0.8" w="1.0"></SpecularLight>
     <SpecularPower value="20"></SpecularPower>
     <LightVecW x="4.0" y="10.0" z="10.0"></LightVecW>
+    <Range value="100"></Range>
+    <Attenuation x="0" y="0.1" z="0"></Attenuation>
+    <Cone value="0"></Cone>
+    <Direction x="0" y="0" z="1"></Direction>
     <PaddingLightAmount x="0.0" y="0.0" z="0.0"></PaddingLightAmount>
     <LightOn value="1"></LightOn>
   </SceneLight>
@@ -112,6 +125,10 @@ X postive is right. Y postive is up.
     <SpecularLight x="0.8" y="0.8" z="0.8" w="1.0"></SpecularLight>
     <SpecularPower value="20"></SpecularPower>
     <LightVecW x="8.0" y="10.0" z="10.0"></LightVecW>
+    <Range value="100"></Range>
+    <Attenuation x="0" y="0.1" z="0"></Attenuation>
+    <Cone value="0"></Cone>
+    <Direction x="0" y="0" z="1"></Direction>
     <PaddingLightAmount x="0.0" y="0.0" z="0.0"></PaddingLightAmount>
     <LightOn value="0"></LightOn>
   </SceneLight>

@@ -99,7 +99,9 @@ void SceneCamera::UpdateCameraViewMatrix()
 	// Generate a rotation matrix just based on yaw
 	XMMATRIX rotateYTempMatrix;
 	rotateYTempMatrix = XMMatrixRotationY(mCameraYaw);
-	SetRotation(0, mCameraYaw, 0);
+
+	XMFLOAT3 rot = XMVECTORToXMFLOAT3(camTarget);
+	SetRotation(rot.x, rot.y, rot.z);
 
 	// Calculate the right, forward and up vectors by multiplying their defaults vectors by the rotation matrix
 	XMVECTOR camRight = XMVector3TransformCoord(XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f), rotateYTempMatrix);

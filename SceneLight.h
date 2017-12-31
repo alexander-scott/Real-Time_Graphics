@@ -19,7 +19,6 @@ public:
 	~SceneLight();
 
 	void UpdateLight(float renderWidth, float renderHeight);
-	void UpdateLightCube(float timeSinceStart, float deltaTime);
 	void ToggleLightOn();
 
 	void HandleLightControls(float deltaTime);
@@ -50,8 +49,20 @@ public:
 	float GetSpecularPower() { return _pSpecularPower; }
 	void SetSpecularPower(float newSpecularPower) { _pSpecularPower = newSpecularPower; }
 
-	XMFLOAT3 GetLightVecW() { return _pLightVecW; }
-	void SetLightVecW(XMFLOAT3 newLightVecW) { _pLightVecW = newLightVecW; }
+	float GetRange() { return mRange; }
+	void SetRange(float range) { mRange = range; }
+
+	XMFLOAT3 GetAttenuation() { return mAttenuation; }
+	void SetAttenuation(XMFLOAT3 attenuation) { mAttenuation = attenuation; }
+
+	float GetCone() { return mCone; }
+	void SetCone(float cone) { mCone = cone; }
+
+	//XMFLOAT3 GetDirection() { return mDirection; }
+	//void SetDirection(XMFLOAT3 direction) { mDirection = direction; }
+
+	/*XMFLOAT3 GetLightVecW() { return _pLightVecW; }
+	void SetLightVecW(XMFLOAT3 newLightVecW) { _pLightVecW = newLightVecW; }*/
 
 	XMFLOAT3 GetPaddingLightAmount() { return _pPaddingLightAmount; }
 	void SetPaddingLightAmount(XMFLOAT3 newPaddingLightAmount) { _pPaddingLightAmount = newPaddingLightAmount; }
@@ -72,7 +83,13 @@ private:
 	XMFLOAT4 _pSpecularLight;
 
 	float _pSpecularPower;
-	XMFLOAT3 _pLightVecW;
+	//XMFLOAT3 _pLightVecW;
+
+	float mRange;
+	XMFLOAT3 mAttenuation;
+
+	float mCone;
+	//XMFLOAT3 mDirection;
 
 	XMFLOAT3 _pPaddingLightAmount;
 	float _pLightOn;

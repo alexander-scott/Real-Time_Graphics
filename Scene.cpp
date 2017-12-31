@@ -2,28 +2,35 @@
 
 Scene::Scene(string name, Geometry cubeGeometry, Material cubeMat) : mSceneName(name), mCubeGeometry(cubeGeometry), mNoSpecMaterial(cubeMat)
 {
-	// Setup the walking camera
-	XMFLOAT3 eyeWalking = XMFLOAT3(0.0f, 5.0f, 0.0f);
-	mSceneCameraWalk = new SceneCamera(0.01f, 2000.0f, (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, false, "Walking Camera", mCubeGeometry, mNoSpecMaterial);
-	mSceneCameraWalk->SetPosition(eyeWalking);
-
 	// Setup the flying camera
 	XMFLOAT3 eyeFly = XMFLOAT3(35.0f, 15.0f, -35.0f);
 	mSceneCameraFly = new SceneCamera(0.01f, 2000.0f, (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, true, "Flying Camera", mCubeGeometry, mNoSpecMaterial);
 	mSceneCameraFly->SetPosition(eyeFly);
 
-	mOctree = new Octree(200, XMFLOAT3(0, 0, 0), 25);
+	//SetupWalkingCamera();
 
-	OctreeItem obj;
-	obj.GameObject = mSceneCameraWalk;
-	obj.Bounds = BoundingBox(mSceneCameraWalk->GetPosition(), XMFLOAT3(2 * mSceneCameraWalk->GetScale().x, 2 * mSceneCameraWalk->GetScale().y, 2 * mSceneCameraWalk->GetScale().z));
-	mOctree->Add(obj);
-	mOctreeGameObjects.push_back(obj);
+	mOctree = new Octree(200, XMFLOAT3(0, 0, 0), 25);
 
 	mFlyCameraActive = false;
 	mSwitchCameraPressed = false;
 }
 
+void Scene::SetWalkingCamera(SceneCamera* cam, SceneLight* camLight)
+{
+	mSceneCameraWalk = cam;
+	AddSceneLight(camLight);
+	
+	//// Setup the walking camera
+	//XMFLOAT3 eyeWalking = XMFLOAT3(0.0f, 5.0f, 0.0f);
+	//mSceneCameraWalk = new SceneCamera(0.01f, 2000.0f, (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, false, "Walking Camera", mCubeGeometry, mNoSpecMaterial);
+	//mSceneCameraWalk->SetPosition(eyeWalking);
+
+	//OctreeItem obj;
+	//obj.GameObject = mSceneCameraWalk;
+	//obj.Bounds = BoundingBox(mSceneCameraWalk->GetPosition(), XMFLOAT3(2 * mSceneCameraWalk->GetScale().x, 2 * mSceneCameraWalk->GetScale().y, 2 * mSceneCameraWalk->GetScale().z));
+	//mOctree->Add(obj);
+	//mOctreeGameObjects.push_back(obj);
+}
 
 Scene::~Scene()
 {

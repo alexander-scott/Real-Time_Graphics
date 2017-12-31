@@ -20,6 +20,7 @@ public:
 
 	XMFLOAT3 GetPosition() { return mPosition; }
 	XMFLOAT3 GetScale() { return mScale; }
+	XMFLOAT3 GetRotation() { return mRotation; }
 
 	// Getters for object details
 	string GetType() const { return mType; }
@@ -43,6 +44,7 @@ public:
 
 	void SetParent(GameObject* parent) { mParent = parent; }
 	void AddChild(GameObject* child) { mChildren.push_back(child); }
+	GameObject* GetChild(int index) { return mChildren[index]; }
 
 	bool Update(float t, float deltaTime);
 	void Draw(ID3D11DeviceContext* pImmediateContext);

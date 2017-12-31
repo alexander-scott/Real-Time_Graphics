@@ -33,6 +33,12 @@ Scene* SceneBuilder::BuildScene(string fileName, Geometry cubeGeometry, Material
 	Scene* scene = new Scene(string(root->first_attribute("name")->value()), cubeGeometry, noSpecMaterial);
 
 	////////////////////////////////////////////////////
+	// Build the camera
+	////////////////////////////////////////////////////
+	xml_node<>* gameCameraNode = root->first_node("CameraLight");
+	BuildCamera(gameCameraNode, cubeGeometry, noSpecMaterial, textureManager, scene);
+
+	////////////////////////////////////////////////////
 	// Extract all the GameObjects
 	////////////////////////////////////////////////////
 	xml_node<>* gameObjectNode = root->first_node("GameObject");
@@ -68,6 +74,91 @@ Scene* SceneBuilder::BuildScene(string fileName, Geometry cubeGeometry, Material
 	}
 
 	return scene;
+}
+
+void SceneBuilder::BuildCamera(xml_node<>* node, Geometry cubeGeometry, Material material, TextureController* textureManager, Scene* scene)
+{
+	XMFLOAT3 eyeWalking = XMFLOAT3(0.0f, 5.0f, 0.0f);
+	SceneCamera* SceneCameraWalk = new SceneCamera(0.01f, 2000.0f, (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, false, "Walking Camera", cubeGeometry, material);
+	SceneCameraWalk->SetPosition(eyeWalking);
+
+	SceneLight* sceneLight = new SceneLight(string(node->first_attribute("type")->value()),
+		textureManager->GetTextureSet(string(node->first_attribute("texture")->value()))->texture,
+		cubeGeometry, material);
+
+	// Set ambient light
+	xml_node<>* ambientLightNode = node->first_node("AmbientLight");
+	sceneLight->SetAmbientLight(XMFLOAT4(
+		(float)atof(ambientLightNode->first_attribute("x")->value()),
+		(float)atof(ambientLightNode->first_attribute("y")->value()),
+		(float)atof(ambientLightNode->first_attribute("z")->value()),
+		(float)atof(ambientLightNode->first_attribute("w")->value())));
+
+	// Set diffuse light
+	xml_node<>* diffuseLightNode = node->first_node("DiffuseLight");
+	sceneLight->SetDiffuseLight(XMFLOAT4(
+		(float)atof(diffuseLightNode->first_attribute("x")->value()),
+		(float)atof(diffuseLightNode->first_attribute("y")->value()),
+		(float)atof(diffuseLightNode->first_attribute("z")->value()),
+		(float)atof(diffuseLightNode->first_attribute("w")->value())));
+
+	// Set specular light
+	xml_node<>* specularLightNode = node->first_node("SpecularLight");
+	sceneLight->SetSpecularLight(XMFLOAT4(
+		(float)atof(specularLightNode->first_attribute("x")->value()),
+		(float)atof(specularLightNode->first_attribute("y")->value()),
+		(float)atof(specularLightNode->first_attribute("z")->value()),
+		(float)atof(specularLightNode->first_attribute("w")->value())));
+
+	// Set specular power
+	xml_node<>* specularPowerNode = node->first_node("SpecularPower");
+	sceneLight->SetSpecularPower((float)atof(specularPowerNode->first_attribute("value")->value()));
+
+	// Set light vec w
+	xml_node<>* lightVecWNode = node->first_node("LightVecW");
+	sceneLight->SetPosition(XMFLOAT3(
+		(float)atof(lightVecWNode->first_attribute("x")->value()),
+		(float)atof(lightVecWNode->first_attribute("y")->value()),
+		(float)atof(lightVecWNode->first_attribute("z")->value())));
+
+	// Set range
+	xml_node<>* rangeNode = node->first_node("Range");
+	sceneLight->SetRange((float)atof(rangeNode->first_attribute("value")->value()));
+
+	// Set attenuation
+	xml_node<>* attenuationNode = node->first_node("Attenuation");
+	sceneLight->SetAttenuation(XMFLOAT3(
+		(float)atof(attenuationNode->first_attribute("x")->value()),
+		(float)atof(attenuationNode->first_attribute("y")->value()),
+		(float)atof(attenuationNode->first_attribute("z")->value())));
+
+	// Set cone
+	xml_node<>* coneNode = node->first_node("Cone");
+	sceneLight->SetCone((float)atof(coneNode->first_attribute("value")->value()));
+
+	// Set direction
+	xml_node<>* directionNode = node->first_node("Direction");
+	sceneLight->SetRotation(
+		(float)atof(directionNode->first_attribute("x")->value()),
+		(float)atof(directionNode->first_attribute("y")->value()),
+		(float)atof(directionNode->first_attribute("z")->value()));
+
+	// Set padding light amount
+	xml_node<>* paddingLightAmountNode = node->first_node("PaddingLightAmount");
+	sceneLight->SetPaddingLightAmount(XMFLOAT3(
+		(float)atof(paddingLightAmountNode->first_attribute("x")->value()),
+		(float)atof(paddingLightAmountNode->first_attribute("y")->value()),
+		(float)atof(paddingLightAmountNode->first_attribute("z")->value())));
+
+	// Set light on
+	xml_node<>* lightOnNode = node->first_node("LightOn");
+	sceneLight->SetLightOn((float)atof(lightOnNode->first_attribute("value")->value()));
+
+	sceneLight->SetPosition(SceneCameraWalk->GetPosition());
+	sceneLight->SetParent(SceneCameraWalk);
+	SceneCameraWalk->AddChild(sceneLight);
+
+	scene->SetWalkingCamera(SceneCameraWalk, sceneLight);
 }
 
 GameObject * SceneBuilder::BuildGameObject(xml_node<>* node, Geometry cubeGeometry, Material noSpecMaterial, TextureController* textureManager)
@@ -135,10 +226,32 @@ SceneLight * SceneBuilder::BuildSceneLight(xml_node<>* node, Geometry cubeGeomet
 
 	// Set light vec w
 	xml_node<>* lightVecWNode = node->first_node("LightVecW");
-	sceneLight->SetLightVecW(XMFLOAT3(
+	sceneLight->SetPosition(XMFLOAT3(
 		(float)atof(lightVecWNode->first_attribute("x")->value()),
 		(float)atof(lightVecWNode->first_attribute("y")->value()),
 		(float)atof(lightVecWNode->first_attribute("z")->value())));
+
+	// Set range
+	xml_node<>* rangeNode = node->first_node("Range");
+	sceneLight->SetRange((float)atof(rangeNode->first_attribute("value")->value()));
+
+	// Set attenuation
+	xml_node<>* attenuationNode = node->first_node("Attenuation");
+	sceneLight->SetAttenuation(XMFLOAT3(
+		(float)atof(attenuationNode->first_attribute("x")->value()),
+		(float)atof(attenuationNode->first_attribute("y")->value()),
+		(float)atof(attenuationNode->first_attribute("z")->value())));
+
+	// Set cone
+	xml_node<>* coneNode = node->first_node("Cone");
+	sceneLight->SetCone((float)atof(coneNode->first_attribute("value")->value()));
+
+	// Set direction
+	xml_node<>* directionNode = node->first_node("Direction");
+	sceneLight->SetRotation(
+		(float)atof(directionNode->first_attribute("x")->value()),
+		(float)atof(directionNode->first_attribute("y")->value()),
+		(float)atof(directionNode->first_attribute("z")->value()));
 
 	// Set padding light amount
 	xml_node<>* paddingLightAmountNode = node->first_node("PaddingLightAmount");
@@ -151,8 +264,7 @@ SceneLight * SceneBuilder::BuildSceneLight(xml_node<>* node, Geometry cubeGeomet
 	xml_node<>* lightOnNode = node->first_node("LightOn");
 	sceneLight->SetLightOn((float)atof(lightOnNode->first_attribute("value")->value()));
 
-	sceneLight->SetPosition(sceneLight->GetLightVecW());
-
+	sceneLight->SetPosition(sceneLight->GetPosition());
 
 	return sceneLight;
 }

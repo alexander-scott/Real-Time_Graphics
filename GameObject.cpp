@@ -20,7 +20,7 @@ GameObject::~GameObject()
 
 bool GameObject::Update(float t, float deltaTime)
 {
-	if (!mHasChanged)
+	if (!mHasChanged &&	(mParent != nullptr && mParent->mHasChanged))
 		return false;
 
 	mHasChanged = false;
@@ -34,7 +34,9 @@ bool GameObject::Update(float t, float deltaTime)
 
 	if (mParent != nullptr)
 	{
-		XMStoreFloat4x4(&mWorld, this->GetWorldMatrix() * mParent->GetWorldMatrix());
+		//XMStoreFloat4x4(&mWorld, this->GetWorldMatrix() * mParent->GetWorldMatrix());
+		SetRotation(mParent->GetRotation().x, mParent->GetRotation().y, mParent->GetRotation().z);
+		SetPosition(mParent->GetPosition().x, mParent->GetPosition().y, mParent->GetPosition().z);
 	}
 
 	return true;
