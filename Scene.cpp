@@ -18,7 +18,12 @@ Scene::Scene(string name, Geometry cubeGeometry, Material cubeMat) : mSceneName(
 void Scene::SetWalkingCamera(SceneCamera* cam, SceneLight* camLight)
 {
 	mSceneCameraWalk = cam;
-	AddSceneLight(camLight);
+
+	//mOctree->Add(obj);
+
+	mSceneLights.push_back(camLight);
+
+	mGameObjects.push_back(camLight);
 	
 	//// Setup the walking camera
 	//XMFLOAT3 eyeWalking = XMFLOAT3(0.0f, 5.0f, 0.0f);
@@ -40,6 +45,15 @@ Scene::~Scene()
 		{
 			delete go.GameObject;
 			go.GameObject = nullptr;
+		}
+	}
+
+	for (auto& go : mGameObjects)
+	{
+		if (go)
+		{
+			delete go;
+			go = nullptr;
 		}
 	}
 
@@ -75,6 +89,11 @@ void Scene::Update(float timeSinceStart, float deltaTime)
 			go.Bounds = BoundingBox(go.GameObject->GetPosition(), XMFLOAT3(2 * go.GameObject->GetScale().x, 2 * go.GameObject->GetScale().y, 2 * go.GameObject->GetScale().z));
 			mOctree->Add(go);
 		}
+	}
+
+	for (auto& go : mGameObjects)
+	{
+		go->Update(timeSinceStart, deltaTime);
 	}
 
 	for (auto& sl : mSceneLights)

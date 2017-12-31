@@ -26,7 +26,7 @@ void SceneLight::UpdateLight(float renderWidth, float renderHeight)
 
 	// Initialise Light Matrices
 	XMStoreFloat4x4(&_pView, XMMatrixLookAtLH(lightEyeVector, lightAtVector, lightUpVector));
-	XMStoreFloat4x4(&_pProjection, XMMatrixPerspectiveFovLH(2* XM_PI, (renderWidth / renderHeight), 0.01f, 100.0f));
+	XMStoreFloat4x4(&_pProjection, XMMatrixPerspectiveFovLH(2 * XM_PI, (renderWidth / renderHeight), 0.01f, 100.0f));
 }
 
 void SceneLight::HandleLightControls(float deltaTime)
@@ -42,11 +42,11 @@ void SceneLight::HandleLightControls(float deltaTime)
 	}
 	else if (GetAsyncKeyState('W'))
 	{
-		SetPosition(GetPosition().x, GetPosition().y, GetPosition().y + 0.01f * deltaTime);
+		SetPosition(GetPosition().x, GetPosition().y, GetPosition().z + 0.01f * deltaTime);
 	}
 	else if (GetAsyncKeyState('S'))
 	{
-		SetPosition(GetPosition().x, GetPosition().y, GetPosition().y - 0.01f * deltaTime);
+		SetPosition(GetPosition().x, GetPosition().y, GetPosition().z - 0.01f * deltaTime);
 	}
 	else if (GetAsyncKeyState('A'))
 	{

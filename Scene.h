@@ -44,7 +44,6 @@ public:
 
 private:
 	void UpdateLightControls(float deltaTime);
-	void SetupWalkingCamera();
 
 	string						mSceneName;
 	SceneCamera*				mSceneCameraWalk;
@@ -56,7 +55,8 @@ private:
 
 	vector<SceneLight*>			mSceneLights;
 
-	vector<OctreeItem>			mOctreeGameObjects;
+	vector<OctreeItem>			mOctreeGameObjects; // Objects that will exist in the octree
+	vector<GameObject*>			mGameObjects; // Objects that need updating but aren't in the octree
 
 	bool						mFlyCameraActive;
 	bool						mSwitchCameraPressed;

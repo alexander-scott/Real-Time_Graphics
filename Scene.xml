@@ -100,7 +100,7 @@ X postive is right. Y postive is up.
     <SpecularPower value="20"></SpecularPower>
     <LightVecW x="-0.45" y="10.0" z="12.7"></LightVecW>
     <Range value="100"></Range>
-    <Attenuation x="0" y="0.1" z="0"></Attenuation>
+    <Attenuation x="0" y="0.5" z="0"></Attenuation>
     <Cone value="0"></Cone>
     <Direction x="0" y="0" z="1"></Direction>
     <PaddingLightAmount x="0.0" y="0.0" z="0.0"></PaddingLightAmount>
