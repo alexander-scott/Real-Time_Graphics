@@ -35,6 +35,9 @@ struct Light
 	float Range;
 	float3 Attenuation;
 
+	float Cone;
+	float3 Direction;
+
 	float3 paddingLightAmount;
 	float lightOn;
 };
@@ -319,41 +322,6 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_Target
 			normalMap = (2.0f * normalMap) - 1.0f;
 			output.normal = normalMap;
 
-			////Create the vector between light position and pixels position
-			//float3 lightToPixelVec = lights[i].LightVecW - input.PosW;
-
-			////Find the distance between the light pos and pixel pos
-			//float d = length(lightToPixelVec);
-
-			////Create the ambient light
-			//float3 finalAmbient = textureColour * lights[i].AmbientLight;
-
-			////If pixel is too far, return pixel color with ambient light
-			//if (d > lights[i].Range)
-			//{
-			//	textureColour = float4(finalAmbient, textureColour.a);
-			//}
-			//else
-			//{
-			//	//Turn lightToPixelVec into a unit length vector describing
-			//	//the pixels direction from the lights position
-			//	lightToPixelVec /= d;
-
-			//	//Calculate how much light the pixel gets by the angle
-			//	//in which the light strikes the pixels surface
-			//	float howMuchLight = dot(lightToPixelVec, input.NormW);
-
-			//	//If light is striking the front side of the pixel
-			//	if (howMuchLight > 0.0f)
-			//	{
-			//		//Add light to the finalColor of the pixel
-			//		textureColour += howMuchLight * textureColour * lights[i].DiffuseLight;
-
-			//		//Calculate Light's Falloff factor
-			//		textureColour /= lights[i].Attenuation[0] + (lights[i].Attenuation[1] * d) + (lights[i].Attenuation[2] * (d*d));
-			//	}
-			//}
-
 			float inShadow = 0.0f;
 
 			if (inShadow == 0.0f)
@@ -370,49 +338,3 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_Target
 
 	return output;
 }
-//
-//float4 PS(VS_OUTPUT input) : SV_TARGET
-//{
-//	input.normal = normalize(input.normal);
-//
-//	float4 diffuse = ObjTexture.Sample(ObjSamplerState, input.TexCoord);
-//
-//	float3 finalColor = float3(0.0f, 0.0f, 0.0f);
-//
-//	//Create the vector between light position and pixels position
-//	float3 lightToPixelVec = light.pos - input.worldPos;
-//
-//	//Find the distance between the light pos and pixel pos
-//	float d = length(lightToPixelVec);
-//
-//	//Create the ambient light
-//	float3 finalAmbient = diffuse * light.ambient;
-//
-//	//If pixel is too far, return pixel color with ambient light
-//	if (d > light.range)
-//		return float4(finalAmbient, diffuse.a);
-//
-//	//Turn lightToPixelVec into a unit length vector describing
-//	//the pixels direction from the lights position
-//	lightToPixelVec /= d;
-//
-//	//Calculate how much light the pixel gets by the angle
-//	//in which the light strikes the pixels surface
-//	float howMuchLight = dot(lightToPixelVec, input.normal);
-//
-//	//If light is striking the front side of the pixel
-//	if (howMuchLight > 0.0f)
-//	{
-//		//Add light to the finalColor of the pixel
-//		finalColor += howMuchLight * diffuse * light.diffuse;
-//
-//		//Calculate Light's Falloff factor
-//		finalColor /= light.att[0] + (light.att[1] * d) + (light.att[2] * (d*d));
-//	}
-//
-//	//make sure the values are between 1 and 0, and add the ambient
-//	finalColor = saturate(finalColor + finalAmbient);
-//
-//	//Return Final Color
-//	return float4(finalColor, diffuse.a);
-//}

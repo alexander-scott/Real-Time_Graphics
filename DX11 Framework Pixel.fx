@@ -33,6 +33,9 @@ struct Light
 	float Range;
 	float3 Attenuation;
 
+	float Cone;
+	float3 Direction;
+
 	float3 paddingLightAmount;
 	float lightOn;
 };

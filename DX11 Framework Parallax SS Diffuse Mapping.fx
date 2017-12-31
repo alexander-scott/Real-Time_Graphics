@@ -39,6 +39,9 @@ struct Light
 	float Range;
 	float3 Attenuation;
 
+	float Cone;
+	float3 Direction;
+
 	float3 paddingLightAmount;
 	float lightOn;
 };
@@ -414,6 +417,9 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_Target
 
 					//Calculate Light's Falloff factor
 					textureColour /= lights[i].Attenuation[0] + (lights[i].Attenuation[1] * d) + (lights[i].Attenuation[2] * (d*d));
+
+					//Calculate falloff from center to edge of pointlight cone
+					textureColour *= pow(max(dot(-lightToPixelVec, lights[i].Direction), 0.0f), lights[i].Cone);
 				}
 			}
 
