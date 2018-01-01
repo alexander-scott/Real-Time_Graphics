@@ -42,11 +42,11 @@
     <Filter Include="DirectX\Textures">
       <UniqueIdentifier>{e4e847cb-165d-44b7-8f05-f08bc046d751}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\Parallax">
-      <UniqueIdentifier>{0c967173-af60-4b38-90e2-11e6ec88a038}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders\Blur Effect">
       <UniqueIdentifier>{3e395ffb-0c49-4883-80f7-cb9c0f41cf4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Scenes">
+      <UniqueIdentifier>{0c967173-af60-4b38-90e2-11e6ec88a038}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -201,10 +201,7 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="DX11 Framework Parallax SS Diffuse Mapping.fx">
-      <Filter>Shaders\Parallax</Filter>
-    </FxCompile>
-    <FxCompile Include="DX11 Framework Parallax SS Deferred.fx">
-      <Filter>Shaders\Parallax</Filter>
+      <Filter>Shaders\Scenes</Filter>
     </FxCompile>
     <FxCompile Include="DX11 Framework Basic.fx">
       <Filter>Shaders</Filter>

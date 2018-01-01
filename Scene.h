@@ -27,8 +27,7 @@ public:
 	void AddSceneLight(SceneLight* sl);
 
 	// Get scene lights
-	vector<SceneLight*> GetSceneLights() { return mSceneLights; }
-	SceneLight* GetSceneLight(int index) { return mSceneLights.at(index); }
+	vector<SceneLight*> GetSceneLights();
 
 	// Called from the main windows message loop and used to update camera rotation based on mouse movement
 	void OnMouseMove(float x, float y);
@@ -56,7 +55,8 @@ private:
 	vector<SceneLight*>			mSceneLights;
 
 	vector<OctreeItem>			mOctreeGameObjects; // Objects that will exist in the octree
-	vector<GameObject*>			mGameObjects; // Objects that need updating but aren't in the octree
+
+	SceneLight*					mFlashLight; // Objects that need updating but aren't in the octree
 
 	bool						mFlyCameraActive;
 	bool						mSwitchCameraPressed;

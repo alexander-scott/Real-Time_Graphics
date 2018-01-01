@@ -207,7 +207,6 @@ HRESULT Application::InitRenderProcesses()
 	mShaderController->AddCustomShader("Parallax Scene", (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight);
 
 	mShaderController->GetRenderToTextureProcess("Parallax Scene")->LoadShaderFilesAndInputLayouts(  DX11AppHelper::_pd3dDevice, L"DX11 Framework Parallax SS Diffuse Mapping.fx", L"DX11 Framework Parallax SS Diffuse Mapping.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 2"));
-	mShaderController->GetRenderToTextureProcess("Parallax Scene")->LoadShaderFilesAndInputLayouts(  DX11AppHelper::_pd3dDevice, L"DX11 Framework Parallax SS Deferred.fx", L"DX11 Framework Parallax SS Deferred.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 2"));
 
 	if (FAILED(hr))
 		return hr;
@@ -336,10 +335,14 @@ void Application::Draw()
 	cb.surface.DiffuseMtrl = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	cb.surface.SpecularMtrl = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	cb.lights[0] = mScene->GetSceneLight(0)->GetLight();
-	cb.lights[1] = mScene->GetSceneLight(1)->GetLight();
-	cb.lights[2] = mScene->GetSceneLight(2)->GetLight();
-	cb.lights[3] = mScene->GetSceneLight(3)->GetLight();
+	std::vector<SceneLight*> sceneLights = mScene->GetSceneLights();
+
+	int count = 0;
+	for (auto& sl : sceneLights) // Load all the scene lights into the constant buffer
+	{
+		cb.lights[count] = sl->GetLight();
+		count++;
+	}
 
 	cb.EyePosW = mScene->GetRenderCamera()->GetPosition();
 	cb.HasTexture = 0.0f;
@@ -353,7 +356,7 @@ void Application::Draw()
 	else
 		cb.selfShadowOn = 0.0f;
 
-	mShaderController->ExecuteShadersInOrder(&cb, mScene->GetSceneLights(), mScene->GetGameObjectsInFrustumOctree());
+	mShaderController->ExecuteShadersInOrder(&cb, sceneLights, mScene->GetGameObjectsInFrustumOctree());
 
 	ImGui::Render();
 

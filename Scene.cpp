@@ -18,9 +18,7 @@ Scene::Scene(string name, Geometry cubeGeometry, Material cubeMat) : mSceneName(
 void Scene::SetWalkingCamera(SceneCamera* cam, SceneLight* camLight)
 {
 	mSceneCameraWalk = cam;
-
-	mSceneLights.push_back(camLight);
-	mGameObjects.push_back(camLight);
+	mFlashLight = camLight;
 }
 
 Scene::~Scene()
@@ -34,13 +32,10 @@ Scene::~Scene()
 		}
 	}
 
-	for (auto& go : mGameObjects)
+	if (mFlashLight)
 	{
-		if (go)
-		{
-			delete go;
-			go = nullptr;
-		}
+		delete mFlashLight;
+		mFlashLight = nullptr;
 	}
 
 	if (mSceneCameraFly)
@@ -71,10 +66,8 @@ void Scene::Update(float timeSinceStart, float deltaTime)
 		}
 	}
 
-	for (auto& go : mGameObjects)
-	{
-		go->Update(timeSinceStart, deltaTime);
-	}
+	mFlashLight->Update(timeSinceStart, deltaTime);
+	mFlashLight->UpdateLight((float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight);
 
 	for (auto& sl : mSceneLights)
 	{
@@ -212,4 +205,18 @@ std::vector<GameObject*> Scene::GetGameObjectsInFrustum()
 	}
 
 	return renderedObjs;
+}
+
+std::vector<SceneLight*> Scene::GetSceneLights()
+{	
+	if (GUIController::_pSceneLightingMode == 0) // Torch Mode
+	{
+		std::vector<SceneLight*> sceneLights;
+		sceneLights.push_back(mFlashLight);
+		return sceneLights;
+	}
+	else // Light Mode
+	{
+		return mSceneLights;
+	}
 }

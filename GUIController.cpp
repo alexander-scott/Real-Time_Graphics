@@ -141,6 +141,14 @@ void GUIController::UpdateGUI()
 	}
 
 	ImGui::Spacing();
+
+	if (_pShaderControlOption == 2)
+	{
+		// Self Shadowing Options
+		ImGui::Checkbox("Self Shadowing", &_pSelfShadingOn);
+	}
+
+	ImGui::Spacing();
 	ImGui::Spacing();
 	ImGui::Separator();
 	ImGui::Spacing();
@@ -189,14 +197,6 @@ void GUIController::UpdateGUI()
 		}
 
 		ImGui::Spacing();
-	}
-
-	if (_pShaderControlOption == 2)
-	{
-		// Self Shading Options
-		ImGui::Text("Self Shading Controls");
-		ImGui::Spacing();
-		ImGui::Checkbox("Self Shading", &_pSelfShadingOn);
 	}
 
 	ImGui::Spacing();
