@@ -162,6 +162,15 @@ void Scene::UpdateLightControls(float deltaTime)
 	{
 		mSwitchCameraPressed = false;
 	}
+
+	if (GetAsyncKeyState('1'))
+		GUIController::_pControlledLight = 0;
+	else if (GetAsyncKeyState('2'))
+		GUIController::_pControlledLight = 1;
+	else if (GetAsyncKeyState('3'))
+		GUIController::_pControlledLight = 2;
+	else if (GetAsyncKeyState('4'))
+		GUIController::_pControlledLight = 3;
 }
 
 void Scene::OnMouseMove(float x, float y)

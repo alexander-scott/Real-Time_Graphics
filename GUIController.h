@@ -47,6 +47,9 @@ public:
 	static bool _pSelfShadingOn;
 
 	static bool _pFlyingCameraEnabled;
+
+	static int _pSceneLightingMode;
+
 	static bool _pTestButton;
 
 	static ImGuiIO& io;
