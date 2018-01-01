@@ -27,14 +27,15 @@ public:
 	void AddSceneLight(SceneLight* sl);
 
 	// Get scene lights
-	vector<SceneLight*> GetSceneLights() { return mSceneLights; }
-	SceneLight* GetSceneLight(int index) { return mSceneLights.at(index); }
+	vector<SceneLight*> GetSceneLights();
 
 	// Called from the main windows message loop and used to update camera rotation based on mouse movement
 	void OnMouseMove(float x, float y);
 
 	// Get the current active render camera
 	SceneCamera* GetRenderCamera();
+
+	void SetWalkingCamera(SceneCamera* cam, SceneLight* camLight);
 
 	// Get all the game objects in a camera frustum
 	std::vector<GameObject*> GetGameObjectsInFrustumOctree();
@@ -53,7 +54,9 @@ private:
 
 	vector<SceneLight*>			mSceneLights;
 
-	vector<OctreeItem>			mOctreeGameObjects;
+	vector<OctreeItem>			mOctreeGameObjects; // Objects that will exist in the octree
+
+	SceneLight*					mFlashLight; // Objects that need updating but aren't in the octree
 
 	bool						mFlyCameraActive;
 	bool						mSwitchCameraPressed;

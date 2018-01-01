@@ -2,28 +2,24 @@
 
 Scene::Scene(string name, Geometry cubeGeometry, Material cubeMat) : mSceneName(name), mCubeGeometry(cubeGeometry), mNoSpecMaterial(cubeMat)
 {
-	// Setup the walking camera
-	XMFLOAT3 eyeWalking = XMFLOAT3(0.0f, 5.0f, 0.0f);
-	mSceneCameraWalk = new SceneCamera(0.01f, 2000.0f, (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, false, "Walking Camera", mCubeGeometry, mNoSpecMaterial);
-	mSceneCameraWalk->SetPosition(eyeWalking);
-
 	// Setup the flying camera
 	XMFLOAT3 eyeFly = XMFLOAT3(35.0f, 15.0f, -35.0f);
 	mSceneCameraFly = new SceneCamera(0.01f, 2000.0f, (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, true, "Flying Camera", mCubeGeometry, mNoSpecMaterial);
 	mSceneCameraFly->SetPosition(eyeFly);
 
-	mOctree = new Octree(200, XMFLOAT3(0, 0, 0), 25);
+	//SetupWalkingCamera();
 
-	OctreeItem obj;
-	obj.GameObject = mSceneCameraWalk;
-	obj.Bounds = BoundingBox(mSceneCameraWalk->GetPosition(), XMFLOAT3(2 * mSceneCameraWalk->GetScale().x, 2 * mSceneCameraWalk->GetScale().y, 2 * mSceneCameraWalk->GetScale().z));
-	mOctree->Add(obj);
-	mOctreeGameObjects.push_back(obj);
+	mOctree = new Octree(200, XMFLOAT3(0, 0, 0), 25);
 
 	mFlyCameraActive = false;
 	mSwitchCameraPressed = false;
 }
 
+void Scene::SetWalkingCamera(SceneCamera* cam, SceneLight* camLight)
+{
+	mSceneCameraWalk = cam;
+	mFlashLight = camLight;
+}
 
 Scene::~Scene()
 {
@@ -36,11 +32,11 @@ Scene::~Scene()
 		}
 	}
 
-	/*if (mSceneCameraWalk)
+	if (mFlashLight)
 	{
-		delete mSceneCameraWalk;
-		mSceneCameraWalk = nullptr;
-	}*/
+		delete mFlashLight;
+		mFlashLight = nullptr;
+	}
 
 	if (mSceneCameraFly)
 	{
@@ -69,6 +65,9 @@ void Scene::Update(float timeSinceStart, float deltaTime)
 			mOctree->Add(go);
 		}
 	}
+
+	mFlashLight->Update(timeSinceStart, deltaTime);
+	mFlashLight->UpdateLight((float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight);
 
 	for (auto& sl : mSceneLights)
 	{
@@ -150,11 +149,21 @@ void Scene::UpdateLightControls(float deltaTime)
 	{
 		mSwitchCameraPressed = true;
 		mFlyCameraActive = !mFlyCameraActive;
+		GUIController::_pFlyingCameraEnabled = mFlyCameraActive;
 	}
 	else if (!GetAsyncKeyState('C'))
 	{
 		mSwitchCameraPressed = false;
 	}
+
+	if (GetAsyncKeyState('1'))
+		GUIController::_pControlledLight = 0;
+	else if (GetAsyncKeyState('2'))
+		GUIController::_pControlledLight = 1;
+	else if (GetAsyncKeyState('3'))
+		GUIController::_pControlledLight = 2;
+	else if (GetAsyncKeyState('4'))
+		GUIController::_pControlledLight = 3;
 }
 
 void Scene::OnMouseMove(float x, float y)
@@ -196,4 +205,18 @@ std::vector<GameObject*> Scene::GetGameObjectsInFrustum()
 	}
 
 	return renderedObjs;
+}
+
+std::vector<SceneLight*> Scene::GetSceneLights()
+{	
+	if (GUIController::_pSceneLightingMode == 0) // Torch Mode
+	{
+		std::vector<SceneLight*> sceneLights;
+		sceneLights.push_back(mFlashLight);
+		return sceneLights;
+	}
+	else // Light Mode
+	{
+		return mSceneLights;
+	}
 }

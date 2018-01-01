@@ -39,6 +39,9 @@ struct Light
 	float Range;
 	float3 Attenuation;
 
+	float Cone;
+	float3 Direction;
+
 	float3 paddingLightAmount;
 	float lightOn;
 };
@@ -281,26 +284,6 @@ float CalculateIfInShadow(VS_OUTPUT input, float3 eyeVec, float3 lightVec, float
 	return inShadow;
 }
 
-//float pcfFiltering(Texture2D shadowMap, float2 projectedTexCoord, float lightDepthValue)
-//{
-//	float depthValue1 = shadowMap.Sample(samClamp, projectedTexCoord).r;
-//	float depthValue2 = shadowMap.Sample(samClamp, projectedTexCoord + float2(1.0f / 1080.0f, 0.0f)).r;
-//	float depthValue3 = shadowMap.Sample(samClamp, projectedTexCoord + float2(0.0f, 1.0f / 1080.0f)).r;
-//	float depthValue4 = shadowMap.Sample(samClamp, projectedTexCoord + float2(1.0f / 1080.0f, 1.0f / 1080.0f)).r;
-//
-//	float result0 = lightDepthValue <= depthValue1;
-//	float result1 = lightDepthValue <= depthValue2;
-//	float result2 = lightDepthValue <= depthValue3;
-//	float result3 = lightDepthValue <= depthValue4;
-//
-//	float2 texelPos = 1080.0f*projectedTexCoord.xy;
-//	float2 t = frac(texelPos);
-//
-//	float2 projFinal = lerp(lerp(result0, result1, t.x), lerp(result2, result3, t.x), t.y);
-//
-//	return shadowMap.Sample(samClamp, projFinal).r;
-//}
-
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
@@ -313,6 +296,7 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_Target
 	float3 ambient = float3(0.0f, 0.0f, 0.0f);
 	float3 diffuse = float3(0.0f, 0.0f, 0.0f);
 	float3 specular = float3(0.0f, 0.0f, 0.0f);
+	float4 textureColour[4];
 
 	// Compute the 3x3 TEN matrix
 	float3x3 wtMat; // World-to-tangent space transformation matrix
@@ -344,12 +328,14 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_Target
 		lightViewPositions[i] = mul(lightViewPositions[i], lights[i].Projection);
 	}
 
-	float4 textureColour = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	//float4 textureColour = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	float parallaxHeight;
 	float depthValue;
 	float lightDepthValue;
 	float pcfFilter = 0.0f;
+
+	int count = 0;
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -374,7 +360,7 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_Target
 			}
 
 			// Sample colour and normal maps
-			textureColour = txDiffuse.Sample(samLinear, vFinalCoords);
+			textureColour[i] = txDiffuse.Sample(samLinear, vFinalCoords);
 			float4 normalMap = txNormalMap.Sample(samLinear, vFinalCoords);
 			normalMap = (2.0f * normalMap) - 1.0f;
 
@@ -388,13 +374,13 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_Target
 			float d = length(lightToPixelVec);
 
 			//Create the ambient light
-			float3 finalAmbient = textureColour * lights[i].AmbientLight;
+			float3 finalAmbient = textureColour[i] * lights[i].AmbientLight;
 
 			//If pixel is too far, return pixel color with ambient light
 			if (d > lights[i].Range)
 			{
-				textureColour = float4(finalAmbient, textureColour.a);
-				continue;
+				textureColour[i] = (0, 0, 0, 0);
+				//continue;
 			}
 			else
 			{
@@ -410,10 +396,31 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_Target
 				if (howMuchLight > 0.0f)
 				{
 					//Add light to the finalColor of the pixel
-					textureColour += howMuchLight * textureColour * lights[i].DiffuseLight;
+					textureColour[i] += howMuchLight * textureColour[i] * lights[i].DiffuseLight;
 
 					//Calculate Light's Falloff factor
-					textureColour /= lights[i].Attenuation[0] + (lights[i].Attenuation[1] * d) + (lights[i].Attenuation[2] * (d*d));
+					textureColour[i] /= lights[i].Attenuation[0] + (lights[i].Attenuation[1] * d) + (lights[i].Attenuation[2] * (d*d));
+
+					if (lights[i].Cone != 0)
+					{
+						float dotProd = dot(-lightToPixelVec, lights[i].Direction);
+						if (dotProd > 0)
+						{
+							//Calculate falloff from center to edge of pointlight cone
+							textureColour[i] *= pow(dotProd, lights[i].Cone);
+						}
+						else
+						{
+							//Calculate falloff from center to edge of pointlight cone
+							textureColour[i] *= pow(0.0f, lights[i].Cone);
+						}
+					}
+
+					count++;
+				}
+				else
+				{
+					textureColour[i] = (0, 0, 0, 0);
 				}
 			}
 
@@ -487,12 +494,18 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_Target
 			diffuse += CalculateDiffuseLight(lights[i], diffuseAmount);
 			ambient += CalculateAmbientLight(lights[i]);
 		}
+		else
+		{
+			textureColour[i] = (0, 0, 0, 0);
+		}
 	}
 
 	// Sum all the terms together and copy over the diffuse alpha.
 	if (HasTexture == 1.0f)
 	{
-		finalColour.rgb = (textureColour.rgb * (ambient + diffuse)) + specular;
+		float4 finalTextureColour = (textureColour[0] + textureColour[1] + textureColour[2] + textureColour[3]) / count;
+
+		finalColour.rgb = (finalTextureColour * (ambient + diffuse)) + specular;
 	}
 	else
 	{

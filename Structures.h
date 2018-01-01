@@ -91,6 +91,9 @@ struct Light
 	float Range;
 	XMFLOAT3 Attenuation;
 
+	float Cone;
+	XMFLOAT3 Direction;
+
 	XMFLOAT3 paddingLightAmount;
 	float lightOn;
 };

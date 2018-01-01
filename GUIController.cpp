@@ -35,10 +35,12 @@ bool GUIController::_pGreenLightOn = false;
 bool GUIController::_pBlueLightOn = false;
 
 int GUIController::_pControlledLight = 0;
+int GUIController::_pSceneLightingMode = 0;
 
 bool GUIController::_pSelfShadingOn = true;
 
 bool GUIController::_pTestButton = false;
+bool GUIController::_pFlyingCameraEnabled = false;
 
 ImGuiIO& GUIController::io = ImGui::GetIO();
 
@@ -70,35 +72,85 @@ void GUIController::UpdateGUI()
 	ImGui::Spacing();
 	ImGui::Spacing();
 
-	ImGui::Text("Light Control Description:");
+	//////////////////////////////////////////////////////////////
+	// Camera Controls
+	//////////////////////////////////////////////////////////////
+	ImGui::Text("Camera Controls");
 	ImGui::Spacing();
-	ImGui::Text("Use WASD to move the currently controlled light forward.");
-	ImGui::Text("Hold Shift and use W and S to alter the lights height.");
+	ImGui::Text("Use the arrow keys to move around the scene.");
+	ImGui::Text("Right click and move the mouse to change camera rotation.");
+	ImGui::Text("Press"); ImGui::SameLine(50); 
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "C"); ImGui::SameLine(65);
+	ImGui::Text("to switch between flying and walking camera.");
+	ImGui::Text("Current Camera: "); ImGui::SameLine(120);
+	if (_pFlyingCameraEnabled == true)
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Flying"); 
+	else
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Walking"); 
+
+	ImGui::Spacing();
+	ImGui::Spacing();
+	ImGui::Separator();
 	ImGui::Spacing();
 	ImGui::Spacing();
 
-	ImGui::Text("Camera Control Description:");
-	ImGui::Spacing();
-	ImGui::Text("Use the Left Mouse Button to rotate the camera around the scene.");
-	ImGui::Text("Use the Right Mouse Button to adjust the zoom.");
-	ImGui::Spacing();
-	ImGui::Spacing();
-	ImGui::Spacing();
-	ImGui::Spacing();
-
+	//////////////////////////////////////////////////////////////
 	// Light Controls
+	//////////////////////////////////////////////////////////////
 	ImGui::Text("Light Controls");
-	ImGui::Checkbox("White", &_pWhiteLightOn); ImGui::SameLine(100);
-	ImGui::Checkbox("Red", &_pRedLightOn); ImGui::SameLine(200);
-	ImGui::Checkbox("Green", &_pGreenLightOn); ImGui::SameLine(300);
-	ImGui::Checkbox("Blue", &_pBlueLightOn);
+	ImGui::Spacing();
+
+	ImGui::Combo("Lighting Mode", &_pSceneLightingMode, "Directional\0Omni-Directional");
+	ImGui::Spacing();
+
+	if (_pSceneLightingMode == 0) // Directional light
+	{
+		ImGui::Text("Press"); ImGui::SameLine(50);
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "T"); ImGui::SameLine(65);
+		ImGui::Text("to toggle on and off the flashlight.");
+		ImGui::Text("Move the camera to change flashlight direction.");
+	}
+	else // Omni directional light
+	{
+		ImGui::Text("Toggle lights on and off using the"); ImGui::SameLine(250);
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "checkboxes.");
+		ImGui::Spacing();
+		ImGui::Checkbox("White", &_pWhiteLightOn); ImGui::SameLine(100);
+		ImGui::Checkbox("Red", &_pRedLightOn); ImGui::SameLine(200);
+		ImGui::Checkbox("Green", &_pGreenLightOn); ImGui::SameLine(300);
+		ImGui::Checkbox("Blue", &_pBlueLightOn);
+
+		ImGui::Spacing();
+
+		ImGui::Text("Press"); ImGui::SameLine(50);
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "1, 2, 3 or 4"); ImGui::SameLine(140);
+		ImGui::Text("to switch between the lights.");
+
+		ImGui::Text("Use"); ImGui::SameLine(35);
+		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "WASD"); ImGui::SameLine(70);
+		ImGui::Text("to move the selected light.");
+		ImGui::Text("Current Selected Light: "); ImGui::SameLine(175);
+		if (_pControlledLight == 0)
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "White");
+		else if (_pControlledLight == 1)
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Red");
+		else if (_pControlledLight == 2)
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Green");
+		else if (_pControlledLight == 3)
+			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Blue");
+	}
+
+	ImGui::Spacing();
+
+	if (_pShaderControlOption == 2)
+	{
+		// Self Shadowing Options
+		ImGui::Checkbox("Self Shadowing", &_pSelfShadingOn);
+	}
 
 	ImGui::Spacing();
 	ImGui::Spacing();
-
-	ImGui::Combo("Controlled Light", &_pControlledLight, "White Light\0Red Light\0Green Light\0Blue Light");
-
-	ImGui::Spacing();
+	ImGui::Separator();
 	ImGui::Spacing();
 	ImGui::Spacing();
 
@@ -145,14 +197,6 @@ void GUIController::UpdateGUI()
 		}
 
 		ImGui::Spacing();
-	}
-
-	if (_pShaderControlOption == 2)
-	{
-		// Self Shading Options
-		ImGui::Text("Self Shading Controls");
-		ImGui::Spacing();
-		ImGui::Checkbox("Self Shading", &_pSelfShadingOn);
 	}
 
 	ImGui::Spacing();

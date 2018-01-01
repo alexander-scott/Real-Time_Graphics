@@ -16,7 +16,7 @@ SceneLight::~SceneLight()
 void SceneLight::UpdateLight(float renderWidth, float renderHeight)
 {
 	// Update the Main Light
-	XMFLOAT4 lightEyePos = XMFLOAT4(_pLightVecW.x, _pLightVecW.y, _pLightVecW.z, 1.0f);
+	XMFLOAT4 lightEyePos = XMFLOAT4(GetPosition().x, GetPosition().y, GetPosition().z, 1.0f);
 	XMFLOAT4 lightEyeDir = XMFLOAT4(lightEyePos.x, lightEyePos.y - 1.0f, lightEyePos.z - 0.0001f, 1.0f);
 	XMFLOAT4 lightUpPos = XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f);
 
@@ -26,13 +26,7 @@ void SceneLight::UpdateLight(float renderWidth, float renderHeight)
 
 	// Initialise Light Matrices
 	XMStoreFloat4x4(&_pView, XMMatrixLookAtLH(lightEyeVector, lightAtVector, lightUpVector));
-	XMStoreFloat4x4(&_pProjection, XMMatrixPerspectiveFovLH(2* XM_PI, (renderWidth / renderHeight), 0.01f, 100.0f));
-}
-
-
-void SceneLight::UpdateLightCube(float timeSinceStart, float deltaTime)
-{
-	Update(timeSinceStart, deltaTime);
+	XMStoreFloat4x4(&_pProjection, XMMatrixPerspectiveFovLH(2 * XM_PI, (renderWidth / renderHeight), 0.01f, 100.0f));
 }
 
 void SceneLight::HandleLightControls(float deltaTime)
@@ -40,34 +34,34 @@ void SceneLight::HandleLightControls(float deltaTime)
 	// Move Basic Light along Z-axis
 	if (GetAsyncKeyState(VK_LSHIFT) && GetAsyncKeyState('W'))
 	{
-		_pLightVecW.y += 0.01f * deltaTime;
+		SetPosition(GetPosition().x, GetPosition().y + 0.01f * deltaTime, GetPosition().z);
 	}
 	else if (GetAsyncKeyState(VK_LSHIFT) && GetAsyncKeyState('S'))
 	{
-		_pLightVecW.y -= 0.01f * deltaTime;
+		SetPosition(GetPosition().x, GetPosition().y - 0.01f * deltaTime, GetPosition().z);
 	}
 	else if (GetAsyncKeyState('W'))
 	{
-		_pLightVecW.z += 0.01f * deltaTime;
+		SetPosition(GetPosition().x, GetPosition().y, GetPosition().z + 0.01f * deltaTime);
 	}
 	else if (GetAsyncKeyState('S'))
 	{
-		_pLightVecW.z -= 0.01f * deltaTime;
+		SetPosition(GetPosition().x, GetPosition().y, GetPosition().z - 0.01f * deltaTime);
 	}
 	else if (GetAsyncKeyState('A'))
 	{
-		_pLightVecW.x -= 0.01f * deltaTime;
+		SetPosition(GetPosition().x - 0.01f * deltaTime, GetPosition().y, GetPosition().z);
 	}
 	else if (GetAsyncKeyState('D'))
 	{
-		_pLightVecW.x += 0.01f * deltaTime;
+		SetPosition(GetPosition().x + 0.01f * deltaTime, GetPosition().y, GetPosition().z);
 	}
 	else
 	{
 		return;
 	}
 
-	SetPosition(_pLightVecW);
+	//SetPosition(_pLightVecW);
 }
 
 void SceneLight::ToggleLightOn()
@@ -95,9 +89,11 @@ Light SceneLight::GetLight()
 	newLight.DiffuseLight = GetDiffuseLight();
 	newLight.SpecularLight = GetSpecularLight();
 	newLight.SpecularPower = GetSpecularPower();
-	newLight.LightVecW = GetLightVecW();
-	newLight.Range = 100.0f;
-	newLight.Attenuation = XMFLOAT3(0.0f, 0.1f, 0.0f);
+	newLight.LightVecW = GetPosition();
+	newLight.Range = GetRange();
+	newLight.Attenuation = GetAttenuation();
+	newLight.Cone = GetCone();
+	newLight.Direction = GetRotation();
 	newLight.paddingLightAmount = GetPaddingLightAmount();
 	newLight.lightOn = GetLightOn();
 
