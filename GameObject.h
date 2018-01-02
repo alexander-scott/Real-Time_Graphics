@@ -13,14 +13,20 @@ public:
 	~GameObject();
 
 	// Setters for position/rotation/scale
-	void SetPosition(XMFLOAT3 position) { mPosition = position; mHasChanged = true; }
-	void SetPosition(float x, float y, float z) { mPosition.x = x; mPosition.y = y; mPosition.z = z; mHasChanged = true; }
-	void SetScale(float x, float y, float z) { mScale.x = x; mScale.y = y; mScale.z = z; mHasChanged = true;}
-	void SetRotation(float x, float y, float z) { mRotation.x = x; mRotation.y = y; mRotation.z = z; mHasChanged = true;}
+	void SetWorldPosition(XMFLOAT3 position);
+	void SetWorldPosition(float x, float y, float z);
+	void SetWorldScale(float x, float y, float z);
+	void SetWorldRotation(float x, float y, float z);
 
-	XMFLOAT3 GetPosition() { return mPosition; }
-	XMFLOAT3 GetScale() { return mScale; }
-	XMFLOAT3 GetRotation() { return mRotation; }
+	// Setters for position/rotation/scale
+	void SetLocalPosition(XMFLOAT3 position);
+	void SetLocalPosition(float x, float y, float z);
+	void SetLocalScale(float x, float y, float z);
+	void SetLocalRotation(float x, float y, float z);
+
+	XMFLOAT3 GetWorldPosition() { return mWorldPosition; }
+	XMFLOAT3 GetWorldScale() { return mWorldScale; }
+	XMFLOAT3 GetWorldRotation() { return mWorldRotation; }
 
 	// Getters for object details
 	string GetType() const { return mType; }
@@ -56,9 +62,13 @@ protected:
 	Material					mMaterial;
 
 private:
-	XMFLOAT3					mPosition;
-	XMFLOAT3					mRotation;
-	XMFLOAT3					mScale;
+	XMFLOAT3					mLocalPosition;
+	XMFLOAT3					mLocalRotation;
+	XMFLOAT3					mLocalScale;
+
+	XMFLOAT3					mWorldPosition;
+	XMFLOAT3					mWorldRotation;
+	XMFLOAT3					mWorldScale;
 
 	XMFLOAT4X4					mWorld;
 

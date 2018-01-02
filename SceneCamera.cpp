@@ -16,7 +16,7 @@ SceneCamera::SceneCamera(float nearDepth, float farDepth, float windowWidth, flo
 
 	mCanFly = canFly;
 
-	SetScale(1.0f, 5.0f, 0.1f);
+	SetWorldScale(1.0f, 5.0f, 0.1f);
 
 	UpdateCameraViewMatrix();
 	CreateProjectionMatrix();
@@ -101,7 +101,7 @@ void SceneCamera::UpdateCameraViewMatrix()
 	rotateYTempMatrix = XMMatrixRotationY(mCameraYaw);
 
 	XMFLOAT3 rot = XMVECTORToXMFLOAT3(camTarget);
-	SetRotation(rot.x, rot.y, rot.z);
+	SetWorldRotation(rot.x, rot.y, rot.z);
 
 	// Calculate the right, forward and up vectors by multiplying their defaults vectors by the rotation matrix
 	XMVECTOR camRight = XMVector3TransformCoord(XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f), rotateYTempMatrix);
@@ -109,7 +109,7 @@ void SceneCamera::UpdateCameraViewMatrix()
 	XMVECTOR camUp = XMVector3TransformCoord(XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f), rotateYTempMatrix);
 	
 	// Load the stored camera pos in as a vector
-	XMVECTOR camPos = XMLoadFloat3(&GetPosition());
+	XMVECTOR camPos = XMLoadFloat3(&GetWorldPosition());
 
 	// Move the position forward/back or left/right depending on user input
 	camPos += mStrafeVelocity * camRight;
@@ -127,7 +127,7 @@ void SceneCamera::UpdateCameraViewMatrix()
 	// Store the new camera position
 	XMFLOAT3 camTempPos;
 	XMStoreFloat3(&camTempPos, camPos);
-	SetPosition(camTempPos);
+	SetWorldPosition(camTempPos);
 
 	// Generate and store the new view matrix based on the camera position and target and up vectors
 	mViewMatrix = XMMatrixLookAtLH(camPos, camTarget, camUp);

@@ -344,7 +344,7 @@ void Application::Draw()
 		count++;
 	}
 
-	cb.EyePosW = mScene->GetRenderCamera()->GetPosition();
+	cb.EyePosW = mScene->GetRenderCamera()->GetWorldPosition();
 	cb.HasTexture = 0.0f;
 	cb.HasNormalMap = 0.0f;
 	cb.HasHeightMap = 0.0f;

@@ -5,9 +5,7 @@ Scene::Scene(string name, Geometry cubeGeometry, Material cubeMat) : mSceneName(
 	// Setup the flying camera
 	XMFLOAT3 eyeFly = XMFLOAT3(35.0f, 15.0f, -35.0f);
 	mSceneCameraFly = new SceneCamera(0.01f, 2000.0f, (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, true, "Flying Camera", mCubeGeometry, mNoSpecMaterial);
-	mSceneCameraFly->SetPosition(eyeFly);
-
-	//SetupWalkingCamera();
+	mSceneCameraFly->SetWorldPosition(eyeFly);
 
 	mOctree = new Octree(200, XMFLOAT3(0, 0, 0), 25);
 
@@ -61,7 +59,7 @@ void Scene::Update(float timeSinceStart, float deltaTime)
 		if (go.GameObject->Update(timeSinceStart, deltaTime))
 		{
 			mOctree->Remove(go);
-			go.Bounds = BoundingBox(go.GameObject->GetPosition(), XMFLOAT3(2 * go.GameObject->GetScale().x, 2 * go.GameObject->GetScale().y, 2 * go.GameObject->GetScale().z));
+			go.Bounds = BoundingBox(go.GameObject->GetWorldPosition(), XMFLOAT3(2 * go.GameObject->GetWorldScale().x, 2 * go.GameObject->GetWorldScale().y, 2 * go.GameObject->GetWorldScale().z));
 			mOctree->Add(go);
 		}
 	}
@@ -87,7 +85,7 @@ void Scene::AddGameObjects(vector<GameObject*> gos)
 	{
 		OctreeItem obj;
 		obj.GameObject = go;
-		obj.Bounds = BoundingBox(go->GetPosition(), XMFLOAT3(2 * go->GetScale().x, 2 * go->GetScale().y, 2 * go->GetScale().z));
+		obj.Bounds = BoundingBox(go->GetWorldPosition(), XMFLOAT3(2 * go->GetWorldScale().x, 2 * go->GetWorldScale().y, 2 * go->GetWorldScale().z));
 
 		mOctree->Add(obj);
 
@@ -99,7 +97,7 @@ void Scene::AddGameObject(GameObject * go)
 {
 	OctreeItem obj;
 	obj.GameObject = go;
-	obj.Bounds = BoundingBox(go->GetPosition(), XMFLOAT3(2 * go->GetScale().x, 2 * go->GetScale().y, 2 * go->GetScale().z));
+	obj.Bounds = BoundingBox(go->GetWorldPosition(), XMFLOAT3(2 * go->GetWorldScale().x, 2 * go->GetWorldScale().y, 2 * go->GetWorldScale().z));
 
 	mOctree->Add(obj);
 
@@ -110,7 +108,7 @@ void Scene::AddSceneLight(SceneLight* sl)
 {
 	OctreeItem obj;
 	obj.GameObject = sl;
-	obj.Bounds = BoundingBox(sl->GetPosition(), XMFLOAT3(2 * sl->GetScale().x, 2 * sl->GetScale().y, 2 * sl->GetScale().z));
+	obj.Bounds = BoundingBox(sl->GetWorldPosition(), XMFLOAT3(2 * sl->GetWorldScale().x, 2 * sl->GetWorldScale().y, 2 * sl->GetWorldScale().z));
 
 	mOctree->Add(obj);
 
@@ -209,14 +207,14 @@ std::vector<GameObject*> Scene::GetGameObjectsInFrustum()
 
 std::vector<SceneLight*> Scene::GetSceneLights()
 {	
-	if (GUIController::_pSceneLightingMode == 0) // Torch Mode
+	if (GUIController::_pSceneLightingMode == 0) // Light Mode
+	{
+		return mSceneLights;
+	}
+	else // Torch Mode
 	{
 		std::vector<SceneLight*> sceneLights;
 		sceneLights.push_back(mFlashLight);
 		return sceneLights;
-	}
-	else // Light Mode
-	{
-		return mSceneLights;
 	}
 }

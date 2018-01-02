@@ -78,9 +78,14 @@ Scene* SceneBuilder::BuildScene(string fileName, Geometry cubeGeometry, Material
 
 void SceneBuilder::BuildCamera(xml_node<>* node, Geometry cubeGeometry, Material material, TextureController* textureManager, Scene* scene)
 {
-	XMFLOAT3 eyeWalking = XMFLOAT3(0.0f, 5.0f, 0.0f);
-	SceneCamera* SceneCameraWalk = new SceneCamera(0.01f, 2000.0f, (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, false, "Walking Camera", cubeGeometry, material);
-	SceneCameraWalk->SetPosition(eyeWalking);
+	SceneCamera* sceneCameraWalk = new SceneCamera(0.01f, 2000.0f, (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, false, "Walking Camera", cubeGeometry, material);
+
+	// Set position
+	xml_node<>* positionNode = node->first_node("Position");
+	sceneCameraWalk->SetWorldPosition(XMFLOAT3(
+		(float)atof(positionNode->first_attribute("x")->value()),
+		(float)atof(positionNode->first_attribute("y")->value()),
+		(float)atof(positionNode->first_attribute("z")->value())));
 
 	SceneLight* sceneLight = new SceneLight(string(node->first_attribute("type")->value()),
 		textureManager->GetTextureSet(string(node->first_attribute("texture")->value()))->texture,
@@ -116,7 +121,7 @@ void SceneBuilder::BuildCamera(xml_node<>* node, Geometry cubeGeometry, Material
 
 	// Set light vec w
 	xml_node<>* lightVecWNode = node->first_node("LightVecW");
-	sceneLight->SetPosition(XMFLOAT3(
+	sceneLight->SetWorldPosition(XMFLOAT3(
 		(float)atof(lightVecWNode->first_attribute("x")->value()),
 		(float)atof(lightVecWNode->first_attribute("y")->value()),
 		(float)atof(lightVecWNode->first_attribute("z")->value())));
@@ -138,7 +143,7 @@ void SceneBuilder::BuildCamera(xml_node<>* node, Geometry cubeGeometry, Material
 
 	// Set direction
 	xml_node<>* directionNode = node->first_node("Direction");
-	sceneLight->SetRotation(
+	sceneLight->SetWorldRotation(
 		(float)atof(directionNode->first_attribute("x")->value()),
 		(float)atof(directionNode->first_attribute("y")->value()),
 		(float)atof(directionNode->first_attribute("z")->value()));
@@ -154,11 +159,12 @@ void SceneBuilder::BuildCamera(xml_node<>* node, Geometry cubeGeometry, Material
 	xml_node<>* lightOnNode = node->first_node("LightOn");
 	sceneLight->SetLightOn((float)atof(lightOnNode->first_attribute("value")->value()));
 
-	sceneLight->SetPosition(SceneCameraWalk->GetPosition());
-	sceneLight->SetParent(SceneCameraWalk);
-	SceneCameraWalk->AddChild(sceneLight);
+	sceneLight->SetWorldPosition(sceneCameraWalk->GetWorldPosition());
 
-	scene->SetWalkingCamera(SceneCameraWalk, sceneLight);
+	sceneLight->SetParent(sceneCameraWalk);
+	sceneCameraWalk->AddChild(sceneLight);
+
+	scene->SetWalkingCamera(sceneCameraWalk, sceneLight);
 }
 
 GameObject * SceneBuilder::BuildGameObject(xml_node<>* node, Geometry cubeGeometry, Material noSpecMaterial, TextureController* textureManager)
@@ -168,19 +174,19 @@ GameObject * SceneBuilder::BuildGameObject(xml_node<>* node, Geometry cubeGeomet
 
 	// Set the gameobjects position
 	xml_node<>* positionNode = node->first_node("Position");
-	gameObject->SetPosition((float)atof(positionNode->first_attribute("x")->value()),
+	gameObject->SetWorldPosition((float)atof(positionNode->first_attribute("x")->value()),
 		(float)atof(positionNode->first_attribute("y")->value()),
 		(float)atof(positionNode->first_attribute("z")->value()));
 
 	// Set the gameobjects scale
 	xml_node<>* scaleNode = node->first_node("Scale");
-	gameObject->SetScale((float)atof(scaleNode->first_attribute("x")->value()),
+	gameObject->SetWorldScale((float)atof(scaleNode->first_attribute("x")->value()),
 		(float)atof(scaleNode->first_attribute("y")->value()),
 		(float)atof(scaleNode->first_attribute("z")->value()));
 
 	// Set the gameobjects rotation
 	xml_node<>* rotationNode = node->first_node("Rotation");
-	gameObject->SetRotation((float)atof(rotationNode->first_attribute("x")->value()),
+	gameObject->SetWorldRotation((float)atof(rotationNode->first_attribute("x")->value()),
 		(float)atof(rotationNode->first_attribute("y")->value()),
 		(float)atof(rotationNode->first_attribute("z")->value()));
 
@@ -226,7 +232,7 @@ SceneLight * SceneBuilder::BuildSceneLight(xml_node<>* node, Geometry cubeGeomet
 
 	// Set light vec w
 	xml_node<>* lightVecWNode = node->first_node("LightVecW");
-	sceneLight->SetPosition(XMFLOAT3(
+	sceneLight->SetWorldPosition(XMFLOAT3(
 		(float)atof(lightVecWNode->first_attribute("x")->value()),
 		(float)atof(lightVecWNode->first_attribute("y")->value()),
 		(float)atof(lightVecWNode->first_attribute("z")->value())));
@@ -248,7 +254,7 @@ SceneLight * SceneBuilder::BuildSceneLight(xml_node<>* node, Geometry cubeGeomet
 
 	// Set direction
 	xml_node<>* directionNode = node->first_node("Direction");
-	sceneLight->SetRotation(
+	sceneLight->SetWorldRotation(
 		(float)atof(directionNode->first_attribute("x")->value()),
 		(float)atof(directionNode->first_attribute("y")->value()),
 		(float)atof(directionNode->first_attribute("z")->value()));
@@ -264,7 +270,7 @@ SceneLight * SceneBuilder::BuildSceneLight(xml_node<>* node, Geometry cubeGeomet
 	xml_node<>* lightOnNode = node->first_node("LightOn");
 	sceneLight->SetLightOn((float)atof(lightOnNode->first_attribute("value")->value()));
 
-	sceneLight->SetPosition(sceneLight->GetPosition());
+	sceneLight->SetWorldPosition(sceneLight->GetWorldPosition());
 
 	return sceneLight;
 }
@@ -310,9 +316,9 @@ vector<GameObject*> SceneBuilder::BuildPlane(xml_node<>* node, Geometry cubeGeom
 			{
 				GameObject* go = new GameObject(type, cubeGeometry, noSpecMaterial);
 				go->SetTextures(textureManager->GetTextureSet(textureName));
-				go->SetRotation(baseRotation.x, baseRotation.y, baseRotation.z);
-				go->SetScale(baseScale.x, baseScale.y, baseScale.z);
-				go->SetPosition(position.x + ((i - midWidthIndex) * step), position.y + ((k - midHeightIndex) * step), position.z + ((j - midDepthIndex) * step));
+				go->SetWorldRotation(baseRotation.x, baseRotation.y, baseRotation.z);
+				go->SetWorldScale(baseScale.x, baseScale.y, baseScale.z);
+				go->SetWorldPosition(position.x + ((i - midWidthIndex) * step), position.y + ((k - midHeightIndex) * step), position.z + ((j - midDepthIndex) * step));
 
 				gameObjects.push_back(go);
 			}

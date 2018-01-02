@@ -27,7 +27,7 @@ void Octree::Add(OctreeItem &obj)
 	while (!mRootNode->AddObject(obj))
 	{
 		// Dir: obj to rootnode
-		Grow(XMFLOAT3(obj.GameObject->GetPosition().x - mRootNode->mOrigin.x, obj.GameObject->GetPosition().y - mRootNode->mOrigin.y, obj.GameObject->GetPosition().z - mRootNode->mOrigin.z));
+		Grow(XMFLOAT3(obj.GameObject->GetWorldPosition().x - mRootNode->mOrigin.x, obj.GameObject->GetWorldPosition().y - mRootNode->mOrigin.y, obj.GameObject->GetWorldPosition().z - mRootNode->mOrigin.z));
 
 		if (count++ > 20)
 		{

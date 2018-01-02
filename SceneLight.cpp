@@ -4,8 +4,8 @@ SceneLight::SceneLight(string type, ID3D11ShaderResourceView* texture, Geometry 
 {
 	_pLightName = type;
 
-	SetScale(0.5f, 0.5f, 0.5f);
-	SetRotation(0.0f, 0.0f, 0.0f);
+	SetWorldScale(0.5f, 0.5f, 0.5f);
+	SetWorldRotation(0.0f, 0.0f, 0.0f);
 	SetTextureRV(texture);
 }
 
@@ -16,7 +16,7 @@ SceneLight::~SceneLight()
 void SceneLight::UpdateLight(float renderWidth, float renderHeight)
 {
 	// Update the Main Light
-	XMFLOAT4 lightEyePos = XMFLOAT4(GetPosition().x, GetPosition().y, GetPosition().z, 1.0f);
+	XMFLOAT4 lightEyePos = XMFLOAT4(GetWorldPosition().x, GetWorldPosition().y, GetWorldPosition().z, 1.0f);
 	XMFLOAT4 lightEyeDir = XMFLOAT4(lightEyePos.x, lightEyePos.y - 1.0f, lightEyePos.z - 0.0001f, 1.0f);
 	XMFLOAT4 lightUpPos = XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f);
 
@@ -34,27 +34,27 @@ void SceneLight::HandleLightControls(float deltaTime)
 	// Move Basic Light along Z-axis
 	if (GetAsyncKeyState(VK_LSHIFT) && GetAsyncKeyState('W'))
 	{
-		SetPosition(GetPosition().x, GetPosition().y + 0.01f * deltaTime, GetPosition().z);
+		SetWorldPosition(GetWorldPosition().x, GetWorldPosition().y + 0.01f * deltaTime, GetWorldPosition().z);
 	}
 	else if (GetAsyncKeyState(VK_LSHIFT) && GetAsyncKeyState('S'))
 	{
-		SetPosition(GetPosition().x, GetPosition().y - 0.01f * deltaTime, GetPosition().z);
+		SetWorldPosition(GetWorldPosition().x, GetWorldPosition().y - 0.01f * deltaTime, GetWorldPosition().z);
 	}
 	else if (GetAsyncKeyState('W'))
 	{
-		SetPosition(GetPosition().x, GetPosition().y, GetPosition().z + 0.01f * deltaTime);
+		SetWorldPosition(GetWorldPosition().x, GetWorldPosition().y, GetWorldPosition().z + 0.01f * deltaTime);
 	}
 	else if (GetAsyncKeyState('S'))
 	{
-		SetPosition(GetPosition().x, GetPosition().y, GetPosition().z - 0.01f * deltaTime);
+		SetWorldPosition(GetWorldPosition().x, GetWorldPosition().y, GetWorldPosition().z - 0.01f * deltaTime);
 	}
 	else if (GetAsyncKeyState('A'))
 	{
-		SetPosition(GetPosition().x - 0.01f * deltaTime, GetPosition().y, GetPosition().z);
+		SetWorldPosition(GetWorldPosition().x - 0.01f * deltaTime, GetWorldPosition().y, GetWorldPosition().z);
 	}
 	else if (GetAsyncKeyState('D'))
 	{
-		SetPosition(GetPosition().x + 0.01f * deltaTime, GetPosition().y, GetPosition().z);
+		SetWorldPosition(GetWorldPosition().x + 0.01f * deltaTime, GetWorldPosition().y, GetWorldPosition().z);
 	}
 	else
 	{
@@ -89,11 +89,11 @@ Light SceneLight::GetLight()
 	newLight.DiffuseLight = GetDiffuseLight();
 	newLight.SpecularLight = GetSpecularLight();
 	newLight.SpecularPower = GetSpecularPower();
-	newLight.LightVecW = GetPosition();
+	newLight.LightVecW = GetWorldPosition();
 	newLight.Range = GetRange();
 	newLight.Attenuation = GetAttenuation();
 	newLight.Cone = GetCone();
-	newLight.Direction = GetRotation();
+	newLight.Direction = GetWorldRotation();
 	newLight.paddingLightAmount = GetPaddingLightAmount();
 	newLight.lightOn = GetLightOn();
 

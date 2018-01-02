@@ -361,9 +361,9 @@ bool OctreeNode::IntersectsBounds(BoundingBox &bounds1, XMFLOAT3 rayOrigin, XMFL
 
 int OctreeNode::BestFitChild(OctreeItem &obj)
 {
-	int xVal = (obj.GameObject->GetPosition().x <= mOrigin.x ? 0 : 1);
-	int yVal = (obj.GameObject->GetPosition().y >= mOrigin.y ? 0 : 4);
-	int zVal = (obj.GameObject->GetPosition().z <= mOrigin.z ? 0 : 2);
+	int xVal = (obj.GameObject->GetWorldPosition().x <= mOrigin.x ? 0 : 1);
+	int yVal = (obj.GameObject->GetWorldPosition().y >= mOrigin.y ? 0 : 4);
+	int zVal = (obj.GameObject->GetWorldPosition().z <= mOrigin.z ? 0 : 2);
 	return xVal + yVal + zVal;
 }
 

@@ -30,14 +30,14 @@ int GUIController::_pBlurEffectPasses = 0;
 float GUIController::_pBlurIntensity = 0;
 
 bool GUIController::_pWhiteLightOn = true;
-bool GUIController::_pRedLightOn = false;
+bool GUIController::_pRedLightOn = true;
 bool GUIController::_pGreenLightOn = false;
 bool GUIController::_pBlueLightOn = false;
 
 int GUIController::_pControlledLight = 0;
 int GUIController::_pSceneLightingMode = 0;
 
-bool GUIController::_pSelfShadingOn = true;
+bool GUIController::_pSelfShadingOn = false;
 
 bool GUIController::_pTestButton = false;
 bool GUIController::_pFlyingCameraEnabled = false;
@@ -100,17 +100,17 @@ void GUIController::UpdateGUI()
 	ImGui::Text("Light Controls");
 	ImGui::Spacing();
 
-	ImGui::Combo("Lighting Mode", &_pSceneLightingMode, "Directional\0Omni-Directional");
+	ImGui::Combo("Lighting Mode", &_pSceneLightingMode, "Omni-Directional\0Directional");
 	ImGui::Spacing();
 
-	if (_pSceneLightingMode == 0) // Directional light
+	if (_pSceneLightingMode == 1) // Omni directional light
 	{
 		ImGui::Text("Press"); ImGui::SameLine(50);
 		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "T"); ImGui::SameLine(65);
 		ImGui::Text("to toggle on and off the flashlight.");
 		ImGui::Text("Move the camera to change flashlight direction.");
 	}
-	else // Omni directional light
+	else // Directional light
 	{
 		ImGui::Text("Toggle lights on and off using the"); ImGui::SameLine(250);
 		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "checkboxes.");
