@@ -2,7 +2,7 @@
 
 SceneLight::SceneLight(string type, ID3D11ShaderResourceView* texture, Geometry geometry, Material material) : GameObject(type, geometry, material)
 {
-	_pLightName = type;
+	mLightName = type;
 
 	SetWorldScale(0.5f, 0.5f, 0.5f);
 	SetWorldRotation(0.0f, 0.0f, 0.0f);
@@ -25,8 +25,8 @@ void SceneLight::UpdateLight(float renderWidth, float renderHeight)
 	XMVECTOR lightUpVector = XMLoadFloat4(&lightUpPos);
 
 	// Initialise Light Matrices
-	XMStoreFloat4x4(&_pView, XMMatrixLookAtLH(lightEyeVector, lightAtVector, lightUpVector));
-	XMStoreFloat4x4(&_pProjection, XMMatrixPerspectiveFovLH(2 * XM_PI, (renderWidth / renderHeight), 0.01f, 100.0f));
+	XMStoreFloat4x4(&mViewMatrix, XMMatrixLookAtLH(lightEyeVector, lightAtVector, lightUpVector));
+	XMStoreFloat4x4(&mProjectionMatrix, XMMatrixPerspectiveFovLH(2 * XM_PI, (renderWidth / renderHeight), 0.01f, 100.0f));
 }
 
 void SceneLight::HandleLightControls(float deltaTime)
@@ -66,13 +66,13 @@ void SceneLight::HandleLightControls(float deltaTime)
 
 void SceneLight::ToggleLightOn()
 {
-	if (_pLightOn == 1.0f)
+	if (mLightOn == 1.0f)
 	{
-		_pLightOn = 0.0f;
+		mLightOn = 0.0f;
 	}
 	else
 	{
-		_pLightOn = 1.0f;
+		mLightOn = 1.0f;
 	}
 }
 

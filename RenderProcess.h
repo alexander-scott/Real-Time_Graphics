@@ -33,8 +33,6 @@ public:
 
 	void RenderGameObjects(ID3D11DeviceContext* immediateContext, vector<GameObject*> gameObjects, ID3D11Buffer* constantBuffer, ConstantBuffer* cb);
 
-#pragma region Get/Set Functions
-
 	vector<ID3D11ShaderResourceView*> GetShaderResources() { return _pShaderResources; }
 	void SetClearColour(float r, float g, float b, float a);
 	void SetCurrentShaderIndex(int newShaderIndex) { currentShaderIndex = newShaderIndex; }
@@ -42,9 +40,6 @@ public:
 	D3D11_TEXTURE2D_DESC GetRenderToTextureDesc() { return _pRenderToTextureDesc; }
 
 	ID3D11ShaderResourceView* GetDepthMapResourceView() { return _pDepthMapResourceView; }
-
-#pragma endregion
-
 
 protected:
 	void SetSamplerStates(ID3D11DeviceContext* immediateContext);

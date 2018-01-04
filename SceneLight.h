@@ -25,29 +25,29 @@ public:
 
 	Light GetLight();
 
-	string GetLightName() { return _pLightName; }
-	void SetLightName(string lightName) { _pLightName = lightName; }
+	string GetLightName() { return mLightName; }
+	void SetLightName(string lightName) { mLightName = lightName; }
 
-	XMFLOAT4X4 GetView() { return _pView; }
-	void SetView(XMFLOAT4X4 newView) { _pView = newView; }
+	XMFLOAT4X4 GetView() { return mViewMatrix; }
+	void SetView(XMFLOAT4X4 newView) { mViewMatrix = newView; }
 
-	XMFLOAT4X4 GetProjection() { return _pProjection; }
-	void SetProjection(XMFLOAT4X4 newProjection) { _pProjection = newProjection; }
+	XMFLOAT4X4 GetProjection() { return mProjectionMatrix; }
+	void SetProjection(XMFLOAT4X4 newProjection) { mProjectionMatrix = newProjection; }
 
-	XMFLOAT4X4 GetShadowTransform() { return _pShadowTransform; }
-	void SetShadowTransform(XMFLOAT4X4 newShadowTransform) { _pShadowTransform = newShadowTransform; }
+	XMFLOAT4X4 GetShadowTransform() { return mShadowTransMatrix; }
+	void SetShadowTransform(XMFLOAT4X4 newShadowTransform) { mShadowTransMatrix = newShadowTransform; }
 
-	XMFLOAT4 GetAmbientLight() { return _pAmbientLight; }
-	void SetAmbientLight(XMFLOAT4 newAmbientLight) { _pAmbientLight = newAmbientLight; }
+	XMFLOAT4 GetAmbientLight() { return mAmbientLight; }
+	void SetAmbientLight(XMFLOAT4 newAmbientLight) { mAmbientLight = newAmbientLight; }
 
-	XMFLOAT4 GetDiffuseLight() { return _pDiffuseLight; }
-	void SetDiffuseLight(XMFLOAT4 newDiffuseLight) { _pDiffuseLight = newDiffuseLight; }
+	XMFLOAT4 GetDiffuseLight() { return mDiffuseLight; }
+	void SetDiffuseLight(XMFLOAT4 newDiffuseLight) { mDiffuseLight = newDiffuseLight; }
 
-	XMFLOAT4 GetSpecularLight() { return _pSpecularLight; }
-	void SetSpecularLight(XMFLOAT4 newSpecularLight) { _pSpecularLight = newSpecularLight; }
+	XMFLOAT4 GetSpecularLight() { return mSpecularLight; }
+	void SetSpecularLight(XMFLOAT4 newSpecularLight) { mSpecularLight = newSpecularLight; }
 
-	float GetSpecularPower() { return _pSpecularPower; }
-	void SetSpecularPower(float newSpecularPower) { _pSpecularPower = newSpecularPower; }
+	float GetSpecularPower() { return mSpecularPower; }
+	void SetSpecularPower(float newSpecularPower) { mSpecularPower = newSpecularPower; }
 
 	float GetRange() { return mRange; }
 	void SetRange(float range) { mRange = range; }
@@ -58,40 +58,32 @@ public:
 	float GetCone() { return mCone; }
 	void SetCone(float cone) { mCone = cone; }
 
-	//XMFLOAT3 GetDirection() { return mDirection; }
-	//void SetDirection(XMFLOAT3 direction) { mDirection = direction; }
+	XMFLOAT3 GetPaddingLightAmount() { return mPaddingLightAmount; }
+	void SetPaddingLightAmount(XMFLOAT3 newPaddingLightAmount) { mPaddingLightAmount = newPaddingLightAmount; }
 
-	/*XMFLOAT3 GetLightVecW() { return _pLightVecW; }
-	void SetLightVecW(XMFLOAT3 newLightVecW) { _pLightVecW = newLightVecW; }*/
-
-	XMFLOAT3 GetPaddingLightAmount() { return _pPaddingLightAmount; }
-	void SetPaddingLightAmount(XMFLOAT3 newPaddingLightAmount) { _pPaddingLightAmount = newPaddingLightAmount; }
-
-	float GetLightOn() { return _pLightOn; }
-	void SetLightOn(float newLightOn) { _pLightOn = newLightOn; }
+	float GetLightOn() { return mLightOn; }
+	void SetLightOn(float newLightOn) { mLightOn = newLightOn; }
 
 private:
 
-	string _pLightName;
+	string							mLightName;
 
-	XMFLOAT4X4 _pView;
-	XMFLOAT4X4 _pProjection;
-	XMFLOAT4X4 _pShadowTransform;
+	XMFLOAT4X4						mViewMatrix;
+	XMFLOAT4X4						mProjectionMatrix;
+	XMFLOAT4X4						mShadowTransMatrix;
 
-	XMFLOAT4 _pAmbientLight;
-	XMFLOAT4 _pDiffuseLight;
-	XMFLOAT4 _pSpecularLight;
+	XMFLOAT4						mAmbientLight;
+	XMFLOAT4						mDiffuseLight;
+	XMFLOAT4						mSpecularLight;
 
-	float _pSpecularPower;
-	//XMFLOAT3 _pLightVecW;
+	float							mSpecularPower;
 
-	float mRange;
-	XMFLOAT3 mAttenuation;
+	float							mRange;
+	XMFLOAT3						mAttenuation;
 
-	float mCone;
-	//XMFLOAT3 mDirection;
+	float							mCone;
 
-	XMFLOAT3 _pPaddingLightAmount;
-	float _pLightOn;
+	XMFLOAT3						mPaddingLightAmount;
+	float							mLightOn;
 };
 

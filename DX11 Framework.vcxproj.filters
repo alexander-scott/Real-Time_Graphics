@@ -12,9 +12,6 @@
     <Filter Include="Resource Files\Textures">
       <UniqueIdentifier>{84a4d56f-682d-4b12-a7c9-064cc08bce09}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Render Process">
-      <UniqueIdentifier>{f9a465ec-cfd7-469a-9a6d-d310ee5bde77}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GUI Libraries">
       <UniqueIdentifier>{585cf594-4adb-4bcd-814a-cb4477cab82d}</UniqueIdentifier>
     </Filter>
@@ -48,15 +45,18 @@
     <Filter Include="Shaders\Scenes">
       <UniqueIdentifier>{0c967173-af60-4b38-90e2-11e6ec88a038}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DirectX\Render Process">
+      <UniqueIdentifier>{f9a465ec-cfd7-469a-9a6d-d310ee5bde77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Structures.h" />
     <ClInclude Include="RenderProcess.h">
-      <Filter>Render Process</Filter>
+      <Filter>DirectX\Render Process</Filter>
     </ClInclude>
     <ClInclude Include="RenderToTextureProcess.h">
-      <Filter>Render Process</Filter>
+      <Filter>DirectX\Render Process</Filter>
     </ClInclude>
     <ClInclude Include="imconfig.h">
       <Filter>GUI Libraries</Filter>
@@ -126,10 +126,10 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="RenderProcess.cpp">
-      <Filter>Render Process</Filter>
+      <Filter>DirectX\Render Process</Filter>
     </ClCompile>
     <ClCompile Include="RenderToTextureProcess.cpp">
-      <Filter>Render Process</Filter>
+      <Filter>DirectX\Render Process</Filter>
     </ClCompile>
     <ClCompile Include="imgui.cpp">
       <Filter>GUI Libraries</Filter>

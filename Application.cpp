@@ -3,7 +3,6 @@
 Application::Application()
 {
 	mShaderController = new ShaderController;
-	mInputLayoutBuilder = new InputLayoutBuilder;
 	mTextureController = new TextureController;
 }
 
@@ -27,7 +26,12 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     }
 
 	InitInputLayouts();
-	InitRenderProcesses();
+
+	if (FAILED(InitRenderProcesses()))
+	{
+		return E_FAIL;
+	}
+
 	GUIController::SetupGUI();
 
 	// Setup Render Target Views
@@ -93,9 +97,9 @@ void Application::InitScene()
 
 void Application::InitInputLayouts()
 {
-	mInputLayoutBuilder->BuildInputLayout("Layout 1", { "POSITION", "TEXCOORD" }, DirectXInstance::Instance()._pd3dDevice);
-	mInputLayoutBuilder->BuildInputLayout("Layout 2", { "POSITION", "NORMAL", "TEXCOORD", "TANGENT" }, DirectXInstance::Instance()._pd3dDevice);
-	mInputLayoutBuilder->BuildInputLayout("Layout 3", { "POSITION", "NORMAL", "TEXCOORD" }, DirectXInstance::Instance()._pd3dDevice);
+	mInputLayoutBuilder.BuildInputLayout("Layout 1", { "POSITION", "TEXCOORD" }, DirectXInstance::Instance()._pd3dDevice);
+	mInputLayoutBuilder.BuildInputLayout("Layout 2", { "POSITION", "NORMAL", "TEXCOORD", "TANGENT" }, DirectXInstance::Instance()._pd3dDevice);
+	mInputLayoutBuilder.BuildInputLayout("Layout 3", { "POSITION", "NORMAL", "TEXCOORD" }, DirectXInstance::Instance()._pd3dDevice);
 }
 
 HRESULT Application::InitRenderProcesses()
@@ -154,22 +158,22 @@ HRESULT Application::InitRenderProcesses()
 	///////////////////////////////////////////////////////////////////
 	// Light Depth Maps
 	///////////////////////////////////////////////////////////////////
-	if (FAILED(mShaderController->AddDepthBufferShader("White Light Depth Map", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Depth Mapping.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 1"), DirectXInstance::Instance()._pd3dDevice)))
+	if (FAILED(mShaderController->AddDepthBufferShader("White Light Depth Map", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Depth Mapping.fx", mInputLayoutBuilder.GetD3D11InputDescs("Layout 1"), DirectXInstance::Instance()._pd3dDevice)))
 	{
 		return E_FAIL;
 	}
 
-	if (FAILED(mShaderController->AddDepthBufferShader("Red Light Depth Map", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Depth Mapping.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 1"), DirectXInstance::Instance()._pd3dDevice)))
+	if (FAILED(mShaderController->AddDepthBufferShader("Red Light Depth Map", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Depth Mapping.fx", mInputLayoutBuilder.GetD3D11InputDescs("Layout 1"), DirectXInstance::Instance()._pd3dDevice)))
 	{
 		return E_FAIL;
 	}
 
-	if (FAILED(mShaderController->AddDepthBufferShader("Green Light Depth Map", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Depth Mapping.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 1"), DirectXInstance::Instance()._pd3dDevice)))
+	if (FAILED(mShaderController->AddDepthBufferShader("Green Light Depth Map", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Depth Mapping.fx", mInputLayoutBuilder.GetD3D11InputDescs("Layout 1"), DirectXInstance::Instance()._pd3dDevice)))
 	{
 		return E_FAIL;
 	}
 
-	if (FAILED(mShaderController->AddDepthBufferShader("Blue Light Depth Map", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Depth Mapping.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 1"), DirectXInstance::Instance()._pd3dDevice)))
+	if (FAILED(mShaderController->AddDepthBufferShader("Blue Light Depth Map", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Depth Mapping.fx", mInputLayoutBuilder.GetD3D11InputDescs("Layout 1"), DirectXInstance::Instance()._pd3dDevice)))
 	{
 		return E_FAIL;
 	}
@@ -177,7 +181,7 @@ HRESULT Application::InitRenderProcesses()
 	///////////////////////////////////////////////////////////////////
 	// Build basic scene
 	///////////////////////////////////////////////////////////////////
-	if (FAILED(mShaderController->AddCommonShader("Basic Scene", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Basic.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 3"), DirectXInstance::Instance()._pd3dDevice)))
+	if (FAILED(mShaderController->AddCommonShader("Basic Scene", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Basic.fx", mInputLayoutBuilder.GetD3D11InputDescs("Layout 3"), DirectXInstance::Instance()._pd3dDevice)))
 	{
 		return E_FAIL;
 	}
@@ -187,7 +191,7 @@ HRESULT Application::InitRenderProcesses()
 	///////////////////////////////////////////////////////////////////
 	// Build Pixel Scene
 	///////////////////////////////////////////////////////////////////
-	if (FAILED(mShaderController->AddCommonShader("Pixel Scene", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Pixel SS.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 2"), DirectXInstance::Instance()._pd3dDevice)))
+	if (FAILED(mShaderController->AddCommonShader("Pixel Scene", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Pixel SS.fx", mInputLayoutBuilder.GetD3D11InputDescs("Layout 2"), DirectXInstance::Instance()._pd3dDevice)))
 	{
 		return E_FAIL;
 	}
@@ -206,7 +210,7 @@ HRESULT Application::InitRenderProcesses()
 	///////////////////////////////////////////////////////////////////
 	mShaderController->AddCustomShader("Parallax Scene", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight);
 
-	mShaderController->GetRenderToTextureProcess("Parallax Scene")->LoadShaderFilesAndInputLayouts(  DirectXInstance::Instance()._pd3dDevice, L"DX11 Framework Parallax SS Diffuse Mapping.fx", L"DX11 Framework Parallax SS Diffuse Mapping.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 2"));
+	mShaderController->GetRenderToTextureProcess("Parallax Scene")->LoadShaderFilesAndInputLayouts(  DirectXInstance::Instance()._pd3dDevice, L"DX11 Framework Parallax SS Diffuse Mapping.fx", L"DX11 Framework Parallax SS Diffuse Mapping.fx", mInputLayoutBuilder.GetD3D11InputDescs("Layout 2"));
 
 	if (FAILED(hr))
 		return hr;
@@ -235,7 +239,7 @@ HRESULT Application::InitRenderProcesses()
 	///////////////////////////////////////////////////////////////////
 	// Build Blur Special Effect
 	///////////////////////////////////////////////////////////////////
-	if (FAILED(mShaderController->AddRenderFromQuadShader("Effect HBlur", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Horizontal Blur.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 3"), DirectXInstance::Instance()._pd3dDevice)))
+	if (FAILED(mShaderController->AddRenderFromQuadShader("Effect HBlur", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Horizontal Blur.fx", mInputLayoutBuilder.GetD3D11InputDescs("Layout 3"), DirectXInstance::Instance()._pd3dDevice)))
 	{
 		return E_FAIL;
 	}
@@ -243,7 +247,7 @@ HRESULT Application::InitRenderProcesses()
 	mShaderController->GetRenderToTextureProcess("Effect HBlur")->AddSamplerState(_pSamplerLinear);
 	mShaderController->GetRenderToTextureProcess("Effect HBlur")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Parallax Scene")->GetShaderTargetTexture("ColourMap"));
 
-	if (FAILED(mShaderController->AddRenderFromQuadShader("Effect VBlur", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Vertical Blur.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 3"), DirectXInstance::Instance()._pd3dDevice)))
+	if (FAILED(mShaderController->AddRenderFromQuadShader("Effect VBlur", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Vertical Blur.fx", mInputLayoutBuilder.GetD3D11InputDescs("Layout 3"), DirectXInstance::Instance()._pd3dDevice)))
 	{
 		return E_FAIL;
 	}
@@ -254,7 +258,7 @@ HRESULT Application::InitRenderProcesses()
 	///////////////////////////////////////////////////////////////////
 	// Setup Final Pass
 	///////////////////////////////////////////////////////////////////
-	if (FAILED(mShaderController->AddRenderToBackBufferShader("Final Pass", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Render To Texture.fx", mInputLayoutBuilder->GetD3D11InputDescs("Layout 3"), DirectXInstance::Instance()._pd3dDevice)))
+	if (FAILED(mShaderController->AddRenderToBackBufferShader("Final Pass", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Render To Texture.fx", mInputLayoutBuilder.GetD3D11InputDescs("Layout 3"), DirectXInstance::Instance()._pd3dDevice)))
 	{
 		return E_FAIL;
 	}

@@ -40,14 +40,13 @@ public:
 private:
 	void Cleanup();
 
-	void InitInputLayouts();
 	HRESULT InitRenderProcesses();
-
+	void InitInputLayouts();
 	void InitScene();
-	
+
 	Scene*						mScene;
 	ShaderController*			mShaderController;
-	InputLayoutBuilder*			mInputLayoutBuilder;
 	TextureController*			mTextureController;
+	InputLayoutBuilder			mInputLayoutBuilder;
 };
 
