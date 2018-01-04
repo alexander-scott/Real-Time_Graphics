@@ -8,50 +8,56 @@
 
 using namespace DirectX;
 
-static class DX11AppHelper
+class DX11AppHelper
 {
 public:
 	DX11AppHelper();
 	~DX11AppHelper();
 
-	static HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
-	static HRESULT InitDevice();
-	static void Cleanup();
+	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
+	HRESULT InitDevice();
+	void Cleanup();
 
-	static HWND						_hWnd;
-	static ID3D11Device*			_pd3dDevice;
-	static ID3D11DeviceContext*		_pImmediateContext;
-	static IDXGISwapChain*			_pSwapChain;
+	HWND						_hWnd;
+	ID3D11Device*			_pd3dDevice;
+	ID3D11DeviceContext*		_pImmediateContext;
+	IDXGISwapChain*			_pSwapChain;
 
-	static ID3D11Buffer*			_pVertexBuffer;
-	static ID3D11Buffer*			_pIndexBuffer;
+	ID3D11Buffer*			_pVertexBuffer;
+	ID3D11Buffer*			_pIndexBuffer;
 
-	static ID3D11Buffer*			_pPlaneVertexBuffer;
-	static ID3D11Buffer*			_pPlaneIndexBuffer;
+	ID3D11Buffer*			_pPlaneVertexBuffer;
+	ID3D11Buffer*			_pPlaneIndexBuffer;
 
-	static ID3D11Buffer*			_pConstantBuffer;
-	static ID3D11Buffer*			_pSMConstantBuffer;
+	ID3D11Buffer*			_pConstantBuffer;
+	ID3D11Buffer*			_pSMConstantBuffer;
 
 	// Render dimensions - Change here to alter screen resolution
-	static UINT						_pRenderHeight;
-	static UINT						_pRenderWidth;
+	UINT						_pRenderHeight;
+	UINT						_pRenderWidth;
+
+	static DX11AppHelper& Instance()
+	{
+		static DX11AppHelper Instance;
+		return Instance;
+	}
 
 private:
-	static HRESULT InitConstantBuffers();
-	static HRESULT InitVertexBuffer();
-	static HRESULT InitIndexBuffer();
-	static HRESULT InitRasterizerState();
+	HRESULT InitConstantBuffers();
+	HRESULT InitVertexBuffer();
+	HRESULT InitIndexBuffer();
+	HRESULT InitRasterizerState();
 
-	static HINSTANCE				_hInst;
-	static D3D_DRIVER_TYPE			_pDriverType;
-	static D3D_FEATURE_LEVEL		_pFeatureLevel;
+	HINSTANCE				_hInst;
+	D3D_DRIVER_TYPE			_pDriverType;
+	D3D_FEATURE_LEVEL		_pFeatureLevel;
 
-	static UINT						_pWindowHeight;
-	static UINT						_pWindowWidth;
+	UINT						_pWindowHeight;
+	UINT						_pWindowWidth;
 
-	static ID3D11DepthStencilState* _pDSLessEqual;
-	static ID3D11RasterizerState*	_pRSCullNone;
+	ID3D11DepthStencilState* _pDSLessEqual;
+	ID3D11RasterizerState*	_pRSCullNone;
 
-	static ID3D11RasterizerState*	_pCCWcullMode;
-	static ID3D11RasterizerState*	_pCWcullMode;
+	ID3D11RasterizerState*	_pCCWcullMode;
+	ID3D11RasterizerState*	_pCWcullMode;
 };

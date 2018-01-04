@@ -128,22 +128,22 @@ void ShaderController::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLig
 
 			string shaderName = lights.at(i)->GetLightName() + " Depth Map";
 
-			mShaderList[shaderName].get()->RenderSceneDepthMap(DX11AppHelper::_pImmediateContext, gameObjects, DX11AppHelper::_pSMConstantBuffer, &smCB);
+			mShaderList[shaderName].get()->RenderSceneDepthMap(DX11AppHelper::Instance()._pImmediateContext, gameObjects, DX11AppHelper::Instance()._pSMConstantBuffer, &smCB);
 		}
 	}
 
-	mCurrentSceneRenderProcess->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, true);
-	mCurrentSceneRenderProcess->RenderGameObjects(DX11AppHelper::_pImmediateContext, gameObjects, DX11AppHelper::_pConstantBuffer, cb);
+	mCurrentSceneRenderProcess->SetupRenderProcess(DX11AppHelper::Instance()._pImmediateContext, DX11AppHelper::Instance()._pConstantBuffer, true);
+	mCurrentSceneRenderProcess->RenderGameObjects(DX11AppHelper::Instance()._pImmediateContext, gameObjects, DX11AppHelper::Instance()._pConstantBuffer, cb);
 
 	if (GUIController::_pBlurEffectPasses != 0)
 	{
 		for (int i = 0; i < GUIController::_pBlurEffectPasses; i++)
 		{
-			mShaderList["Effect HBlur"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, false);
-			mShaderList["Effect HBlur"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
+			mShaderList["Effect HBlur"].get()->SetupRenderProcess(DX11AppHelper::Instance()._pImmediateContext, DX11AppHelper::Instance()._pConstantBuffer, false);
+			mShaderList["Effect HBlur"].get()->RenderToTexture(DX11AppHelper::Instance()._pImmediateContext, DX11AppHelper::Instance()._pConstantBuffer, cb);
 
-			mShaderList["Effect VBlur"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, false);
-			mShaderList["Effect VBlur"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
+			mShaderList["Effect VBlur"].get()->SetupRenderProcess(DX11AppHelper::Instance()._pImmediateContext, DX11AppHelper::Instance()._pConstantBuffer, false);
+			mShaderList["Effect VBlur"].get()->RenderToTexture(DX11AppHelper::Instance()._pImmediateContext, DX11AppHelper::Instance()._pConstantBuffer, cb);
 
 			if (i == 0)
 			{
@@ -157,15 +157,15 @@ void ShaderController::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLig
 	}
 	else
 	{
-		mShaderList["Effect HBlur"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, false);
-		mShaderList["Effect HBlur"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
+		mShaderList["Effect HBlur"].get()->SetupRenderProcess(DX11AppHelper::Instance()._pImmediateContext, DX11AppHelper::Instance()._pConstantBuffer, false);
+		mShaderList["Effect HBlur"].get()->RenderToTexture(DX11AppHelper::Instance()._pImmediateContext, DX11AppHelper::Instance()._pConstantBuffer, cb);
 
-		mShaderList["Effect VBlur"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, false);
-		mShaderList["Effect VBlur"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
+		mShaderList["Effect VBlur"].get()->SetupRenderProcess(DX11AppHelper::Instance()._pImmediateContext, DX11AppHelper::Instance()._pConstantBuffer, false);
+		mShaderList["Effect VBlur"].get()->RenderToTexture(DX11AppHelper::Instance()._pImmediateContext, DX11AppHelper::Instance()._pConstantBuffer, cb);
 	}
 
-	mShaderList["Final Pass"].get()->SetupRenderProcess(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, false);
-	mShaderList["Final Pass"].get()->RenderToTexture(DX11AppHelper::_pImmediateContext, DX11AppHelper::_pConstantBuffer, cb);
+	mShaderList["Final Pass"].get()->SetupRenderProcess(DX11AppHelper::Instance()._pImmediateContext, DX11AppHelper::Instance()._pConstantBuffer, false);
+	mShaderList["Final Pass"].get()->RenderToTexture(DX11AppHelper::Instance()._pImmediateContext, DX11AppHelper::Instance()._pConstantBuffer, cb);
 }
 
 void ShaderController::UpdateShaderSelection(int selectedShaderOption)

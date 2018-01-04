@@ -56,7 +56,7 @@ GUIController::~GUIController()
 
 void GUIController::SetupGUI()
 {
-	InitGUI(DX11AppHelper::_hWnd, DX11AppHelper::_pd3dDevice, DX11AppHelper::_pImmediateContext);
+	InitGUI(DX11AppHelper::Instance()._hWnd, DX11AppHelper::Instance()._pd3dDevice, DX11AppHelper::Instance()._pImmediateContext);
 }
 
 void GUIController::UpdateGUI()
@@ -230,7 +230,7 @@ void GUIController::GUINewFrame()
 
 	// Setup display size (every frame to accommodate for window resizing)
 	RECT rect;
-	GetClientRect(DX11AppHelper::_hWnd, &rect);
+	GetClientRect(DX11AppHelper::Instance()._hWnd, &rect);
 	io.DisplaySize = ImVec2((float)(rect.right - rect.left), (float)(rect.bottom - rect.top));
 
 	// Setup time step
@@ -241,7 +241,7 @@ void GUIController::GUINewFrame()
 
 	POINT p;
 	GetCursorPos(&p);
-	ScreenToClient(DX11AppHelper::_hWnd, &p);
+	ScreenToClient(DX11AppHelper::Instance()._hWnd, &p);
 	ImVec2 mousePos;
 	/*mousePos.x = p.x / 2.0f;
 	mousePos.y = p.y / 1.91f - 20.0f;*/
@@ -307,14 +307,14 @@ bool GUIController::InitGUI(void* hwnd, ID3D11Device* device, ID3D11DeviceContex
 	io.KeyMap[ImGuiKey_Z] = 'Z';
 
 	io.RenderDrawListsFn = RenderDrawLists;  // Alternatively you can set this to NULL and call ImGui::GetDrawData() after ImGui::Render() to get the same ImDrawData pointer.
-	io.ImeWindowHandle = DX11AppHelper::_hWnd;
+	io.ImeWindowHandle = DX11AppHelper::Instance()._hWnd;
 
 	return true;
 }
 
 void GUIController::RenderDrawLists(ImDrawData* draw_data)
 {
-	ID3D11DeviceContext* ctx = DX11AppHelper::_pImmediateContext;
+	ID3D11DeviceContext* ctx = DX11AppHelper::Instance()._pImmediateContext;
 
 	// Create and grow vertex/index buffers if needed
 	if (!_pVB || _pVertexBufferSize < draw_data->TotalVtxCount)
@@ -331,7 +331,7 @@ void GUIController::RenderDrawLists(ImDrawData* draw_data)
 		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		desc.MiscFlags = 0;
-		if (DX11AppHelper::_pd3dDevice->CreateBuffer(&desc, NULL, &_pVB) < 0)
+		if (DX11AppHelper::Instance()._pd3dDevice->CreateBuffer(&desc, NULL, &_pVB) < 0)
 		{
 			return;
 		}
@@ -347,7 +347,7 @@ void GUIController::RenderDrawLists(ImDrawData* draw_data)
 		desc.ByteWidth = _pIndexBufferSize * sizeof(ImDrawIdx);
 		desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		if (DX11AppHelper::_pd3dDevice->CreateBuffer(&desc, NULL, &_pIB) < 0)
+		if (DX11AppHelper::Instance()._pd3dDevice->CreateBuffer(&desc, NULL, &_pIB) < 0)
 			return;
 	}
 
@@ -510,7 +510,7 @@ void GUIController::RenderDrawLists(ImDrawData* draw_data)
 
 bool GUIController::CreateDeviceObjects()
 {
-	if (!DX11AppHelper::_pd3dDevice)
+	if (!DX11AppHelper::Instance()._pd3dDevice)
 	{
 		return false;
 	}
@@ -563,7 +563,7 @@ bool GUIController::CreateDeviceObjects()
 			return false;
 		}
 
-		if (DX11AppHelper::_pd3dDevice->CreateVertexShader((DWORD*)_pVSBlob->GetBufferPointer(), _pVSBlob->GetBufferSize(), NULL, &_pVertexShader) != S_OK)
+		if (DX11AppHelper::Instance()._pd3dDevice->CreateVertexShader((DWORD*)_pVSBlob->GetBufferPointer(), _pVSBlob->GetBufferSize(), NULL, &_pVertexShader) != S_OK)
 		{
 			return false;
 		}
@@ -574,7 +574,7 @@ bool GUIController::CreateDeviceObjects()
 			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,   0, (size_t)(&((ImDrawVert*)0)->uv),  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "COLOR",    0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, (size_t)(&((ImDrawVert*)0)->col), D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
-		if (DX11AppHelper::_pd3dDevice->CreateInputLayout(local_layout, 3, _pVSBlob->GetBufferPointer(), _pVSBlob->GetBufferSize(), &_pInputLayout) != S_OK)
+		if (DX11AppHelper::Instance()._pd3dDevice->CreateInputLayout(local_layout, 3, _pVSBlob->GetBufferPointer(), _pVSBlob->GetBufferSize(), &_pInputLayout) != S_OK)
 			return false;
 
 		// Create the constant buffer
@@ -585,7 +585,7 @@ bool GUIController::CreateDeviceObjects()
 			desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 			desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 			desc.MiscFlags = 0;
-			DX11AppHelper::_pd3dDevice->CreateBuffer(&desc, NULL, &_pVertexConstantBuffer);
+			DX11AppHelper::Instance()._pd3dDevice->CreateBuffer(&desc, NULL, &_pVertexConstantBuffer);
 		}
 	}
 
@@ -614,7 +614,7 @@ bool GUIController::CreateDeviceObjects()
 			return false;
 		}
 			
-		if (DX11AppHelper::_pd3dDevice->CreatePixelShader((DWORD*)_pPSBlob->GetBufferPointer(), _pPSBlob->GetBufferSize(), NULL, &_pPixelShader) != S_OK)
+		if (DX11AppHelper::Instance()._pd3dDevice->CreatePixelShader((DWORD*)_pPSBlob->GetBufferPointer(), _pPSBlob->GetBufferSize(), NULL, &_pPixelShader) != S_OK)
 		{
 			return false;
 		}
@@ -633,7 +633,7 @@ bool GUIController::CreateDeviceObjects()
 		desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 		desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		DX11AppHelper::_pd3dDevice->CreateBlendState(&desc, &_pBlendState);
+		DX11AppHelper::Instance()._pd3dDevice->CreateBlendState(&desc, &_pBlendState);
 	}
 
 	// Create the rasterizer state
@@ -644,7 +644,7 @@ bool GUIController::CreateDeviceObjects()
 		desc.CullMode = D3D11_CULL_NONE;
 		desc.ScissorEnable = true;
 		desc.DepthClipEnable = true;
-		DX11AppHelper::_pd3dDevice->CreateRasterizerState(&desc, &_pRasterizerState);
+		DX11AppHelper::Instance()._pd3dDevice->CreateRasterizerState(&desc, &_pRasterizerState);
 	}
 
 	// Create depth-stencil State
@@ -658,7 +658,7 @@ bool GUIController::CreateDeviceObjects()
 		desc.FrontFace.StencilFailOp = desc.FrontFace.StencilDepthFailOp = desc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 		desc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 		desc.BackFace = desc.FrontFace;
-		DX11AppHelper::_pd3dDevice->CreateDepthStencilState(&desc, &_pDepthStencilState);
+		DX11AppHelper::Instance()._pd3dDevice->CreateDepthStencilState(&desc, &_pDepthStencilState);
 	}
 
 	CreateFontsTexture();
@@ -668,7 +668,7 @@ bool GUIController::CreateDeviceObjects()
 
 void GUIController::InvalidateDeviceObjects()
 {
-	if (!DX11AppHelper::_pd3dDevice)
+	if (!DX11AppHelper::Instance()._pd3dDevice)
 		return;
 
 	if (_pFontSampler) { _pFontSampler->Release(); _pFontSampler = NULL; }
@@ -714,7 +714,7 @@ void GUIController::CreateFontsTexture()
 		subResource.pSysMem = pixels;
 		subResource.SysMemPitch = desc.Width * 4;
 		subResource.SysMemSlicePitch = 0;
-		DX11AppHelper::_pd3dDevice->CreateTexture2D(&desc, &subResource, &pTexture);
+		DX11AppHelper::Instance()._pd3dDevice->CreateTexture2D(&desc, &subResource, &pTexture);
 
 		// Create texture view
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -723,7 +723,7 @@ void GUIController::CreateFontsTexture()
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MipLevels = desc.MipLevels;
 		srvDesc.Texture2D.MostDetailedMip = 0;
-		DX11AppHelper::_pd3dDevice->CreateShaderResourceView(pTexture, &srvDesc, &_pFontTextureView);
+		DX11AppHelper::Instance()._pd3dDevice->CreateShaderResourceView(pTexture, &srvDesc, &_pFontTextureView);
 		pTexture->Release();
 	}
 
@@ -742,6 +742,6 @@ void GUIController::CreateFontsTexture()
 		desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
 		desc.MinLOD = 0.f;
 		desc.MaxLOD = 0.f;
-		DX11AppHelper::_pd3dDevice->CreateSamplerState(&desc, &_pFontSampler);
+		DX11AppHelper::Instance()._pd3dDevice->CreateSamplerState(&desc, &_pFontSampler);
 	}
 }

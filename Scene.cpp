@@ -4,7 +4,7 @@ Scene::Scene(string name, Geometry cubeGeometry, Material cubeMat) : mSceneName(
 {
 	// Setup the flying camera
 	XMFLOAT3 eyeFly = XMFLOAT3(35.0f, 15.0f, -35.0f);
-	mSceneCameraFly = new SceneCamera(0.01f, 2000.0f, (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, true, "Flying Camera", mCubeGeometry, mNoSpecMaterial);
+	mSceneCameraFly = new SceneCamera(0.01f, 2000.0f, (float)DX11AppHelper::Instance()._pRenderWidth, (float)DX11AppHelper::Instance()._pRenderHeight, true, "Flying Camera", mCubeGeometry, mNoSpecMaterial);
 	mSceneCameraFly->SetWorldPosition(eyeFly);
 
 	mOctree = new Octree(200, XMFLOAT3(0, 0, 0), 15);
@@ -65,11 +65,11 @@ void Scene::Update(float timeSinceStart, float deltaTime)
 	}
 
 	mFlashLight->Update(timeSinceStart, deltaTime);
-	mFlashLight->UpdateLight((float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight);
+	mFlashLight->UpdateLight((float)DX11AppHelper::Instance()._pRenderWidth, (float)DX11AppHelper::Instance()._pRenderHeight);
 
 	for (auto& sl : mSceneLights)
 	{
-		sl->UpdateLight((float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight);
+		sl->UpdateLight((float)DX11AppHelper::Instance()._pRenderWidth, (float)DX11AppHelper::Instance()._pRenderHeight);
 	}
 
 	// This if statement can be used to test functionality through a GUI click event

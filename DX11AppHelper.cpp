@@ -1,33 +1,34 @@
 #include "DX11AppHelper.h"
 
-HINSTANCE DX11AppHelper::_hInst = nullptr;
-HWND DX11AppHelper::_hWnd = nullptr;
-D3D_DRIVER_TYPE DX11AppHelper::_pDriverType = D3D_DRIVER_TYPE_NULL;
-D3D_FEATURE_LEVEL DX11AppHelper::_pFeatureLevel = D3D_FEATURE_LEVEL_11_0;
-ID3D11Device* DX11AppHelper::_pd3dDevice = nullptr;
-ID3D11DeviceContext* DX11AppHelper::_pImmediateContext = nullptr;
-IDXGISwapChain* DX11AppHelper::_pSwapChain = nullptr;
 
-ID3D11Buffer* DX11AppHelper::_pVertexBuffer = nullptr;
-ID3D11Buffer* DX11AppHelper::_pIndexBuffer = nullptr;
-ID3D11Buffer* DX11AppHelper::_pPlaneVertexBuffer = nullptr;
-ID3D11Buffer* DX11AppHelper::_pPlaneIndexBuffer = nullptr;
-ID3D11Buffer* DX11AppHelper::_pConstantBuffer = nullptr;
-ID3D11Buffer* DX11AppHelper::_pSMConstantBuffer = nullptr;
-
-ID3D11DepthStencilState* DX11AppHelper::_pDSLessEqual = nullptr;
-ID3D11RasterizerState* DX11AppHelper::_pRSCullNone = nullptr;
-ID3D11RasterizerState* DX11AppHelper::_pCCWcullMode = nullptr;
-ID3D11RasterizerState* DX11AppHelper::_pCWcullMode = nullptr;
-
-UINT DX11AppHelper::_pWindowHeight;
-UINT DX11AppHelper::_pWindowWidth;
-
-UINT DX11AppHelper::_pRenderHeight = 1080;
-UINT DX11AppHelper::_pRenderWidth = 1920;
 
 DX11AppHelper::DX11AppHelper()
 {
+	HINSTANCE _hInst = nullptr;
+	HWND _hWnd = nullptr;
+	D3D_DRIVER_TYPE _pDriverType = D3D_DRIVER_TYPE_NULL;
+	D3D_FEATURE_LEVEL _pFeatureLevel = D3D_FEATURE_LEVEL_11_0;
+	ID3D11Device* _pd3dDevice = nullptr;
+	ID3D11DeviceContext* _pImmediateContext = nullptr;
+	IDXGISwapChain* _pSwapChain = nullptr;
+
+	ID3D11Buffer* _pVertexBuffer = nullptr;
+	ID3D11Buffer* _pIndexBuffer = nullptr;
+	ID3D11Buffer* _pPlaneVertexBuffer = nullptr;
+	ID3D11Buffer* _pPlaneIndexBuffer = nullptr;
+	ID3D11Buffer* _pConstantBuffer = nullptr;
+	ID3D11Buffer* _pSMConstantBuffer = nullptr;
+
+	ID3D11DepthStencilState* _pDSLessEqual = nullptr;
+	ID3D11RasterizerState* _pRSCullNone = nullptr;
+	ID3D11RasterizerState* _pCCWcullMode = nullptr;
+	ID3D11RasterizerState* _pCWcullMode = nullptr;
+
+	UINT _pWindowHeight;
+	UINT _pWindowWidth;
+
+	UINT _pRenderHeight = 1080;
+	UINT _pRenderWidth = 1920;
 }
 
 DX11AppHelper::~DX11AppHelper()
