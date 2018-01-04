@@ -2,7 +2,7 @@
 
 #include "imgui.h"
 
-#include "DX11AppHelper.h"
+#include "DirectXInstance.h"
 
 static class GUIController
 {

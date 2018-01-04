@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <memory>
 
-#include "DX11AppHelper.h"
+#include "DirectXInstance.h"
 #include "RenderToTextureProcess.h"
 #include "GUIController.h"
 

@@ -78,7 +78,7 @@ Scene* SceneBuilder::BuildScene(string fileName, Geometry cubeGeometry, Material
 
 void SceneBuilder::BuildCamera(xml_node<>* node, Geometry cubeGeometry, Material material, TextureController* textureManager, Scene* scene)
 {
-	SceneCamera* sceneCameraWalk = new SceneCamera(0.01f, 2000.0f, (float)DX11AppHelper::Instance()._pRenderWidth, (float)DX11AppHelper::Instance()._pRenderHeight, false, "Walking Camera", cubeGeometry, material);
+	SceneCamera* sceneCameraWalk = new SceneCamera(0.01f, 2000.0f, (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, false, "Walking Camera", cubeGeometry, material);
 
 	// Set position
 	xml_node<>* positionNode = node->first_node("Position");

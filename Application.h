@@ -17,7 +17,7 @@
 #include "SceneBuilder.h"
 #include "RenderToTextureProcess.h"
 #include "TextureController.h"
-#include "DX11AppHelper.h"
+#include "DirectXInstance.h"
 #include "ShaderController.h"
 #include "InputLayoutBuilder.h"
 #include "GUIController.h"

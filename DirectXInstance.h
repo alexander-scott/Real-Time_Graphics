@@ -8,19 +8,19 @@
 
 using namespace DirectX;
 
-class DX11AppHelper
+class DirectXInstance
 {
 public:
-	DX11AppHelper();
-	~DX11AppHelper();
+	DirectXInstance();
+	~DirectXInstance();
 
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
 	HRESULT InitDevice();
 	void Cleanup();
 
-	HWND						_hWnd;
+	HWND					_hWnd;
 	ID3D11Device*			_pd3dDevice;
-	ID3D11DeviceContext*		_pImmediateContext;
+	ID3D11DeviceContext*	_pImmediateContext;
 	IDXGISwapChain*			_pSwapChain;
 
 	ID3D11Buffer*			_pVertexBuffer;
@@ -32,13 +32,13 @@ public:
 	ID3D11Buffer*			_pConstantBuffer;
 	ID3D11Buffer*			_pSMConstantBuffer;
 
-	// Render dimensions - Change here to alter screen resolution
-	UINT						_pRenderHeight;
-	UINT						_pRenderWidth;
+	// Render dimensions
+	UINT					_pRenderHeight;
+	UINT					_pRenderWidth;
 
-	static DX11AppHelper& Instance()
+	static DirectXInstance& Instance()
 	{
-		static DX11AppHelper Instance;
+		static DirectXInstance Instance;
 		return Instance;
 	}
 
@@ -48,16 +48,16 @@ private:
 	HRESULT InitIndexBuffer();
 	HRESULT InitRasterizerState();
 
-	HINSTANCE				_hInst;
-	D3D_DRIVER_TYPE			_pDriverType;
-	D3D_FEATURE_LEVEL		_pFeatureLevel;
+	HINSTANCE					_hInst;
+	D3D_DRIVER_TYPE				_pDriverType;
+	D3D_FEATURE_LEVEL			_pFeatureLevel;
 
 	UINT						_pWindowHeight;
 	UINT						_pWindowWidth;
 
-	ID3D11DepthStencilState* _pDSLessEqual;
-	ID3D11RasterizerState*	_pRSCullNone;
+	ID3D11DepthStencilState*	_pDSLessEqual;
+	ID3D11RasterizerState*		_pRSCullNone;
 
-	ID3D11RasterizerState*	_pCCWcullMode;
-	ID3D11RasterizerState*	_pCWcullMode;
+	ID3D11RasterizerState*		_pCCWcullMode;
+	ID3D11RasterizerState*		_pCWcullMode;
 };

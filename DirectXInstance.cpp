@@ -1,8 +1,8 @@
-#include "DX11AppHelper.h"
+#include "DirectXInstance.h"
 
 
 
-DX11AppHelper::DX11AppHelper()
+DirectXInstance::DirectXInstance()
 {
 	HINSTANCE _hInst = nullptr;
 	HWND _hWnd = nullptr;
@@ -31,7 +31,7 @@ DX11AppHelper::DX11AppHelper()
 	UINT _pRenderWidth = 1920;
 }
 
-DX11AppHelper::~DX11AppHelper()
+DirectXInstance::~DirectXInstance()
 {
 }
 
@@ -58,7 +58,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-HRESULT DX11AppHelper::InitWindow(HINSTANCE hInstance, int nCmdShow)
+HRESULT DirectXInstance::InitWindow(HINSTANCE hInstance, int nCmdShow)
 {
 	RECT desktop;
 	// Get a handle to the desktop window
@@ -107,7 +107,7 @@ HRESULT DX11AppHelper::InitWindow(HINSTANCE hInstance, int nCmdShow)
 	return S_OK;
 }
 
-HRESULT DX11AppHelper::InitDevice()
+HRESULT DirectXInstance::InitDevice()
 {
 	HRESULT hr = S_OK;
 
@@ -165,8 +165,6 @@ HRESULT DX11AppHelper::InitDevice()
 	if (FAILED(hr))
 		return hr;
 
-#pragma endregion
-
 	hr = InitConstantBuffers();
 
 	if (FAILED(hr))
@@ -194,11 +192,9 @@ HRESULT DX11AppHelper::InitDevice()
 }
 
 
-HRESULT DX11AppHelper::InitVertexBuffer()
+HRESULT DirectXInstance::InitVertexBuffer()
 {
 	HRESULT hr;
-
-#pragma region Create Cube Vertex Buffer
 
 	// Frank Luna Normals and Tangents
 	SimpleVertex vertices[] =
@@ -256,10 +252,6 @@ HRESULT DX11AppHelper::InitVertexBuffer()
 	if (FAILED(hr))
 		return hr;
 
-#pragma endregion
-
-#pragma region Create Plane Vertex Bufffer
-
 	// Create Plane vertex buffer
 	SimpleVertex planeVertices[] =
 	{
@@ -283,12 +275,10 @@ HRESULT DX11AppHelper::InitVertexBuffer()
 	if (FAILED(hr))
 		return hr;
 
-#pragma endregion
-
 	return S_OK;
 }
 
-HRESULT DX11AppHelper::InitIndexBuffer()
+HRESULT DirectXInstance::InitIndexBuffer()
 {
 	HRESULT hr;
 
@@ -353,7 +343,7 @@ HRESULT DX11AppHelper::InitIndexBuffer()
 	return S_OK;
 }
 
-HRESULT DX11AppHelper::InitConstantBuffers()
+HRESULT DirectXInstance::InitConstantBuffers()
 {
 	HRESULT hr;
 
@@ -384,7 +374,7 @@ HRESULT DX11AppHelper::InitConstantBuffers()
 		return hr;
 }
 
-HRESULT DX11AppHelper::InitRasterizerState()
+HRESULT DirectXInstance::InitRasterizerState()
 {
 	HRESULT hr;
 
@@ -425,28 +415,18 @@ HRESULT DX11AppHelper::InitRasterizerState()
 	return hr;
 }
 
-void DX11AppHelper::Cleanup()
+void DirectXInstance::Cleanup()
 {
-#pragma region DirectX Initialisation Variables
-
 	if (_pSwapChain) _pSwapChain->Release();
 	if (_pImmediateContext) _pImmediateContext->ClearState();
 	if (_pImmediateContext) _pImmediateContext->Release();
-	if (DX11AppHelper::_pd3dDevice)  DX11AppHelper::_pd3dDevice->Release();
-
-#pragma endregion
-
-#pragma region Rasterizer States
+	if (_pd3dDevice)  _pd3dDevice->Release();
 
 	if (_pDSLessEqual) _pDSLessEqual->Release();
 	if (_pRSCullNone) _pRSCullNone->Release();
 
 	if (_pCCWcullMode) _pCCWcullMode->Release();
 	if (_pCWcullMode) _pCWcullMode->Release();
-
-#pragma endregion
-
-#pragma region Buffer Variables
 
 	if (_pVertexBuffer) _pVertexBuffer->Release();
 	if (_pIndexBuffer) _pIndexBuffer->Release();
@@ -456,6 +436,4 @@ void DX11AppHelper::Cleanup()
 
 	if (_pConstantBuffer) _pConstantBuffer->Release();
 	if (_pSMConstantBuffer) _pSMConstantBuffer->Release();
-
-#pragma endregion
 }

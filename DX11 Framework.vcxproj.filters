@@ -103,9 +103,6 @@
     <ClInclude Include="DDSTextureLoader.h">
       <Filter>DirectX\Textures</Filter>
     </ClInclude>
-    <ClInclude Include="DX11AppHelper.h">
-      <Filter>DirectX</Filter>
-    </ClInclude>
     <ClInclude Include="GUIController.h">
       <Filter>DirectX\GUI</Filter>
     </ClInclude>
@@ -120,6 +117,9 @@
     </ClInclude>
     <ClInclude Include="SceneCamera.h">
       <Filter>Scene\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXInstance.h">
+      <Filter>DirectX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -161,9 +161,6 @@
     <ClCompile Include="DDSTextureLoader.cpp">
       <Filter>DirectX\Textures</Filter>
     </ClCompile>
-    <ClCompile Include="DX11AppHelper.cpp">
-      <Filter>DirectX</Filter>
-    </ClCompile>
     <ClCompile Include="GUIController.cpp">
       <Filter>DirectX\GUI</Filter>
     </ClCompile>
@@ -178,6 +175,9 @@
     </ClCompile>
     <ClCompile Include="SceneCamera.cpp">
       <Filter>Scene\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXInstance.cpp">
+      <Filter>DirectX</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
