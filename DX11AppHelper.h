@@ -18,23 +18,23 @@ public:
 	static HRESULT InitDevice();
 	static void Cleanup();
 
-	static HWND                    _hWnd;
-	static ID3D11Device*           _pd3dDevice;
-	static ID3D11DeviceContext*    _pImmediateContext;
-	static IDXGISwapChain*         _pSwapChain;
+	static HWND						_hWnd;
+	static ID3D11Device*			_pd3dDevice;
+	static ID3D11DeviceContext*		_pImmediateContext;
+	static IDXGISwapChain*			_pSwapChain;
 
-#pragma region Buffer Variables
+	static ID3D11Buffer*			_pVertexBuffer;
+	static ID3D11Buffer*			_pIndexBuffer;
 
-	static ID3D11Buffer*           _pVertexBuffer;
-	static ID3D11Buffer*           _pIndexBuffer;
+	static ID3D11Buffer*			_pPlaneVertexBuffer;
+	static ID3D11Buffer*			_pPlaneIndexBuffer;
 
-	static ID3D11Buffer*           _pPlaneVertexBuffer;
-	static ID3D11Buffer*           _pPlaneIndexBuffer;
-
-	static ID3D11Buffer*           _pConstantBuffer;
+	static ID3D11Buffer*			_pConstantBuffer;
 	static ID3D11Buffer*			_pSMConstantBuffer;
 
-#pragma endregion
+	// Render dimensions - Change here to alter screen resolution
+	static UINT						_pRenderHeight;
+	static UINT						_pRenderWidth;
 
 private:
 	static HRESULT InitConstantBuffers();
@@ -42,35 +42,16 @@ private:
 	static HRESULT InitIndexBuffer();
 	static HRESULT InitRasterizerState();
 
-#pragma region DirectX Initialisation Variables
+	static HINSTANCE				_hInst;
+	static D3D_DRIVER_TYPE			_pDriverType;
+	static D3D_FEATURE_LEVEL		_pFeatureLevel;
 
-	static HINSTANCE               _hInst;
-	static D3D_DRIVER_TYPE         _pDriverType;
-	static D3D_FEATURE_LEVEL       _pFeatureLevel;
-
-#pragma endregion
-
-#pragma region Windows Decriptive Variables
-
-	static UINT _pWindowHeight;
-	static UINT _pWindowWidth;
-
-public:
-	// Render dimensions - Change here to alter screen resolution
-	static UINT _pRenderHeight;
-	static UINT _pRenderWidth;
-
-#pragma endregion
-
-private:
-#pragma region Rasterizer States
+	static UINT						_pWindowHeight;
+	static UINT						_pWindowWidth;
 
 	static ID3D11DepthStencilState* _pDSLessEqual;
-	static ID3D11RasterizerState* _pRSCullNone;
+	static ID3D11RasterizerState*	_pRSCullNone;
 
-	static ID3D11RasterizerState* _pCCWcullMode;
-	static ID3D11RasterizerState* _pCWcullMode;
-
-#pragma endregion
-
+	static ID3D11RasterizerState*	_pCCWcullMode;
+	static ID3D11RasterizerState*	_pCWcullMode;
 };

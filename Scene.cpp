@@ -7,7 +7,7 @@ Scene::Scene(string name, Geometry cubeGeometry, Material cubeMat) : mSceneName(
 	mSceneCameraFly = new SceneCamera(0.01f, 2000.0f, (float)DX11AppHelper::_pRenderWidth, (float)DX11AppHelper::_pRenderHeight, true, "Flying Camera", mCubeGeometry, mNoSpecMaterial);
 	mSceneCameraFly->SetWorldPosition(eyeFly);
 
-	mOctree = new Octree(200, XMFLOAT3(0, 0, 0), 25);
+	mOctree = new Octree(200, XMFLOAT3(0, 0, 0), 15);
 
 	mFlyCameraActive = false;
 	mSwitchCameraPressed = false;
