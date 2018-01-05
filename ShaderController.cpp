@@ -2,7 +2,7 @@
 
 ShaderController::ShaderController()
 {
-	mCurrentSceneRenderProcess = nullptr;
+	mCurrentRenderProcess = nullptr;
 }
 
 ShaderController::~ShaderController()
@@ -119,8 +119,8 @@ void ShaderController::Draw(ConstantBuffer* cb, vector<SceneLight*> lights, vect
 		}
 	}
 
-	mCurrentSceneRenderProcess->SetupRenderProcess(DirectXInstance::Instance()._pImmediateContext, DirectXInstance::Instance()._pConstantBuffer, true);
-	mCurrentSceneRenderProcess->RenderGameObjects(DirectXInstance::Instance()._pImmediateContext, gameObjects, DirectXInstance::Instance()._pConstantBuffer, cb);
+	mCurrentRenderProcess->SetupRenderProcess(DirectXInstance::Instance()._pImmediateContext, DirectXInstance::Instance()._pConstantBuffer, true);
+	mCurrentRenderProcess->RenderGameObjects(DirectXInstance::Instance()._pImmediateContext, gameObjects, DirectXInstance::Instance()._pConstantBuffer, cb);
 
 	if (GUIController::_pBlurEffectPasses != 0)
 	{
@@ -140,7 +140,7 @@ void ShaderController::Draw(ConstantBuffer* cb, vector<SceneLight*> lights, vect
 		}
 
 		mShaderList["Effect HBlur"].get()->RemoveShaderResources();
-		mShaderList["Effect HBlur"].get()->AddShaderResource(mCurrentSceneRenderProcess->GetShaderTargetTexture("ColourMap"));
+		mShaderList["Effect HBlur"].get()->AddShaderResource(mCurrentRenderProcess->GetShaderTargetTexture("ColourMap"));
 	}
 	else
 	{
@@ -163,9 +163,9 @@ void ShaderController::SetShaderResources()
 	mShaderList["Parallax Scene"].get()->AddShaderResource(mShaderList["Green Light Depth Map"].get()->GetDepthMapResourceView());
 	mShaderList["Parallax Scene"].get()->AddShaderResource(mShaderList["Blue Light Depth Map"].get()->GetDepthMapResourceView());
 	mShaderList["Parallax Scene"].get()->SetCurrentShaderIndex(0);
-	mCurrentSceneRenderProcess = mShaderList["Parallax Scene"].get();
+	mCurrentRenderProcess = mShaderList["Parallax Scene"].get();
 	mShaderList["Effect HBlur"].get()->RemoveShaderResources();
-	mShaderList["Effect HBlur"].get()->AddShaderResource(mCurrentSceneRenderProcess->GetShaderTargetTexture("ColourMap"));
+	mShaderList["Effect HBlur"].get()->AddShaderResource(mCurrentRenderProcess->GetShaderTargetTexture("ColourMap"));
 	mShaderList["Final Pass"].get()->RemoveShaderResources();
 	mShaderList["Final Pass"].get()->AddShaderResource(mShaderList["Effect VBlur"].get()->GetShaderTargetTexture("OutputText"));
 	GUIController::ResetBlurOptions();

@@ -56,8 +56,5 @@ private:
 	UINT						_pWindowWidth;
 
 	ID3D11DepthStencilState*	_pDSLessEqual;
-	ID3D11RasterizerState*		_pRSCullNone;
-
-	ID3D11RasterizerState*		_pCCWcullMode;
-	ID3D11RasterizerState*		_pCWcullMode;
+	ID3D11RasterizerState*		_pRSCullMode;
 };

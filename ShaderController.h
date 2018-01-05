@@ -33,5 +33,5 @@ private:
 	HRESULT SetupShader(string shaderName, string rtvName, float renderWidth, float renderHeight, WCHAR* szFileName, vector<D3D11_INPUT_ELEMENT_DESC> layoutDescVec, ID3D11Device* d3dDevice);
 
 	unordered_map<string, unique_ptr<RenderToTextureProcess>>	mShaderList;
-	RenderToTextureProcess*										mCurrentSceneRenderProcess;
+	RenderToTextureProcess*										mCurrentRenderProcess;
 };

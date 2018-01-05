@@ -182,6 +182,7 @@ HRESULT DirectXInstance::InitDevice()
 
 	InitVertexBuffer();
 	InitIndexBuffer();
+	InitRasterizerState();
 
 	// Set primitive topology
 	_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -384,10 +385,12 @@ HRESULT DirectXInstance::InitRasterizerState()
 	ZeroMemory(&cmdesc, sizeof(D3D11_RASTERIZER_DESC));
 	cmdesc.FillMode = D3D11_FILL_SOLID;
 	cmdesc.CullMode = D3D11_CULL_BACK;
-	hr = _pd3dDevice->CreateRasterizerState(&cmdesc, &_pRSCullNone);
+	hr = _pd3dDevice->CreateRasterizerState(&cmdesc, &_pRSCullMode);
 
 	if (FAILED(hr))
 		return hr;
+
+	_pImmediateContext->RSSetState(_pRSCullMode);
 
 	D3D11_DEPTH_STENCIL_DESC dssDesc;
 	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
@@ -395,22 +398,7 @@ HRESULT DirectXInstance::InitRasterizerState()
 	dssDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	dssDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
-	_pd3dDevice->CreateDepthStencilState(&dssDesc, &_pDSLessEqual);
-
-	ZeroMemory(&cmdesc, sizeof(D3D11_RASTERIZER_DESC));
-
-	cmdesc.FillMode = D3D11_FILL_SOLID;
-	cmdesc.CullMode = D3D11_CULL_BACK;
-
-	cmdesc.FrontCounterClockwise = true;
-	hr = _pd3dDevice->CreateRasterizerState(&cmdesc, &_pCCWcullMode);
-
-	if (FAILED(hr))
-		return hr;
-
-	cmdesc.FrontCounterClockwise = false;
-	hr = _pd3dDevice->CreateRasterizerState(&cmdesc, &_pCWcullMode);
-	return S_OK;
+	hr = _pd3dDevice->CreateDepthStencilState(&dssDesc, &_pDSLessEqual);
 
 	return hr;
 }
@@ -423,10 +411,7 @@ void DirectXInstance::Cleanup()
 	if (_pd3dDevice)  _pd3dDevice->Release();
 
 	if (_pDSLessEqual) _pDSLessEqual->Release();
-	if (_pRSCullNone) _pRSCullNone->Release();
-
-	if (_pCCWcullMode) _pCCWcullMode->Release();
-	if (_pCWcullMode) _pCWcullMode->Release();
+	if (_pRSCullMode) _pRSCullMode->Release();
 
 	if (_pVertexBuffer) _pVertexBuffer->Release();
 	if (_pIndexBuffer) _pIndexBuffer->Release();
