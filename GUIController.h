@@ -30,8 +30,6 @@ private:
 	static void CreateFontsTexture();
 
 public:
-	static int _pShaderControlOption;
-
 	static bool _pBlurOn;
 	static bool _pBlurWasOn;
 	static int _pBlurEffectPasses;

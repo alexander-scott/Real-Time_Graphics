@@ -40,7 +40,7 @@ public:
 private:
 	void Cleanup();
 
-	HRESULT InitRenderProcesses();
+	HRESULT InitShaderResources();
 	void InitInputLayouts();
 	void InitScene();
 

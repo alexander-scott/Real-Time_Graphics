@@ -203,12 +203,6 @@
     <FxCompile Include="DX11 Framework Parallax SS Diffuse Mapping.fx">
       <Filter>Shaders\Scenes</Filter>
     </FxCompile>
-    <FxCompile Include="DX11 Framework Basic.fx">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="DX11 Framework Pixel.fx">
-      <Filter>Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="DX11 Framework Render To Texture.fx">
       <Filter>Shaders</Filter>
     </FxCompile>

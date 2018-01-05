@@ -393,9 +393,6 @@
     <ClCompile Include="TextureController.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="DX11 Framework Basic.fx">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </FxCompile>
     <FxCompile Include="DX11 Framework Horizontal Blur.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </FxCompile>
@@ -407,10 +404,6 @@
     </FxCompile>
     <FxCompile Include="DX11 Framework Depth Mapping.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="DX11 Framework Pixel.fx">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <FileType>Document</FileType>
     </FxCompile>
     <FxCompile Include="DX11 Framework Vertical Blur.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

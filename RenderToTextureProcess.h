@@ -40,11 +40,7 @@ public:
 
 	void RenderSceneDepthMap(ID3D11DeviceContext* immediateContext, vector<GameObject*> gameObjects, ID3D11Buffer* constantBuffer, SMConstantBuffer* sMCB);
 
-#pragma region Get/Set Functions
-
 	ID3D11ShaderResourceView* GetShaderTargetTexture(string resourceName);
-
-#pragma endregion
 
 protected:
 	D3D11_SHADER_RESOURCE_VIEW_DESC _pShaderResourceViewDesc;

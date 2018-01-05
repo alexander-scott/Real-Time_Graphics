@@ -23,7 +23,6 @@ int GUIController::_pIndexBufferSize = 10000;
 INT64 GUIController::_pTime = 0;
 INT64 GUIController::_pTicksPerSecond = 0;
 
-int GUIController::_pShaderControlOption = 2;
 bool GUIController::_pBlurOn = false;
 bool GUIController::_pBlurWasOn = false;
 int GUIController::_pBlurEffectPasses = 0;
@@ -142,11 +141,8 @@ void GUIController::UpdateGUI()
 
 	ImGui::Spacing();
 
-	if (_pShaderControlOption == 2)
-	{
-		// Self Shadowing Options
-		ImGui::Checkbox("Self Shadowing", &_pSelfShadingOn);
-	}
+	// Self Shadowing Options
+	ImGui::Checkbox("Self Shadowing", &_pSelfShadingOn);
 
 	ImGui::Spacing();
 	ImGui::Spacing();
@@ -154,50 +150,41 @@ void GUIController::UpdateGUI()
 	ImGui::Spacing();
 	ImGui::Spacing();
 
-	// Change Main Shader Used
-	ImGui::Text("Shader/Effect Controls");
-	ImGui::Combo("Shader Options", &_pShaderControlOption, "Vertex Lighting\0Pixel Lighting\0Parallax Occlusion Mapping\0G-Buffer Diffuse\0G-Buffer Normals\0G-Buffer Position");
+	// Blur Controls
+	ImGui::Text("Blur Effect Controls");
+	ImGui::Checkbox("Blur On/Off", &_pBlurOn);
+
+	if (_pBlurOn && !_pBlurWasOn)
+	{
+		_pBlurIntensity += 0.1f;
+		_pBlurWasOn = true;
+	}
+	else if (!_pBlurOn && _pBlurWasOn)
+	{
+		_pBlurIntensity = 0.0f;
+		_pBlurWasOn = false;
+	}
+
+	ImGui::SliderInt("Blur Pass Count", &_pBlurEffectPasses, 0, 150);
+	ImGui::Spacing();
+	ImGui::SliderFloat("Blur Intensity", &_pBlurIntensity, 0.0f, 1.0f);
+
+	if (_pBlurOn && _pBlurIntensity < 0.1f)
+	{
+		_pBlurIntensity = 0.1f;
+	}
+
+	if (!_pBlurOn && _pBlurIntensity > 0.0f)
+	{
+		_pBlurIntensity = 0.0f;
+	}
+
+	if (!_pBlurOn && _pBlurEffectPasses > 1)
+	{
+		_pBlurEffectPasses = 1;
+	}
 
 	ImGui::Spacing();
-
-	if (_pShaderControlOption == 2)
-	{
-		// Blur Controls
-		ImGui::Text("Blur Effect Controls");
-		ImGui::Checkbox("Blur On/Off", &_pBlurOn);
-
-		if (_pBlurOn && !_pBlurWasOn)
-		{
-			_pBlurIntensity += 0.1f;
-			_pBlurWasOn = true;
-		}
-		else if (!_pBlurOn && _pBlurWasOn)
-		{
-			_pBlurIntensity = 0.0f;
-			_pBlurWasOn = false;
-		}
-
-		ImGui::SliderInt("Blur Pass Count", &_pBlurEffectPasses, 0, 150);
-		ImGui::Spacing();
-		ImGui::SliderFloat("Blur Intensity", &_pBlurIntensity, 0.0f, 1.0f);
-
-		if (_pBlurOn && _pBlurIntensity < 0.1f)
-		{
-			_pBlurIntensity = 0.1f;
-		}
-
-		if (!_pBlurOn && _pBlurIntensity > 0.0f)
-		{
-			_pBlurIntensity = 0.0f;
-		}
-
-		if (!_pBlurOn && _pBlurEffectPasses > 1)
-		{
-			_pBlurEffectPasses = 1;
-		}
-
-		ImGui::Spacing();
-	}
 
 	ImGui::Spacing();
 	ImGui::Separator();

@@ -3,7 +3,6 @@
 ShaderController::ShaderController()
 {
 	mCurrentSceneRenderProcess = nullptr;
-	mCurrentShaderOptionSelected = 1;
 }
 
 ShaderController::~ShaderController()
@@ -37,18 +36,6 @@ HRESULT ShaderController::AddDepthBufferShader(string shaderName, float renderWi
 	}
 
 	mShaderList[shaderName].get()->SetClearColour(1.0f, 1.0f, 1.0f, 1.0f);
-
-	return S_OK;
-}
-
-HRESULT ShaderController::AddCommonShader(string shaderName, float renderWidth, float renderHeight, WCHAR* szFileName, vector<D3D11_INPUT_ELEMENT_DESC> layoutDescVec, ID3D11Device* d3dDevice)
-{
-	if (FAILED(SetupShader(shaderName, "OutputText", renderWidth, renderHeight, szFileName, layoutDescVec, d3dDevice)))
-	{
-		return E_FAIL;
-	}
-
-	mShaderList[shaderName].get()->SetClearColour(0.0f, 0.0f, 0.0f, 1.0f);
 
 	return S_OK;
 }
@@ -89,14 +76,14 @@ HRESULT ShaderController::AddRenderToBackBufferShader(string shaderName, float r
 	return S_OK;
 }
 
-void ShaderController::AddCustomShader(string shaderName, float renderWidth, float renderHeight)
+void ShaderController::AddSceneShader(string shaderName, float renderWidth, float renderHeight)
 {
 	auto renderProcess = std::make_unique<RenderToTextureProcess>(renderWidth, renderHeight);
 	renderProcess->SetClearColour(0.0f, 0.0f, 0.0f, 1.0f);
 	mShaderList[shaderName] = std::move(renderProcess);
 }
 
-void ShaderController::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLight*> lights, vector<GameObject*> gameObjects)
+void ShaderController::Draw(ConstantBuffer* cb, vector<SceneLight*> lights, vector<GameObject*> gameObjects)
 {
 	cb->shadowsOn = true;
 	cb->blurIntensity = GUIController::_pBlurIntensity;
@@ -168,70 +155,18 @@ void ShaderController::ExecuteShadersInOrder(ConstantBuffer* cb, vector<SceneLig
 	mShaderList["Final Pass"].get()->RenderToTexture(DirectXInstance::Instance()._pImmediateContext, DirectXInstance::Instance()._pConstantBuffer, cb);
 }
 
-void ShaderController::UpdateShaderSelection(int selectedShaderOption)
+void ShaderController::SetShaderResources()
 {
-	if (mCurrentShaderOptionSelected != selectedShaderOption)
-	{
-		mCurrentShaderOptionSelected = selectedShaderOption;
-
-		switch (selectedShaderOption)
-		{
-		case 0: // Vertex lighting
-			mCurrentSceneRenderProcess = mShaderList["Basic Scene"].get();
-			mShaderList["Effect HBlur"].get()->RemoveShaderResources();
-			mShaderList["Effect HBlur"].get()->AddShaderResource(mShaderList["Basic Scene"].get()->GetShaderTargetTexture("OutputText"));
-			GUIController::ResetBlurOptions();
-			break;
-
-		case 1: // Pixel lighting
-			mCurrentSceneRenderProcess = mShaderList["Pixel Scene"].get();
-			mShaderList["Effect HBlur"].get()->RemoveShaderResources();
-			mShaderList["Effect HBlur"].get()->AddShaderResource(mShaderList["Pixel Scene"].get()->GetShaderTargetTexture("OutputText"));
-			GUIController::ResetBlurOptions();
-			break;
-
-		case 2: // Parallax Occlusion Mapping
-			mShaderList["Parallax Scene"].get()->RemoveShaderResources();
-			mShaderList["Parallax Scene"].get()->AddShaderResource(mShaderList["White Light Depth Map"].get()->GetDepthMapResourceView());
-			mShaderList["Parallax Scene"].get()->AddShaderResource(mShaderList["Red Light Depth Map"].get()->GetDepthMapResourceView());
-			mShaderList["Parallax Scene"].get()->AddShaderResource(mShaderList["Green Light Depth Map"].get()->GetDepthMapResourceView());
-			mShaderList["Parallax Scene"].get()->AddShaderResource(mShaderList["Blue Light Depth Map"].get()->GetDepthMapResourceView());
-			mShaderList["Parallax Scene"].get()->SetCurrentShaderIndex(0);
-			mCurrentSceneRenderProcess = mShaderList["Parallax Scene"].get();
-			mShaderList["Effect HBlur"].get()->RemoveShaderResources();
-			mShaderList["Effect HBlur"].get()->AddShaderResource(mCurrentSceneRenderProcess->GetShaderTargetTexture("ColourMap"));
-			mShaderList["Final Pass"].get()->RemoveShaderResources();
-			mShaderList["Final Pass"].get()->AddShaderResource(mShaderList["Effect VBlur"].get()->GetShaderTargetTexture("OutputText"));
-			GUIController::ResetBlurOptions();
-			break;
-
-		case 3: // G-Buffer Diffuse
-			mShaderList["Parallax Scene"].get()->RemoveShaderResources();
-			mShaderList["Parallax Scene"].get()->SetCurrentShaderIndex(1);
-			mCurrentSceneRenderProcess = mShaderList["Parallax Scene"].get();
-			mShaderList["Effect HBlur"].get()->RemoveShaderResources();
-			mCurrentSceneRenderProcess = mShaderList["Parallax Scene"].get();
-			mShaderList["Effect HBlur"].get()->RemoveShaderResources();
-			mShaderList["Effect HBlur"].get()->AddShaderResource(mCurrentSceneRenderProcess->GetShaderTargetTexture("ColourMap"));
-			GUIController::ResetBlurOptions();
-			break;
-
-		case 4: // G-Buffer Normals
-			mShaderList["Parallax Scene"].get()->RemoveShaderResources();
-			mShaderList["Parallax Scene"].get()->SetCurrentShaderIndex(1);
-			mCurrentSceneRenderProcess = mShaderList["Parallax Scene"].get();
-			mShaderList["Effect HBlur"].get()->RemoveShaderResources();
-			mShaderList["Effect HBlur"].get()->AddShaderResource(mCurrentSceneRenderProcess->GetShaderTargetTexture("NormalMap"));
-			GUIController::ResetBlurOptions();
-			break;
-
-		case 5: // G-Buffer Position
-			mShaderList["Parallax Scene"].get()->SetCurrentShaderIndex(1);
-			mCurrentSceneRenderProcess = mShaderList["Parallax Scene"].get();
-			mShaderList["Effect HBlur"].get()->RemoveShaderResources();
-			mShaderList["Effect HBlur"].get()->AddShaderResource(mCurrentSceneRenderProcess->GetShaderTargetTexture("PositionMap"));
-			GUIController::ResetBlurOptions();
-			break;
-		}
-	}
+	mShaderList["Parallax Scene"].get()->RemoveShaderResources();
+	mShaderList["Parallax Scene"].get()->AddShaderResource(mShaderList["White Light Depth Map"].get()->GetDepthMapResourceView());
+	mShaderList["Parallax Scene"].get()->AddShaderResource(mShaderList["Red Light Depth Map"].get()->GetDepthMapResourceView());
+	mShaderList["Parallax Scene"].get()->AddShaderResource(mShaderList["Green Light Depth Map"].get()->GetDepthMapResourceView());
+	mShaderList["Parallax Scene"].get()->AddShaderResource(mShaderList["Blue Light Depth Map"].get()->GetDepthMapResourceView());
+	mShaderList["Parallax Scene"].get()->SetCurrentShaderIndex(0);
+	mCurrentSceneRenderProcess = mShaderList["Parallax Scene"].get();
+	mShaderList["Effect HBlur"].get()->RemoveShaderResources();
+	mShaderList["Effect HBlur"].get()->AddShaderResource(mCurrentSceneRenderProcess->GetShaderTargetTexture("ColourMap"));
+	mShaderList["Final Pass"].get()->RemoveShaderResources();
+	mShaderList["Final Pass"].get()->AddShaderResource(mShaderList["Effect VBlur"].get()->GetShaderTargetTexture("OutputText"));
+	GUIController::ResetBlurOptions();
 }

@@ -27,10 +27,12 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
 	InitInputLayouts();
 
-	if (FAILED(InitRenderProcesses()))
+	if (FAILED(InitShaderResources()))
 	{
 		return E_FAIL;
 	}
+
+	mShaderController->SetShaderResources();
 
 	GUIController::SetupGUI();
 
@@ -42,7 +44,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 		return E_FAIL;
 	}
 
-	if (FAILED(mShaderController->GetRenderToTextureProcess("Final Pass")->SetupBackBufferRTV(DirectXInstance::Instance()._pd3dDevice, pBackBuffer)))
+	if (FAILED(mShaderController->GetRTTProcess("Final Pass")->SetupBackBufferRTV(DirectXInstance::Instance()._pd3dDevice, pBackBuffer)))
 	{
 		return E_FAIL;
 	}
@@ -102,7 +104,7 @@ void Application::InitInputLayouts()
 	mInputLayoutBuilder.BuildInputLayout("Layout 3", { "POSITION", "NORMAL", "TEXCOORD" }, DirectXInstance::Instance()._pd3dDevice);
 }
 
-HRESULT Application::InitRenderProcesses()
+HRESULT Application::InitShaderResources()
 {
 	HRESULT hr;
 
@@ -179,60 +181,33 @@ HRESULT Application::InitRenderProcesses()
 	}
 
 	///////////////////////////////////////////////////////////////////
-	// Build basic scene
-	///////////////////////////////////////////////////////////////////
-	if (FAILED(mShaderController->AddCommonShader("Basic Scene", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Basic.fx", mInputLayoutBuilder.GetD3D11InputDescs("Layout 3"), DirectXInstance::Instance()._pd3dDevice)))
-	{
-		return E_FAIL;
-	}
-
-	mShaderController->GetRenderToTextureProcess("Basic Scene")->AddSamplerState(_pSamplerLinear);
-
-	///////////////////////////////////////////////////////////////////
-	// Build Pixel Scene
-	///////////////////////////////////////////////////////////////////
-	if (FAILED(mShaderController->AddCommonShader("Pixel Scene", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Pixel SS.fx", mInputLayoutBuilder.GetD3D11InputDescs("Layout 2"), DirectXInstance::Instance()._pd3dDevice)))
-	{
-		return E_FAIL;
-	}
-
-	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddSamplerState(_pSamplerLinear);
-
-	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddSamplerState(_pSamplerLinear);
-
-	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("White Light Depth Map")->GetDepthMapResourceView());
-	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Red Light Depth Map")->GetDepthMapResourceView());
-	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Green Light Depth Map")->GetDepthMapResourceView());
-	mShaderController->GetRenderToTextureProcess("Pixel Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Blue Light Depth Map")->GetDepthMapResourceView());
-
-	///////////////////////////////////////////////////////////////////
 	// Build parallax scene
 	///////////////////////////////////////////////////////////////////
-	mShaderController->AddCustomShader("Parallax Scene", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight);
+	mShaderController->AddSceneShader("Parallax Scene", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight);
 
-	mShaderController->GetRenderToTextureProcess("Parallax Scene")->LoadShaderFilesAndInputLayouts(  DirectXInstance::Instance()._pd3dDevice, L"DX11 Framework Parallax SS Diffuse Mapping.fx", L"DX11 Framework Parallax SS Diffuse Mapping.fx", mInputLayoutBuilder.GetD3D11InputDescs("Layout 2"));
-
-	if (FAILED(hr))
-		return hr;
-
-	hr = mShaderController->GetRenderToTextureProcess("Parallax Scene")->SetupRTVAndSRV(  DirectXInstance::Instance()._pd3dDevice, "ColourMap");
-	hr = mShaderController->GetRenderToTextureProcess("Parallax Scene")->SetupRTVAndSRV(  DirectXInstance::Instance()._pd3dDevice, "NormalMap");
-	hr = mShaderController->GetRenderToTextureProcess("Parallax Scene")->SetupRTVAndSRV(  DirectXInstance::Instance()._pd3dDevice, "TexCoordOffsetMap");
-	hr = mShaderController->GetRenderToTextureProcess("Parallax Scene")->SetupRTVAndSRV(  DirectXInstance::Instance()._pd3dDevice, "PositionMap");
-	hr = mShaderController->GetRenderToTextureProcess("Parallax Scene")->SetupRTVAndSRV(  DirectXInstance::Instance()._pd3dDevice, "TangentMap");
-	hr = mShaderController->GetRenderToTextureProcess("Parallax Scene")->SetupRTVAndSRV(  DirectXInstance::Instance()._pd3dDevice, "BiNormalMap");
-	hr = mShaderController->GetRenderToTextureProcess("Parallax Scene")->SetupRTVAndSRV(  DirectXInstance::Instance()._pd3dDevice, "WorldNormalMap");
+	mShaderController->GetRTTProcess("Parallax Scene")->LoadShaderFilesAndInputLayouts(  DirectXInstance::Instance()._pd3dDevice, L"DX11 Framework Parallax SS Diffuse Mapping.fx", L"DX11 Framework Parallax SS Diffuse Mapping.fx", mInputLayoutBuilder.GetD3D11InputDescs("Layout 2"));
 
 	if (FAILED(hr))
 		return hr;
 
-	mShaderController->GetRenderToTextureProcess("Parallax Scene")->AddSamplerState(_pSamplerLinear);
-	mShaderController->GetRenderToTextureProcess("Parallax Scene")->AddSamplerState(_pSamplerClamp);
+	hr = mShaderController->GetRTTProcess("Parallax Scene")->SetupRTVAndSRV(  DirectXInstance::Instance()._pd3dDevice, "ColourMap");
+	hr = mShaderController->GetRTTProcess("Parallax Scene")->SetupRTVAndSRV(  DirectXInstance::Instance()._pd3dDevice, "NormalMap");
+	hr = mShaderController->GetRTTProcess("Parallax Scene")->SetupRTVAndSRV(  DirectXInstance::Instance()._pd3dDevice, "TexCoordOffsetMap");
+	hr = mShaderController->GetRTTProcess("Parallax Scene")->SetupRTVAndSRV(  DirectXInstance::Instance()._pd3dDevice, "PositionMap");
+	hr = mShaderController->GetRTTProcess("Parallax Scene")->SetupRTVAndSRV(  DirectXInstance::Instance()._pd3dDevice, "TangentMap");
+	hr = mShaderController->GetRTTProcess("Parallax Scene")->SetupRTVAndSRV(  DirectXInstance::Instance()._pd3dDevice, "BiNormalMap");
+	hr = mShaderController->GetRTTProcess("Parallax Scene")->SetupRTVAndSRV(  DirectXInstance::Instance()._pd3dDevice, "WorldNormalMap");
 
-	mShaderController->GetRenderToTextureProcess("Parallax Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("White Light Depth Map")->GetDepthMapResourceView());
-	mShaderController->GetRenderToTextureProcess("Parallax Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Red Light Depth Map")->GetDepthMapResourceView());
-	mShaderController->GetRenderToTextureProcess("Parallax Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Green Light Depth Map")->GetDepthMapResourceView());
-	mShaderController->GetRenderToTextureProcess("Parallax Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Blue Light Depth Map")->GetDepthMapResourceView());
+	if (FAILED(hr))
+		return hr;
+
+	mShaderController->GetRTTProcess("Parallax Scene")->AddSamplerState(_pSamplerLinear);
+	mShaderController->GetRTTProcess("Parallax Scene")->AddSamplerState(_pSamplerClamp);
+
+	mShaderController->GetRTTProcess("Parallax Scene")->AddShaderResource(mShaderController->GetRTTProcess("White Light Depth Map")->GetDepthMapResourceView());
+	mShaderController->GetRTTProcess("Parallax Scene")->AddShaderResource(mShaderController->GetRTTProcess("Red Light Depth Map")->GetDepthMapResourceView());
+	mShaderController->GetRTTProcess("Parallax Scene")->AddShaderResource(mShaderController->GetRTTProcess("Green Light Depth Map")->GetDepthMapResourceView());
+	mShaderController->GetRTTProcess("Parallax Scene")->AddShaderResource(mShaderController->GetRTTProcess("Blue Light Depth Map")->GetDepthMapResourceView());
 
 	///////////////////////////////////////////////////////////////////
 	// Build Blur Special Effect
@@ -242,16 +217,16 @@ HRESULT Application::InitRenderProcesses()
 		return E_FAIL;
 	}
 
-	mShaderController->GetRenderToTextureProcess("Effect HBlur")->AddSamplerState(_pSamplerLinear);
-	mShaderController->GetRenderToTextureProcess("Effect HBlur")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Parallax Scene")->GetShaderTargetTexture("ColourMap"));
+	mShaderController->GetRTTProcess("Effect HBlur")->AddSamplerState(_pSamplerLinear);
+	mShaderController->GetRTTProcess("Effect HBlur")->AddShaderResource(mShaderController->GetRTTProcess("Parallax Scene")->GetShaderTargetTexture("ColourMap"));
 
 	if (FAILED(mShaderController->AddRenderFromQuadShader("Effect VBlur", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight, L"DX11 Framework Vertical Blur.fx", mInputLayoutBuilder.GetD3D11InputDescs("Layout 3"), DirectXInstance::Instance()._pd3dDevice)))
 	{
 		return E_FAIL;
 	}
 
-	mShaderController->GetRenderToTextureProcess("Effect VBlur")->AddSamplerState(_pSamplerLinear);
-	mShaderController->GetRenderToTextureProcess("Effect VBlur")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Effect HBlur")->GetShaderTargetTexture("OutputText"));
+	mShaderController->GetRTTProcess("Effect VBlur")->AddSamplerState(_pSamplerLinear);
+	mShaderController->GetRTTProcess("Effect VBlur")->AddShaderResource(mShaderController->GetRTTProcess("Effect HBlur")->GetShaderTargetTexture("OutputText"));
 
 	///////////////////////////////////////////////////////////////////
 	// Setup Final Pass
@@ -261,10 +236,10 @@ HRESULT Application::InitRenderProcesses()
 		return E_FAIL;
 	}
 
-	mShaderController->GetRenderToTextureProcess("Final Pass")->AddSamplerState(_pSamplerLinear);
-	mShaderController->GetRenderToTextureProcess("Final Pass")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Effect VBlur")->GetShaderTargetTexture("OutputText"));
+	mShaderController->GetRTTProcess("Final Pass")->AddSamplerState(_pSamplerLinear);
+	mShaderController->GetRTTProcess("Final Pass")->AddShaderResource(mShaderController->GetRTTProcess("Effect VBlur")->GetShaderTargetTexture("OutputText"));
 
-	mShaderController->GetRenderToTextureProcess("Final Pass")->SetClearColour(0.0f, 0.0f, 1.0f, 1.0f);
+	mShaderController->GetRTTProcess("Final Pass")->SetClearColour(0.0f, 0.0f, 1.0f, 1.0f);
 
 	return hr;
 }
@@ -293,7 +268,6 @@ bool Application::HandleKeyboard(MSG msg, float deltaTime)
 void Application::Update(float deltaTime)
 {
 	GUIController::UpdateGUI();
-	mShaderController->UpdateShaderSelection(GUIController::_pShaderControlOption);
 
 	if (!GUIController::io.WantCaptureMouse)
 	{
@@ -358,7 +332,7 @@ void Application::Draw()
 	else
 		cb.selfShadowOn = 0.0f;
 
-	mShaderController->ExecuteShadersInOrder(&cb, sceneLights, mScene->GetGameObjectsInFrustumOctree());
+	mShaderController->Draw(&cb, sceneLights, mScene->GetGameObjectsInFrustumOctree());
 
 	ImGui::Render();
 
