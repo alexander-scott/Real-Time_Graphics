@@ -106,15 +106,15 @@ void Scene::AddGameObject(GameObject * go)
 
 void Scene::AddSceneLight(SceneLight* sl)
 {
-	OctreeItem obj;
+	/*OctreeItem obj;
 	obj.GameObject = sl;
 	obj.Bounds = BoundingBox(sl->GetWorldPosition(), XMFLOAT3(2 * sl->GetWorldScale().x, 2 * sl->GetWorldScale().y, 2 * sl->GetWorldScale().z));
 
-	mOctree->Add(obj);
+	mOctree->Add(obj);*/
 
 	mSceneLights.push_back(sl); 
 
-	mOctreeGameObjects.push_back(obj);
+	//mOctreeGameObjects.push_back(obj);
 }
 
 void Scene::UpdateLightControls(float deltaTime) 

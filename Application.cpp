@@ -234,8 +234,6 @@ HRESULT Application::InitRenderProcesses()
 	mShaderController->GetRenderToTextureProcess("Parallax Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Green Light Depth Map")->GetDepthMapResourceView());
 	mShaderController->GetRenderToTextureProcess("Parallax Scene")->AddShaderResource(mShaderController->GetRenderToTextureProcess("Blue Light Depth Map")->GetDepthMapResourceView());
 
-	mShaderController->SetCurrentRenderToTexutreProcess(mShaderController->GetRenderToTextureProcess("Parallax Scene"));
-
 	///////////////////////////////////////////////////////////////////
 	// Build Blur Special Effect
 	///////////////////////////////////////////////////////////////////

@@ -19,9 +19,6 @@ public:
 
 	RenderToTextureProcess* GetRenderToTextureProcess(string s) { return mShaderList[s].get(); }
 
-	RenderToTextureProcess* GetCurrentRenderToTextureProcess() { return mCurrentSceneRenderProcess; }
-	void SetCurrentRenderToTexutreProcess(RenderToTextureProcess* rttp) { mCurrentSceneRenderProcess = rttp; }
-
 	HRESULT AddDepthBufferShader(string shaderName, float renderWidth, float renderHeight, WCHAR* szFileName, vector<D3D11_INPUT_ELEMENT_DESC> layoutDescVec, ID3D11Device* d3dDevice);
 	HRESULT AddCommonShader(string shaderName, float renderWidth, float renderHeight, WCHAR* szFileName, vector<D3D11_INPUT_ELEMENT_DESC> layoutDescVec, ID3D11Device* d3dDevice);
 	HRESULT AddRenderFromQuadShader(string shaderName, float renderWidth, float renderHeight, WCHAR* szFileName, vector<D3D11_INPUT_ELEMENT_DESC> layoutDescVec, ID3D11Device* d3dDevice);
