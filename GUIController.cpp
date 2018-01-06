@@ -23,23 +23,22 @@ int GUIController::_pIndexBufferSize = 10000;
 INT64 GUIController::_pTime = 0;
 INT64 GUIController::_pTicksPerSecond = 0;
 
-bool GUIController::_pBlurOn = false;
-bool GUIController::_pBlurWasOn = false;
-int GUIController::_pBlurEffectPasses = 0;
-float GUIController::_pBlurIntensity = 0;
+bool GUIController::BlurOn = false;
+bool GUIController::BlurWasOn = false;
+int GUIController::BlurEffectPasses = 0;
+float GUIController::BlurIntensity = 0;
 
-bool GUIController::_pWhiteLightOn = true;
-bool GUIController::_pRedLightOn = true;
-bool GUIController::_pGreenLightOn = false;
-bool GUIController::_pBlueLightOn = false;
+bool GUIController::WhiteLightOn = true;
+bool GUIController::RedLightOn = true;
+bool GUIController::GreenLightOn = false;
+bool GUIController::BlueLightOn = false;
 
-int GUIController::_pControlledLight = 0;
-int GUIController::_pSceneLightingMode = 0;
+int GUIController::ControlledLight = 0;
+int GUIController::SceneLightingMode = 0;
 
-bool GUIController::_pSelfShadingOn = false;
+bool GUIController::SelfShadingOn = true;
 
-bool GUIController::_pTestButton = false;
-bool GUIController::_pFlyingCameraEnabled = false;
+bool GUIController::FlyingCameraEnabled = false;
 
 ImGuiIO& GUIController::io = ImGui::GetIO();
 
@@ -82,7 +81,7 @@ void GUIController::UpdateGUI()
 	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "C"); ImGui::SameLine(65);
 	ImGui::Text("to switch between flying and walking camera.");
 	ImGui::Text("Current Camera: "); ImGui::SameLine(120);
-	if (_pFlyingCameraEnabled == true)
+	if (FlyingCameraEnabled == true)
 		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Flying"); 
 	else
 		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Walking"); 
@@ -99,10 +98,10 @@ void GUIController::UpdateGUI()
 	ImGui::Text("Light Controls");
 	ImGui::Spacing();
 
-	ImGui::Combo("Lighting Mode", &_pSceneLightingMode, "Omni-Directional\0Directional");
+	ImGui::Combo("Lighting Mode", &SceneLightingMode, "Omni-Directional\0Directional");
 	ImGui::Spacing();
 
-	if (_pSceneLightingMode == 1) // Omni directional light
+	if (SceneLightingMode == 1) // Omni directional light
 	{
 		ImGui::Text("Press"); ImGui::SameLine(50);
 		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "T"); ImGui::SameLine(65);
@@ -114,10 +113,10 @@ void GUIController::UpdateGUI()
 		ImGui::Text("Toggle lights on and off using the"); ImGui::SameLine(250);
 		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "checkboxes.");
 		ImGui::Spacing();
-		ImGui::Checkbox("White", &_pWhiteLightOn); ImGui::SameLine(100);
-		ImGui::Checkbox("Red", &_pRedLightOn); ImGui::SameLine(200);
-		ImGui::Checkbox("Green", &_pGreenLightOn); ImGui::SameLine(300);
-		ImGui::Checkbox("Blue", &_pBlueLightOn);
+		ImGui::Checkbox("White", &WhiteLightOn); ImGui::SameLine(100);
+		ImGui::Checkbox("Red", &RedLightOn); ImGui::SameLine(200);
+		ImGui::Checkbox("Green", &GreenLightOn); ImGui::SameLine(300);
+		ImGui::Checkbox("Blue", &BlueLightOn);
 
 		ImGui::Spacing();
 
@@ -129,20 +128,20 @@ void GUIController::UpdateGUI()
 		ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "WASD"); ImGui::SameLine(70);
 		ImGui::Text("to move the selected light.");
 		ImGui::Text("Current Selected Light: "); ImGui::SameLine(175);
-		if (_pControlledLight == 0)
+		if (ControlledLight == 0)
 			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "White");
-		else if (_pControlledLight == 1)
+		else if (ControlledLight == 1)
 			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Red");
-		else if (_pControlledLight == 2)
+		else if (ControlledLight == 2)
 			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Green");
-		else if (_pControlledLight == 3)
+		else if (ControlledLight == 3)
 			ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Blue");
 	}
 
 	ImGui::Spacing();
 
 	// Self Shadowing Options
-	ImGui::Checkbox("Self Shadowing", &_pSelfShadingOn);
+	ImGui::Checkbox("Self Shadowing", &SelfShadingOn);
 
 	ImGui::Spacing();
 	ImGui::Spacing();
@@ -152,52 +151,39 @@ void GUIController::UpdateGUI()
 
 	// Blur Controls
 	ImGui::Text("Blur Effect Controls");
-	ImGui::Checkbox("Blur On/Off", &_pBlurOn);
+	ImGui::Checkbox("Blur On/Off", &BlurOn);
 
-	if (_pBlurOn && !_pBlurWasOn)
+	if (BlurOn && !BlurWasOn)
 	{
-		_pBlurIntensity += 0.1f;
-		_pBlurWasOn = true;
+		BlurIntensity += 0.1f;
+		BlurWasOn = true;
 	}
-	else if (!_pBlurOn && _pBlurWasOn)
+	else if (!BlurOn && BlurWasOn)
 	{
-		_pBlurIntensity = 0.0f;
-		_pBlurWasOn = false;
+		BlurIntensity = 0.0f;
+		BlurWasOn = false;
 	}
 
-	ImGui::SliderInt("Blur Pass Count", &_pBlurEffectPasses, 0, 150);
+	ImGui::SliderInt("Blur Pass Count", &BlurEffectPasses, 0, 150);
 	ImGui::Spacing();
-	ImGui::SliderFloat("Blur Intensity", &_pBlurIntensity, 0.0f, 1.0f);
+	ImGui::SliderFloat("Blur Intensity", &BlurIntensity, 0.0f, 1.0f);
 
-	if (_pBlurOn && _pBlurIntensity < 0.1f)
+	if (BlurOn && BlurIntensity < 0.1f)
 	{
-		_pBlurIntensity = 0.1f;
+		BlurIntensity = 0.1f;
 	}
 
-	if (!_pBlurOn && _pBlurIntensity > 0.0f)
+	if (!BlurOn && BlurIntensity > 0.0f)
 	{
-		_pBlurIntensity = 0.0f;
+		BlurIntensity = 0.0f;
 	}
 
-	if (!_pBlurOn && _pBlurEffectPasses > 1)
+	if (!BlurOn && BlurEffectPasses > 1)
 	{
-		_pBlurEffectPasses = 1;
+		BlurEffectPasses = 1;
 	}
-
-	ImGui::Spacing();
 
 	ImGui::Spacing();
-	ImGui::Separator();
-	ImGui::Spacing();
-
-	ImGui::Checkbox("Test Button", &_pTestButton);
-}
-
-void GUIController::ResetBlurOptions()
-{
-	GUIController::_pBlurOn = false;
-	GUIController::_pBlurIntensity = 0.0f;
-	GUIController::_pBlurEffectPasses = 0;
 }
 
 void GUIController::ExitGUI()

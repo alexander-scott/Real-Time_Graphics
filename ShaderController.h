@@ -17,7 +17,7 @@ public:
 	ShaderController();
 	~ShaderController();
 
-	void Draw(ConstantBuffer* cb, vector<SceneLight*> lights, vector<GameObject*> gameObjects);
+	void ShaderPass(ConstantBuffer* cb, vector<SceneLight*> lights, vector<GameObject*> gameObjects);
 
 	RenderToTextureProcess* GetRTTProcess(string s) { return mShaderList[s].get(); }
 

@@ -4,7 +4,7 @@ SceneLight::SceneLight(string type, ID3D11ShaderResourceView* texture, Geometry 
 {
 	mLightName = type;
 
-	SetWorldScale(0.5f, 0.5f, 0.5f);
+	SetWorldScale(0.2f, 0.2f, 0.2f);
 	SetWorldRotation(0.0f, 0.0f, 0.0f);
 	SetTextureRV(texture);
 }

@@ -185,7 +185,7 @@ HRESULT Application::InitShaderResources()
 	///////////////////////////////////////////////////////////////////
 	mShaderController->AddSceneShader("Parallax Scene", (float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight);
 
-	mShaderController->GetRTTProcess("Parallax Scene")->LoadShaderFilesAndInputLayouts(  DirectXInstance::Instance()._pd3dDevice, L"DX11 Framework Parallax SS Diffuse Mapping.fx", L"DX11 Framework Parallax SS Diffuse Mapping.fx", mInputLayoutBuilder.GetD3D11InputDescs("Layout 2"));
+	mShaderController->GetRTTProcess("Parallax Scene")->LoadShader(  DirectXInstance::Instance()._pd3dDevice, L"DX11 Framework Parallax SS Diffuse Mapping.fx", L"DX11 Framework Parallax SS Diffuse Mapping.fx", mInputLayoutBuilder.GetD3D11InputDescs("Layout 2"));
 
 	if (FAILED(hr))
 		return hr;
@@ -327,12 +327,12 @@ void Application::Draw()
 	cb.screenWidth = DirectXInstance::Instance()._pRenderWidth;
 	cb.screenHeight = DirectXInstance::Instance()._pRenderHeight;
 
-	if (GUIController::_pSelfShadingOn)
+	if (GUIController::SelfShadingOn)
 		cb.selfShadowOn = 1.0f;
 	else
 		cb.selfShadowOn = 0.0f;
 
-	mShaderController->Draw(&cb, sceneLights, mScene->GetGameObjectsInFrustumOctree());
+	mShaderController->ShaderPass(&cb, sceneLights, mScene->GetGameObjectsInFrustumOctree());
 
 	ImGui::Render();
 

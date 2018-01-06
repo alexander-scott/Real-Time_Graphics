@@ -13,7 +13,7 @@ HRESULT ShaderController::SetupShader(string shaderName, string rtvName, float r
 {
 	auto renderProcess = std::make_unique<RenderToTextureProcess>(renderWidth, renderHeight);
 
-	if (FAILED(renderProcess->LoadShaderFilesAndInputLayouts(d3dDevice, szFileName, szFileName, layoutDescVec)))
+	if (FAILED(renderProcess->LoadShader(d3dDevice, szFileName, szFileName, layoutDescVec)))
 	{
 		return E_FAIL;
 	}
@@ -61,7 +61,7 @@ HRESULT ShaderController::AddRenderToBackBufferShader(string shaderName, float r
 {
 	auto renderProcess = std::make_unique<RenderToTextureProcess>(renderWidth, renderHeight);
 
-	if (FAILED(renderProcess->LoadShaderFilesAndInputLayouts(d3dDevice, szFileName, szFileName, layoutDescVec)))
+	if (FAILED(renderProcess->LoadShader(d3dDevice, szFileName, szFileName, layoutDescVec)))
 	{
 		return E_FAIL;
 	}
@@ -83,10 +83,10 @@ void ShaderController::AddSceneShader(string shaderName, float renderWidth, floa
 	mShaderList[shaderName] = std::move(renderProcess);
 }
 
-void ShaderController::Draw(ConstantBuffer* cb, vector<SceneLight*> lights, vector<GameObject*> gameObjects)
+void ShaderController::ShaderPass(ConstantBuffer* cb, vector<SceneLight*> lights, vector<GameObject*> gameObjects)
 {
 	cb->shadowsOn = true;
-	cb->blurIntensity = GUIController::_pBlurIntensity;
+	cb->blurIntensity = GUIController::BlurIntensity;
 
 	SMConstantBuffer smCB;
 
@@ -122,9 +122,9 @@ void ShaderController::Draw(ConstantBuffer* cb, vector<SceneLight*> lights, vect
 	mCurrentRenderProcess->SetupRenderProcess(DirectXInstance::Instance()._pImmediateContext, DirectXInstance::Instance()._pConstantBuffer, true);
 	mCurrentRenderProcess->RenderGameObjects(DirectXInstance::Instance()._pImmediateContext, gameObjects, DirectXInstance::Instance()._pConstantBuffer, cb);
 
-	if (GUIController::_pBlurEffectPasses != 0)
+	if (GUIController::BlurEffectPasses != 0)
 	{
-		for (int i = 0; i < GUIController::_pBlurEffectPasses; i++)
+		for (int i = 0; i < GUIController::BlurEffectPasses; i++)
 		{
 			mShaderList["Effect HBlur"].get()->SetupRenderProcess(DirectXInstance::Instance()._pImmediateContext, DirectXInstance::Instance()._pConstantBuffer, false);
 			mShaderList["Effect HBlur"].get()->RenderToTexture(DirectXInstance::Instance()._pImmediateContext, DirectXInstance::Instance()._pConstantBuffer, cb);
@@ -162,11 +162,9 @@ void ShaderController::SetShaderResources()
 	mShaderList["Parallax Scene"].get()->AddShaderResource(mShaderList["Red Light Depth Map"].get()->GetDepthMapResourceView());
 	mShaderList["Parallax Scene"].get()->AddShaderResource(mShaderList["Green Light Depth Map"].get()->GetDepthMapResourceView());
 	mShaderList["Parallax Scene"].get()->AddShaderResource(mShaderList["Blue Light Depth Map"].get()->GetDepthMapResourceView());
-	mShaderList["Parallax Scene"].get()->SetCurrentShaderIndex(0);
 	mCurrentRenderProcess = mShaderList["Parallax Scene"].get();
 	mShaderList["Effect HBlur"].get()->RemoveShaderResources();
 	mShaderList["Effect HBlur"].get()->AddShaderResource(mCurrentRenderProcess->GetShaderTargetTexture("ColourMap"));
 	mShaderList["Final Pass"].get()->RemoveShaderResources();
 	mShaderList["Final Pass"].get()->AddShaderResource(mShaderList["Effect VBlur"].get()->GetShaderTargetTexture("OutputText"));
-	GUIController::ResetBlurOptions();
 }

@@ -42,9 +42,6 @@
     <Filter Include="Shaders\Blur Effect">
       <UniqueIdentifier>{3e395ffb-0c49-4883-80f7-cb9c0f41cf4d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\Scenes">
-      <UniqueIdentifier>{0c967173-af60-4b38-90e2-11e6ec88a038}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DirectX\Render Process">
       <UniqueIdentifier>{f9a465ec-cfd7-469a-9a6d-d310ee5bde77}</UniqueIdentifier>
     </Filter>
@@ -200,10 +197,10 @@
     <FxCompile Include="DX11 Framework Depth Mapping.fx">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="DX11 Framework Parallax SS Diffuse Mapping.fx">
-      <Filter>Shaders\Scenes</Filter>
-    </FxCompile>
     <FxCompile Include="DX11 Framework Render To Texture.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="DX11 Framework Parallax SS Diffuse Mapping.fx">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

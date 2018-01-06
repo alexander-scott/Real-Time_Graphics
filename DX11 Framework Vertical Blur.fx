@@ -133,7 +133,5 @@ float4 PS(VS_OUTPUT input) : SV_Target
 		textureColour = txDiffuse.Sample(samLinear, input.Tex);
 	}
 
-	//float4 colour = float4(0.5f, 0.0f, 0.0f, 1.0f);
-
 	return textureColour;
 }

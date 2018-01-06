@@ -33,6 +33,7 @@ public:
 
 	void RemoveShaderResources();
 
+	// Setup render target view and shader resource view
 	HRESULT SetupRTVAndSRV(ID3D11Device* d3dDevice, string resourceName);
 	HRESULT SetupRenderQuad(ID3D11Device* d3dDevice);
 
@@ -42,17 +43,16 @@ public:
 
 	ID3D11ShaderResourceView* GetShaderTargetTexture(string resourceName);
 
-protected:
-	D3D11_SHADER_RESOURCE_VIEW_DESC _pShaderResourceViewDesc;
-
-	ID3D11Buffer* _pQuadIndexBuffer;
-	ID3D11Buffer* _pQuadVertexBuffer;
-
-	UINT _pQuadStride;
-	UINT _pQuadOffset;
-	UINT _pQuadIndexCount;
-
 private:
-	vector<ResourceView*> _pShaderResourceViews;
+	D3D11_SHADER_RESOURCE_VIEW_DESC		mShaderResourceViewDesc;
+
+	ID3D11Buffer*						mQuadIndexBuffer;
+	ID3D11Buffer*						mQuadVertexBuffer;
+
+	UINT								mQuadStride;
+	UINT								mQuadOffset;
+	UINT								mQuadIndexCount;
+
+	vector<ResourceView*>				mShaderResourceViews;
 };
 

@@ -3,11 +3,11 @@
 RenderToTextureProcess::RenderToTextureProcess(float renderWidth, float renderHeight)
 					   :RenderProcess(renderWidth, renderHeight)
 {
-	ZeroMemory(&_pShaderResourceViewDesc, sizeof(_pShaderResourceViewDesc));
-	_pShaderResourceViewDesc.Format = _pRenderToTextureDesc.Format;
-	_pShaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	_pShaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-	_pShaderResourceViewDesc.Texture2D.MipLevels = 1;
+	ZeroMemory(&mShaderResourceViewDesc, sizeof(mShaderResourceViewDesc));
+	mShaderResourceViewDesc.Format = mRenderToTextureDesc.Format;
+	mShaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	mShaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+	mShaderResourceViewDesc.Texture2D.MipLevels = 1;
 }
 
 RenderToTextureProcess::~RenderToTextureProcess()
@@ -38,7 +38,7 @@ HRESULT RenderToTextureProcess::SetupRenderQuad(ID3D11Device* d3dDevice)
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = quadVertices;
 
-	hr = d3dDevice->CreateBuffer(&bd, &InitData, &_pQuadVertexBuffer);
+	hr = d3dDevice->CreateBuffer(&bd, &InitData, &mQuadVertexBuffer);
 
 	if (FAILED(hr))
 		return hr;
@@ -60,15 +60,15 @@ HRESULT RenderToTextureProcess::SetupRenderQuad(ID3D11Device* d3dDevice)
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = indices;
 
-	hr = d3dDevice->CreateBuffer(&bd, &InitData, &_pQuadIndexBuffer);
+	hr = d3dDevice->CreateBuffer(&bd, &InitData, &mQuadIndexBuffer);
 
 	if (FAILED(hr))
 		return hr;
 
-	_pQuadIndexCount = ARRAYSIZE(indices);
+	mQuadIndexCount = ARRAYSIZE(indices);
 
-	_pQuadStride = sizeof(QuadVertex);
-	_pQuadOffset = 0;
+	mQuadStride = sizeof(QuadVertex);
+	mQuadOffset = 0;
 
 	return hr;
 }
@@ -85,10 +85,10 @@ HRESULT RenderToTextureProcess::SetupRTVAndSRV(ID3D11Device* d3dDevice, string r
 
 	ResourceView* newResourceView = new ResourceView(resourceName, nullptr);
 
-	hr = d3dDevice->CreateShaderResourceView(_pRenderToTexture, &_pShaderResourceViewDesc, &newResourceView->ShaderResourceView);
-	_pRenderToTexture->Release();
+	hr = d3dDevice->CreateShaderResourceView(mRenderToTexture, &mShaderResourceViewDesc, &newResourceView->ShaderResourceView);
+	mRenderToTexture->Release();
 
-	_pShaderResourceViews.push_back(newResourceView);
+	mShaderResourceViews.push_back(newResourceView);
 
 	if (FAILED(hr))
 		return hr;
@@ -98,11 +98,11 @@ HRESULT RenderToTextureProcess::SetupRTVAndSRV(ID3D11Device* d3dDevice, string r
 
 ID3D11ShaderResourceView* RenderToTextureProcess::GetShaderTargetTexture(string resourceName)
 {
-	for (int i = 0; i <_pShaderResourceViews.size(); i++)
+	for (int i = 0; i <mShaderResourceViews.size(); i++)
 	{
-		if (_pShaderResourceViews.at(i)->Name == resourceName)
+		if (mShaderResourceViews.at(i)->Name == resourceName)
 		{
-			return _pShaderResourceViews.at(i)->ShaderResourceView;
+			return mShaderResourceViews.at(i)->ShaderResourceView;
 		}
 	}
 
@@ -111,8 +111,8 @@ ID3D11ShaderResourceView* RenderToTextureProcess::GetShaderTargetTexture(string 
 
 void RenderToTextureProcess::RenderToTexture(ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, ConstantBuffer* cb)
 {
-	immediateContext->IASetVertexBuffers(0, 1, &_pQuadVertexBuffer, &_pQuadStride, &_pQuadOffset);
-	immediateContext->IASetIndexBuffer(_pQuadIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	immediateContext->IASetVertexBuffers(0, 1, &mQuadVertexBuffer, &mQuadStride, &mQuadOffset);
+	immediateContext->IASetIndexBuffer(mQuadIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
 	immediateContext->UpdateSubresource(constantBuffer, 0, nullptr, cb, 0, 0);
 
@@ -125,13 +125,13 @@ void RenderToTextureProcess::RenderSceneDepthMap(ID3D11DeviceContext* immediateC
 {
 	// Switch Render Target back to the H Blur Render Target View
 	ID3D11RenderTargetView* renderTargets[1] = { 0 };
-	immediateContext->OMSetRenderTargets(1, renderTargets, _pDepthStencilView);
-	immediateContext->ClearDepthStencilView(_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	immediateContext->OMSetRenderTargets(1, renderTargets, mDepthStencilView);
+	immediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-	immediateContext->IASetInputLayout(_pInputLayouts.at(currentShaderIndex));
+	immediateContext->IASetInputLayout(mInputLayouts.at(mCurrentShaderIndex));
 
-	immediateContext->VSSetShader(_pVertexShaders.at(currentShaderIndex), nullptr, 0);
-	immediateContext->PSSetShader(_pPixelShaders.at(currentShaderIndex), nullptr, 0);
+	immediateContext->VSSetShader(mVertexShaders.at(mCurrentShaderIndex), nullptr, 0);
+	immediateContext->PSSetShader(mPixelShaders.at(mCurrentShaderIndex), nullptr, 0);
 
 	immediateContext->VSSetConstantBuffers(0, 1, &constantBuffer);
 	immediateContext->PSSetConstantBuffers(0, 1, &constantBuffer);
@@ -157,5 +157,5 @@ void RenderToTextureProcess::RenderSceneDepthMap(ID3D11DeviceContext* immediateC
 
 void RenderToTextureProcess::RemoveShaderResources()
 {
-	_pShaderResources.clear();
+	mShaderResources.clear();
 }

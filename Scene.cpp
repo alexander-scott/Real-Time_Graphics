@@ -71,12 +71,6 @@ void Scene::Update(float timeSinceStart, float deltaTime)
 	{
 		sl->UpdateLight((float)DirectXInstance::Instance()._pRenderWidth, (float)DirectXInstance::Instance()._pRenderHeight);
 	}
-
-	// This if statement can be used to test functionality through a GUI click event
-	if (GUIController::_pTestButton)
-	{
-		GUIController::_pTestButton = false;
-	}
 }
 
 void Scene::AddGameObjects(vector<GameObject*> gos)
@@ -106,38 +100,38 @@ void Scene::AddGameObject(GameObject * go)
 
 void Scene::AddSceneLight(SceneLight* sl)
 {
-	/*OctreeItem obj;
+	OctreeItem obj;
 	obj.GameObject = sl;
 	obj.Bounds = BoundingBox(sl->GetWorldPosition(), XMFLOAT3(2 * sl->GetWorldScale().x, 2 * sl->GetWorldScale().y, 2 * sl->GetWorldScale().z));
 
-	mOctree->Add(obj);*/
+	mOctree->Add(obj);
 
 	mSceneLights.push_back(sl); 
 
-	//mOctreeGameObjects.push_back(obj);
+	mOctreeGameObjects.push_back(obj);
 }
 
 void Scene::UpdateLightControls(float deltaTime) 
 {
-	mSceneLights.at(GUIController::_pControlledLight)->HandleLightControls(deltaTime);
+	mSceneLights.at(GUIController::ControlledLight)->HandleLightControls(deltaTime);
 
 	// Toggle Lights ON/OFF
-	if (GUIController::_pWhiteLightOn)
+	if (GUIController::WhiteLightOn)
 		mSceneLights.at(0)->SetLightOn(true);
 	else
 		mSceneLights.at(0)->SetLightOn(false);
 
-	if (GUIController::_pRedLightOn)
+	if (GUIController::RedLightOn)
 		mSceneLights.at(1)->SetLightOn(true);
 	else
 		mSceneLights.at(1)->SetLightOn(false);
 
-	if (GUIController::_pGreenLightOn)
+	if (GUIController::GreenLightOn)
 		mSceneLights.at(2)->SetLightOn(true);
 	else
 		mSceneLights.at(2)->SetLightOn(false);
 
-	if (GUIController::_pBlueLightOn)
+	if (GUIController::BlueLightOn)
 		mSceneLights.at(3)->SetLightOn(true);
 	else
 		mSceneLights.at(3)->SetLightOn(false);
@@ -147,7 +141,7 @@ void Scene::UpdateLightControls(float deltaTime)
 	{
 		mSwitchCameraPressed = true;
 		mFlyCameraActive = !mFlyCameraActive;
-		GUIController::_pFlyingCameraEnabled = mFlyCameraActive;
+		GUIController::FlyingCameraEnabled = mFlyCameraActive;
 	}
 	else if (!GetAsyncKeyState('C'))
 	{
@@ -155,13 +149,13 @@ void Scene::UpdateLightControls(float deltaTime)
 	}
 
 	if (GetAsyncKeyState('1'))
-		GUIController::_pControlledLight = 0;
+		GUIController::ControlledLight = 0;
 	else if (GetAsyncKeyState('2'))
-		GUIController::_pControlledLight = 1;
+		GUIController::ControlledLight = 1;
 	else if (GetAsyncKeyState('3'))
-		GUIController::_pControlledLight = 2;
+		GUIController::ControlledLight = 2;
 	else if (GetAsyncKeyState('4'))
-		GUIController::_pControlledLight = 3;
+		GUIController::ControlledLight = 3;
 }
 
 void Scene::OnMouseMove(float x, float y)
@@ -207,7 +201,7 @@ std::vector<GameObject*> Scene::GetGameObjectsInFrustum()
 
 std::vector<SceneLight*> Scene::GetSceneLights()
 {	
-	if (GUIController::_pSceneLightingMode == 0) // Light Mode
+	if (GUIController::SceneLightingMode == 0) // Light Mode
 	{
 		return mSceneLights;
 	}

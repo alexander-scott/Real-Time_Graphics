@@ -19,8 +19,6 @@ public:
 	static void UpdateGUI();
 	static void ExitGUI();
 
-	static void ResetBlurOptions();
-
 private:
 	static bool InitGUI(void* hwnd, ID3D11Device* device, ID3D11DeviceContext* device_context);
 	static void RenderDrawLists(ImDrawData* draw_data);
@@ -30,25 +28,23 @@ private:
 	static void CreateFontsTexture();
 
 public:
-	static bool _pBlurOn;
-	static bool _pBlurWasOn;
-	static int _pBlurEffectPasses;
-	static float _pBlurIntensity;
+	static bool BlurOn;
+	static bool BlurWasOn;
+	static int BlurEffectPasses;
+	static float BlurIntensity;
 
-	static bool _pWhiteLightOn;
-	static bool _pRedLightOn;
-	static bool _pGreenLightOn;
-	static bool _pBlueLightOn;
+	static bool WhiteLightOn;
+	static bool RedLightOn;
+	static bool GreenLightOn;
+	static bool BlueLightOn;
 
-	static int _pControlledLight;
+	static int ControlledLight;
 
-	static bool _pSelfShadingOn;
+	static bool SelfShadingOn;
 
-	static bool _pFlyingCameraEnabled;
+	static bool FlyingCameraEnabled;
 
-	static int _pSceneLightingMode;
-
-	static bool _pTestButton;
+	static int SceneLightingMode;
 
 	static ImGuiIO& io;
 

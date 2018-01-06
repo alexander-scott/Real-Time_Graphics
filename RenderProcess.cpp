@@ -3,29 +3,29 @@
 
 RenderProcess::RenderProcess(float renderWidth, float renderHeight)
 {
-	ZeroMemory(&_pRenderToTextureDesc, sizeof(_pRenderToTextureDesc));
-	_pRenderToTextureDesc.Width = renderWidth;
-	_pRenderToTextureDesc.Height = renderHeight;
-	_pRenderToTextureDesc.MipLevels = 1;
-	_pRenderToTextureDesc.ArraySize = 1;
-	_pRenderToTextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	_pRenderToTextureDesc.SampleDesc.Count = 1;
-	_pRenderToTextureDesc.Usage = D3D11_USAGE_DEFAULT;
-	_pRenderToTextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	_pRenderToTextureDesc.CPUAccessFlags = 0;
-	_pRenderToTextureDesc.MiscFlags = 0;
+	ZeroMemory(&mRenderToTextureDesc, sizeof(mRenderToTextureDesc));
+	mRenderToTextureDesc.Width = renderWidth;
+	mRenderToTextureDesc.Height = renderHeight;
+	mRenderToTextureDesc.MipLevels = 1;
+	mRenderToTextureDesc.ArraySize = 1;
+	mRenderToTextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	mRenderToTextureDesc.SampleDesc.Count = 1;
+	mRenderToTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+	mRenderToTextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	mRenderToTextureDesc.CPUAccessFlags = 0;
+	mRenderToTextureDesc.MiscFlags = 0;
 
-	ZeroMemory(&_pRenderTargetViewDesc, sizeof(_pRenderTargetViewDesc));
-	_pRenderTargetViewDesc.Format = _pRenderToTextureDesc.Format;
-	_pRenderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-	_pRenderTargetViewDesc.Texture2D.MipSlice = 0;
+	ZeroMemory(&mRenderTargetViewDesc, sizeof(mRenderTargetViewDesc));
+	mRenderTargetViewDesc.Format = mRenderToTextureDesc.Format;
+	mRenderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	mRenderTargetViewDesc.Texture2D.MipSlice = 0;
 
 	nullShaderResourceView = nullptr;
 
 	float ClearWhiteColor[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
-	currentShaderIndex = 0;
-	renderTargetViewCount = 0;
-	renderTargetViewLimit = 8;
+	mCurrentShaderIndex = 0;
+	mRenderTargetViewCount = 0;
+	mRenderTargetViewLimit = 8;
 }
 
 
@@ -34,7 +34,7 @@ RenderProcess::~RenderProcess()
 }
 
 
-HRESULT RenderProcess::LoadShaderFilesAndInputLayouts(ID3D11Device* d3dDevice, WCHAR* szVSFileName, WCHAR* szPSFileName, vector<D3D11_INPUT_ELEMENT_DESC> layoutDescVec)
+HRESULT RenderProcess::LoadShader(ID3D11Device* d3dDevice, WCHAR* szVSFileName, WCHAR* szPSFileName, vector<D3D11_INPUT_ELEMENT_DESC> layoutDescVec)
 {
 	HRESULT hr;
 
@@ -65,7 +65,7 @@ HRESULT RenderProcess::LoadShaderFilesAndInputLayouts(ID3D11Device* d3dDevice, W
 		return hr;
 	}
 
-	_pVertexShaders.push_back(vertexShader);
+	mVertexShaders.push_back(vertexShader);
 
 	// Compile the pixel shader
 	hr = CompileShaderFromFile(szVSFileName, "PS", "ps_4_0", &pPSBlob);
@@ -84,9 +84,7 @@ HRESULT RenderProcess::LoadShaderFilesAndInputLayouts(ID3D11Device* d3dDevice, W
 	if (FAILED(hr))
 		return hr;
 
-	_pPixelShaders.push_back(pixelShader);
-
-#pragma region Define Input Layout
+	mPixelShaders.push_back(pixelShader);
 
 	ZeroMemory(&inputLayout, sizeof(inputLayout));
 
@@ -97,9 +95,7 @@ HRESULT RenderProcess::LoadShaderFilesAndInputLayouts(ID3D11Device* d3dDevice, W
 	hr = d3dDevice->CreateInputLayout(layout, numElements, pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), &inputLayout);
 	pVSBlob->Release();
 
-	_pInputLayouts.push_back(inputLayout);
-
-#pragma endregion
+	mInputLayouts.push_back(inputLayout);
 
 	if (FAILED(hr))
 		return hr;
@@ -143,24 +139,24 @@ HRESULT RenderProcess::SetupRTV(ID3D11Device* d3dDevice)
 {
 	HRESULT hr;
 
-	if (renderTargetViewCount < renderTargetViewLimit)
+	if (mRenderTargetViewCount < mRenderTargetViewLimit)
 	{
 		ID3D11Texture2D* _pDepthStencilBuffer = nullptr;
 
-		ZeroMemory(&_pDepthStencilTextDesc, sizeof(_pDepthStencilTextDesc));
-		_pDepthStencilTextDesc.Width = _pRenderToTextureDesc.Width;
-		_pDepthStencilTextDesc.Height = _pRenderToTextureDesc.Height;
-		_pDepthStencilTextDesc.MipLevels = 1;
-		_pDepthStencilTextDesc.ArraySize = 1;
-		_pDepthStencilTextDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
-		_pDepthStencilTextDesc.SampleDesc.Count = 1;
-		_pDepthStencilTextDesc.SampleDesc.Quality = 0;
-		_pDepthStencilTextDesc.Usage = D3D11_USAGE_DEFAULT;
-		_pDepthStencilTextDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
-		_pDepthStencilTextDesc.CPUAccessFlags = 0;
-		_pDepthStencilTextDesc.MiscFlags = 0;
+		ZeroMemory(&mDepthStencilTextDesc, sizeof(mDepthStencilTextDesc));
+		mDepthStencilTextDesc.Width = mRenderToTextureDesc.Width;
+		mDepthStencilTextDesc.Height = mRenderToTextureDesc.Height;
+		mDepthStencilTextDesc.MipLevels = 1;
+		mDepthStencilTextDesc.ArraySize = 1;
+		mDepthStencilTextDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+		mDepthStencilTextDesc.SampleDesc.Count = 1;
+		mDepthStencilTextDesc.SampleDesc.Quality = 0;
+		mDepthStencilTextDesc.Usage = D3D11_USAGE_DEFAULT;
+		mDepthStencilTextDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+		mDepthStencilTextDesc.CPUAccessFlags = 0;
+		mDepthStencilTextDesc.MiscFlags = 0;
 
-		hr = d3dDevice->CreateTexture2D(&_pDepthStencilTextDesc, nullptr, &_pDepthStencilBuffer);
+		hr = d3dDevice->CreateTexture2D(&mDepthStencilTextDesc, nullptr, &_pDepthStencilBuffer);
 
 		if (FAILED(hr))
 			return hr;
@@ -172,9 +168,9 @@ HRESULT RenderProcess::SetupRTV(ID3D11Device* d3dDevice)
 		descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 		descDSV.Texture2D.MipSlice = 0;
 
-		ZeroMemory(&_pDepthStencilView, sizeof(_pDepthStencilView));
+		ZeroMemory(&mDepthStencilView, sizeof(mDepthStencilView));
 
-		hr = d3dDevice->CreateDepthStencilView(_pDepthStencilBuffer, &descDSV, &_pDepthStencilView);
+		hr = d3dDevice->CreateDepthStencilView(_pDepthStencilBuffer, &descDSV, &mDepthStencilView);
 
 		if (FAILED(hr))
 			return hr;
@@ -184,28 +180,28 @@ HRESULT RenderProcess::SetupRTV(ID3D11Device* d3dDevice)
 		ZeroMemory(&srvDesc, sizeof(srvDesc));
 		srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		srvDesc.Texture2D.MipLevels = _pDepthStencilTextDesc.MipLevels;
+		srvDesc.Texture2D.MipLevels = mDepthStencilTextDesc.MipLevels;
 		srvDesc.Texture2D.MostDetailedMip = 0;
 
-		hr = d3dDevice->CreateShaderResourceView(_pDepthStencilBuffer, &srvDesc, &_pDepthMapResourceView);
+		hr = d3dDevice->CreateShaderResourceView(_pDepthStencilBuffer, &srvDesc, &mDepthMapResourceView);
 
-		ZeroMemory(&_pRenderToTexture, sizeof(_pRenderToTexture));
+		ZeroMemory(&mRenderToTexture, sizeof(mRenderToTexture));
 
-		hr = d3dDevice->CreateTexture2D(&_pRenderToTextureDesc, NULL, &_pRenderToTexture);
+		hr = d3dDevice->CreateTexture2D(&mRenderToTextureDesc, NULL, &mRenderToTexture);
 
 		if (FAILED(hr))
 			return hr;
 
 		ID3D11RenderTargetView* renderTargetView;
 
-		hr = d3dDevice->CreateRenderTargetView(_pRenderToTexture, &_pRenderTargetViewDesc, &renderTargetView);
+		hr = d3dDevice->CreateRenderTargetView(mRenderToTexture, &mRenderTargetViewDesc, &renderTargetView);
 
-		_pRenderTargetViews[renderTargetViewCount] = renderTargetView;
+		mRenderTargetViews[mRenderTargetViewCount] = renderTargetView;
 
 		if (FAILED(hr))
 			return hr;
 
-		renderTargetViewCount += 1;
+		mRenderTargetViewCount += 1;
 	}
 
 	return hr;
@@ -217,25 +213,25 @@ HRESULT RenderProcess::SetupBackBufferRTV(ID3D11Device* d3dDevice, ID3D11Texture
 
 	ID3D11Texture2D* _pDepthStencilBuffer = nullptr;
 
-	ZeroMemory(&_pDepthStencilTextDesc, sizeof(_pDepthStencilTextDesc));
-	_pDepthStencilTextDesc.Width = _pRenderToTextureDesc.Width;
-	_pDepthStencilTextDesc.Height = _pRenderToTextureDesc.Height;
-	_pDepthStencilTextDesc.MipLevels = 1;
-	_pDepthStencilTextDesc.ArraySize = 1;
-	_pDepthStencilTextDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	_pDepthStencilTextDesc.SampleDesc.Count = 1;
-	_pDepthStencilTextDesc.SampleDesc.Quality = 0;
-	_pDepthStencilTextDesc.Usage = D3D11_USAGE_DEFAULT;
-	_pDepthStencilTextDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	_pDepthStencilTextDesc.CPUAccessFlags = 0;
-	_pDepthStencilTextDesc.MiscFlags = 0;
+	ZeroMemory(&mDepthStencilTextDesc, sizeof(mDepthStencilTextDesc));
+	mDepthStencilTextDesc.Width = mRenderToTextureDesc.Width;
+	mDepthStencilTextDesc.Height = mRenderToTextureDesc.Height;
+	mDepthStencilTextDesc.MipLevels = 1;
+	mDepthStencilTextDesc.ArraySize = 1;
+	mDepthStencilTextDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	mDepthStencilTextDesc.SampleDesc.Count = 1;
+	mDepthStencilTextDesc.SampleDesc.Quality = 0;
+	mDepthStencilTextDesc.Usage = D3D11_USAGE_DEFAULT;
+	mDepthStencilTextDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	mDepthStencilTextDesc.CPUAccessFlags = 0;
+	mDepthStencilTextDesc.MiscFlags = 0;
 
-	hr = d3dDevice->CreateTexture2D(&_pDepthStencilTextDesc, nullptr, &_pDepthStencilBuffer);
+	hr = d3dDevice->CreateTexture2D(&mDepthStencilTextDesc, nullptr, &_pDepthStencilBuffer);
 
 	if (FAILED(hr))
 		return hr;
 
-	hr = d3dDevice->CreateDepthStencilView(_pDepthStencilBuffer, nullptr, &_pDepthStencilView);
+	hr = d3dDevice->CreateDepthStencilView(_pDepthStencilBuffer, nullptr, &mDepthStencilView);
 
 	if (FAILED(hr))
 		return hr;
@@ -244,9 +240,9 @@ HRESULT RenderProcess::SetupBackBufferRTV(ID3D11Device* d3dDevice, ID3D11Texture
 
 	hr = d3dDevice->CreateRenderTargetView(backBuffer, nullptr, &renderTargetView);
 
-	_pRenderTargetViews[renderTargetViewCount] = renderTargetView;
+	mRenderTargetViews[mRenderTargetViewCount] = renderTargetView;
 
-	renderTargetViewCount += 1;
+	mRenderTargetViewCount += 1;
 
 	if (FAILED(hr))
 		return hr;
@@ -256,41 +252,41 @@ HRESULT RenderProcess::SetupBackBufferRTV(ID3D11Device* d3dDevice, ID3D11Texture
 
 void RenderProcess::SetClearColour(float r, float g, float b, float a)
 {
-	_pClearColour[0] = r;
-	_pClearColour[1] = g;
-	_pClearColour[2] = b;
-	_pClearColour[3] = a;
+	mClearColour[0] = r;
+	mClearColour[1] = g;
+	mClearColour[2] = b;
+	mClearColour[3] = a;
 }
 
 void RenderProcess::AddSamplerState(ID3D11SamplerState* samplerState)
 {
-	_pSamplerStates.push_back(samplerState);
+	mSamplerStates.push_back(samplerState);
 }
 
 void RenderProcess::AddShaderResource(ID3D11ShaderResourceView* shaderResource)
 {
-	_pShaderResources.push_back(shaderResource);
+	mShaderResources.push_back(shaderResource);
 }
 
 void RenderProcess::SetSamplerStates(ID3D11DeviceContext* immediateContext)
 {
-	for (int i = 0; i < _pSamplerStates.size(); i++)
+	for (int i = 0; i < mSamplerStates.size(); i++)
 	{
-		immediateContext->PSSetSamplers(i, 1, &_pSamplerStates.at(i));
+		immediateContext->PSSetSamplers(i, 1, &mSamplerStates.at(i));
 	}
 }
 
 void RenderProcess::SetShaderResources(ID3D11DeviceContext* immediateContext)
 {
-	for (int i = 0; i < _pShaderResources.size(); i++)
+	for (int i = 0; i < mShaderResources.size(); i++)
 	{
-		immediateContext->PSSetShaderResources(i, 1, &_pShaderResources.at(i));
+		immediateContext->PSSetShaderResources(i, 1, &mShaderResources.at(i));
 	}
 }
 
 void RenderProcess::NullifyShaderResources(ID3D11DeviceContext* immediateContext)
 {
-	for (int i = 0; i < _pShaderResources.size(); i++)
+	for (int i = 0; i < mShaderResources.size(); i++)
 	{
 		immediateContext->PSSetShaderResources(i, 1, &nullShaderResourceView);
 	}
@@ -299,48 +295,48 @@ void RenderProcess::NullifyShaderResources(ID3D11DeviceContext* immediateContext
 void RenderProcess::SetupRenderProcess(ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, bool needDepthView)
 {
 	// Switch Render Target back to the H Blur Render Target View
-	if (renderTargetViewCount == 1)
+	if (mRenderTargetViewCount == 1)
 	{
 		if (needDepthView)
 		{
-			immediateContext->OMSetRenderTargets(1, &_pRenderTargetViews[0], _pDepthStencilView);
-			immediateContext->ClearRenderTargetView(_pRenderTargetViews[0], _pClearColour);
-			immediateContext->ClearDepthStencilView(_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+			immediateContext->OMSetRenderTargets(1, &mRenderTargetViews[0], mDepthStencilView);
+			immediateContext->ClearRenderTargetView(mRenderTargetViews[0], mClearColour);
+			immediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		}
 		else
 		{
-			immediateContext->OMSetRenderTargets(1, &_pRenderTargetViews[0], nullptr);
-			immediateContext->ClearRenderTargetView(_pRenderTargetViews[0], _pClearColour);
+			immediateContext->OMSetRenderTargets(1, &mRenderTargetViews[0], nullptr);
+			immediateContext->ClearRenderTargetView(mRenderTargetViews[0], mClearColour);
 		}
 	}
 	else
 	{
 		if (needDepthView)
 		{
-			immediateContext->OMSetRenderTargets(renderTargetViewCount, _pRenderTargetViews, _pDepthStencilView);
+			immediateContext->OMSetRenderTargets(mRenderTargetViewCount, mRenderTargetViews, mDepthStencilView);
 
-			for (int i = 0; i < renderTargetViewCount; i++)
+			for (int i = 0; i < mRenderTargetViewCount; i++)
 			{
-				immediateContext->ClearRenderTargetView(_pRenderTargetViews[i], _pClearColour);
+				immediateContext->ClearRenderTargetView(mRenderTargetViews[i], mClearColour);
 			}
 
-			immediateContext->ClearDepthStencilView(_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+			immediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		}
 		else
 		{
-			immediateContext->OMSetRenderTargets(renderTargetViewCount, _pRenderTargetViews, nullptr);
+			immediateContext->OMSetRenderTargets(mRenderTargetViewCount, mRenderTargetViews, nullptr);
 
-			for (int i = 0; i < renderTargetViewCount; i++)
+			for (int i = 0; i < mRenderTargetViewCount; i++)
 			{
-				immediateContext->ClearRenderTargetView(_pRenderTargetViews[i], _pClearColour);
+				immediateContext->ClearRenderTargetView(mRenderTargetViews[i], mClearColour);
 			}
 		}
 	}
 
-	immediateContext->IASetInputLayout(_pInputLayouts.at(currentShaderIndex));
+	immediateContext->IASetInputLayout(mInputLayouts.at(mCurrentShaderIndex));
 
-	immediateContext->VSSetShader(_pVertexShaders.at(currentShaderIndex), nullptr, 0);
-	immediateContext->PSSetShader(_pPixelShaders.at(currentShaderIndex), nullptr, 0);
+	immediateContext->VSSetShader(mVertexShaders.at(mCurrentShaderIndex), nullptr, 0);
+	immediateContext->PSSetShader(mPixelShaders.at(mCurrentShaderIndex), nullptr, 0);
 
 	immediateContext->VSSetConstantBuffers(0, 1, &constantBuffer);
 	immediateContext->PSSetConstantBuffers(0, 1, &constantBuffer);
@@ -351,7 +347,7 @@ void RenderProcess::SetupRenderProcess(ID3D11DeviceContext* immediateContext, ID
 
 void RenderProcess::RenderGameObjects(ID3D11DeviceContext* immediateContext, vector<GameObject*> gameObjects, ID3D11Buffer* constantBuffer, ConstantBuffer* cb)
 {
-	int shaderResourceIndex = _pShaderResources.size();
+	int shaderResourceIndex = mShaderResources.size();
 
 	// Render all scene objects
 	for (auto gameObject : gameObjects)
@@ -414,7 +410,7 @@ void RenderProcess::RenderGameObjects(ID3D11DeviceContext* immediateContext, vec
 		// Draw object
 		gameObject->Draw(immediateContext);
 
-		shaderResourceIndex = _pShaderResources.size();
+		shaderResourceIndex = mShaderResources.size();
 	}
 
 	NullifyShaderResources(immediateContext);

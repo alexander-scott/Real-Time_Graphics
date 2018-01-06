@@ -174,12 +174,12 @@ float3 CalculateTextureCoordOffset(VS_OUTPUT input, float3 eyeVec, float3 lightV
 	float2 vMaxOffset = vOffsetDir * fParallaxLimit;
 
 	// Max and min amount of ray samples
-	int nMinSamples = 4;
+	int nMinSamples = 20;
 	int nMaxSamples = 200;
 
-	// Determine amount of smapling needed from the angle of the light vector to the eyeVec
-	//int nNumSamples = (int)lerp(nMaxSamples, nMinSamples, dot(eyeVec, lightVec));
-	int nNumSamples = 200;
+	// Determine amount of sampling needed from the angle of the light vector to the eyeVec
+	int nNumSamples = (int)lerp(nMaxSamples, nMinSamples, dot(eyeVec, lightVec));
+	//int nNumSamples = 200;
 
 	// Step size difference dependant on sampling frequency
 	float fStepSize = 1.0f / (float)nNumSamples;
@@ -242,12 +242,12 @@ float CalculateIfInShadow(VS_OUTPUT input, float3 eyeVec, float3 lightVec, float
 	float2 vMaxOffset = vOffsetDir * fParallaxLimit;
 
 	// Max and min amount of ray samples
-	int nMinSamples = 4;
+	int nMinSamples = 20;
 	int nMaxSamples = 200;
 
 	// Determine amount of sampling needed from the angle of the light vector to the eyeVec
-	//int nNumSamples = (int)lerp(nMaxSamples, nMinSamples, dot(eyeVec, lightVec));
-	int nNumSamples = 200;
+	int nNumSamples = (int)lerp(nMaxSamples, nMinSamples, dot(eyeVec, lightVec));
+	//int nNumSamples = 200;
 
 	// Step size difference dependant on sampling frequency
 	float fStepSize = 1.0f / (float)nNumSamples;
@@ -329,6 +329,7 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_Target
 	}
 
 	//float4 textureColour = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	float4 finalTextureColour = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	float parallaxHeight;
 	float depthValue;
@@ -336,6 +337,14 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_Target
 	float pcfFilter = 0.0f;
 
 	int count = 0;
+
+	for (int i = 0; i < 4; i++)
+	{
+		if (lights[i].lightOn == 1.0f)
+		{
+			count++;
+		}
+	}
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -403,24 +412,13 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_Target
 
 					if (lights[i].Cone != 0)
 					{
+						//Calculate falloff from center to edge of pointlight cone
 						float dotProd = dot(-lightToPixelVec, lights[i].Direction);
 						if (dotProd > 0)
-						{
-							//Calculate falloff from center to edge of pointlight cone
 							textureColour[i] *= pow(dotProd, lights[i].Cone);
-						}
 						else
-						{
-							//Calculate falloff from center to edge of pointlight cone
 							textureColour[i] *= pow(0.0f, lights[i].Cone);
-						}
 					}
-
-					count++;
-				}
-				else
-				{
-					textureColour[i] = (0, 0, 0, 0);
 				}
 			}
 
@@ -493,18 +491,13 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_Target
 			specular += CalculateSpecularLight(lights[i], lightVecWorld[i], normalMap, diffuseAmount, eyeVec);
 			diffuse += CalculateDiffuseLight(lights[i], diffuseAmount);
 			ambient += CalculateAmbientLight(lights[i]);
-		}
-		else
-		{
-			textureColour[i] = (0, 0, 0, 0);
+			finalTextureColour += (textureColour[i] / count);
 		}
 	}
 
 	// Sum all the terms together and copy over the diffuse alpha.
 	if (HasTexture == 1.0f)
 	{
-		float4 finalTextureColour = (textureColour[0] + textureColour[1] + textureColour[2] + textureColour[3]) / count;
-
 		finalColour.rgb = (finalTextureColour * (ambient + diffuse)) + specular;
 	}
 	else
