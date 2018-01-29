@@ -144,4 +144,11 @@ struct SMConstantBuffer
 	XMMATRIX Projection;
 };
 
+struct HeightMapInfo 
+{
+	int terrainWidth;		// Width of heightmap
+	int terrainHeight;		// Height (Length) of heightmap
+	XMFLOAT3 *heightMap;	// Array to store terrain's vertex positions
+};
+
 #pragma endregion

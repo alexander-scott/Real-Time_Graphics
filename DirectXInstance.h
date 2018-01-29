@@ -2,6 +2,7 @@
 
 #include <d3d11_1.h>
 #include <DirectXMath.h>
+#include <vector>
 #include "resource.h"
 
 #include "Structures.h"
@@ -23,11 +24,14 @@ public:
 	ID3D11DeviceContext*	_pImmediateContext;
 	IDXGISwapChain*			_pSwapChain;
 
-	ID3D11Buffer*			_pVertexBuffer;
-	ID3D11Buffer*			_pIndexBuffer;
+	ID3D11Buffer*			_pCubeVertexBuffer;
+	ID3D11Buffer*			_pCubeIndexBuffer;
 
 	ID3D11Buffer*			_pPlaneVertexBuffer;
 	ID3D11Buffer*			_pPlaneIndexBuffer;
+
+	ID3D11Buffer*			_pTerrainVertexBuffer;
+	ID3D11Buffer*			_pTerrainIndexBuffer;
 
 	ID3D11Buffer*			_pConstantBuffer;
 	ID3D11Buffer*			_pSMConstantBuffer;
@@ -46,7 +50,10 @@ private:
 	HRESULT InitConstantBuffers();
 	HRESULT InitVertexBuffer();
 	HRESULT InitIndexBuffer();
+	HRESULT InitTerrainBuffers();
 	HRESULT InitRasterizerState();
+
+	bool HeightMapLoad(char* filename, HeightMapInfo &hminfo);
 
 	HINSTANCE					_hInst;
 	D3D_DRIVER_TYPE				_pDriverType;

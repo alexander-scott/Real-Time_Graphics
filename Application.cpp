@@ -69,8 +69,8 @@ void Application::InitScene()
 
 	// Prebuild the geometrys and materials to pass to the scene builder
 	Geometry cubeGeometry;
-	cubeGeometry.indexBuffer = DirectXInstance::Instance()._pIndexBuffer;
-	cubeGeometry.vertexBuffer = DirectXInstance::Instance()._pVertexBuffer;
+	cubeGeometry.indexBuffer = DirectXInstance::Instance()._pCubeIndexBuffer;
+	cubeGeometry.vertexBuffer = DirectXInstance::Instance()._pCubeVertexBuffer;
 	cubeGeometry.numberOfIndices = 36;
 	cubeGeometry.vertexBufferOffset = 0;
 	cubeGeometry.vertexBufferStride = sizeof(SimpleVertex);
